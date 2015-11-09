@@ -30,7 +30,7 @@ public function index()
             $config['first_tagl_close'] = "</li>";
             $config['last_tag_open'] = "<li>";
             $config['last_tagl_close'] = "</li>";
-            
+            //this is a change
             $this->pagination->initialize($config);
             $data['records'] = $this->db->get('m_depot', $config['per_page'], $this->uri->segment(3));
             $data['section'] = "Configuration";
