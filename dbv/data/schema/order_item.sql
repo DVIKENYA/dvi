@@ -1,0 +1,10 @@
+CREATE TABLE `order_item` (
+  `vaccine_id` int(14) NOT NULL,
+  `stock_on_hand` int(14) NOT NULL,
+  `min_stock` int(14) NOT NULL,
+  `max_stock` int(11) NOT NULL,
+  `period_stock` int(14) NOT NULL,
+  `first_expiry` date NOT NULL,
+  `qty_order_doses` int(14) NOT NULL,
+  `order_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1

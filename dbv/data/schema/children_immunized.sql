@@ -1,0 +1,1 @@
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `children_immunized` AS select distinct `dhis_usage`.`periodname` AS `Months`,sum(`dhis_usage`.`fullyimmunizedchildficabove2years`) AS `Above2yrs`,sum(`dhis_usage`.`fullyimmunizedchildrenficunder1ye`) AS `Above1yr` from `dhis_usage` group by `dhis_usage`.`periodname`

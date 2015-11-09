@@ -1,0 +1,21 @@
+CREATE TABLE `m_stock_movement` (
+  `stock_id` int(11) NOT NULL AUTO_INCREMENT,
+  `vaccine_id` int(11) NOT NULL,
+  `batch_number` varchar(11) NOT NULL,
+  `expiry_date` date NOT NULL,
+  `transaction_date` date NOT NULL,
+  `transaction_type` int(11) NOT NULL,
+  `source` int(11) NOT NULL,
+  `destination` int(11) NOT NULL,
+  `quantity_in` int(11) NOT NULL,
+  `quantity_out` int(11) NOT NULL,
+  `physical_count` int(11) NOT NULL,
+  `disparity_reason` text NOT NULL,
+  `VVM_status` int(11) NOT NULL,
+  `order_number` int(11) NOT NULL,
+  `operator` varchar(30) NOT NULL,
+  PRIMARY KEY (`stock_id`),
+  KEY `trans_fk` (`transaction_type`),
+  KEY `vaccine_fk` (`vaccine_id`),
+  KEY `vvm_fk` (`VVM_status`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1

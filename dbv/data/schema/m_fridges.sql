@@ -1,0 +1,21 @@
+CREATE TABLE `m_fridges` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `Model` varchar(10) NOT NULL,
+  `Manufacturer` varchar(10) NOT NULL,
+  `Technology Type` varchar(10) NOT NULL,
+  `Vaccine storage volume (L)` varchar(10) NOT NULL,
+  `Holdover period (hrs)` varchar(10) NOT NULL,
+  `Freezer capacity` varchar(10) NOT NULL,
+  `Purchase price/ unit (USD)` varchar(10) NOT NULL,
+  `Freight charges - to port (USD)` varchar(10) NOT NULL,
+  `Local levies and in-country transport (USD)` varchar(10) NOT NULL,
+  `Installation charges (USD)` varchar(10) NOT NULL,
+  `Training costs (USD)` varchar(10) NOT NULL,
+  `Total installed cost/ Capex (USD)` varchar(10) NOT NULL,
+  `Annual energy costs (USD)` varchar(10) NOT NULL,
+  `Annual maintenance costs (USD)` varchar(10) NOT NULL,
+  `Total operational cost (USD)` varchar(10) NOT NULL,
+  `TCO (USD)` varchar(10) NOT NULL,
+  `TCO/ Ltr (USD)` varchar(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1

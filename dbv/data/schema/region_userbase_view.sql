@@ -1,0 +1,1 @@
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `region_userbase_view` AS select `m_region`.`id` AS `id`,`m_region`.`region_name` AS `region_name`,`user_base`.`user_id` AS `user_id`,`user_base`.`national` AS `national`,`user_base`.`region` AS `region` from (`m_region` join `user_base` on((`user_base`.`region` = `m_region`.`id`)))

@@ -1,0 +1,1 @@
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vaccine_stockbalance` AS select `v`.`Vaccine_name` AS `Vaccine`,`s`.`stock_balance` AS `Stock_Balance`,`s`.`user_id` AS `User_id` from (`m_vaccines` `v` join `m_stock_balance` `s`) where (`v`.`ID` = `s`.`vaccine_id`)
