@@ -132,7 +132,7 @@ Modules::run('secure_tings/is_logged_in');
 
     if ($this->form_validation->run() == FALSE)
     {   
-        $this->create_user();         
+        redirect('users/create_user');         
     }
     else
     {       

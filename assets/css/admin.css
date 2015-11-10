@@ -1851,10 +1851,10 @@ input {
 .tab-content > .active, .pill-content > .active { padding: 0;}
 .tab-content { background: none repeat scroll 0 0 #FFFFFF; border: 0 none; border-radius: 0; margin-bottom: 40px;padding: 20px;}
 .tab-content { overflow: hidden; position: relative; z-index: 10;}
-.block-web .nav-tabs > li > a { border-color: -moz-use-text-color; border-radius: 0;border-style: none; border-width: medium;color: #FFFFFF;font-size: 14px; line-height: 1.42857; margin: 0;transition: all 0.4s ease 0s;}
+.block-web .nav-tabs > li > a { border-color: -moz-use-text-color; border-radius: 0;border-style: none; border-width: medium;color: #D9534F;font-size: 14px; line-height: 1.42857; margin: 0;transition: all 0.4s ease 0s;}
 
 .block-web .nav-tabs > li.active > a, .block-web .nav-tabs > li.active > a:hover, .block-web .nav-tabs > li.active > a:focus {
-    background-color:#E47946!important;
+    background-color:#D9534F!important;
     border-color: -moz-use-text-color;
     border-style: none;
     border-width: medium;
@@ -1862,11 +1862,11 @@ input {
     cursor: default;
 }
 .block-web .nav-tabs > li.active > a, .block-web .nav-tabs > li.active > a:hover{
-    background-color:#FFFFFF!important;
+    background-color:#D9534F!important;
     border-color: -moz-use-text-color;
     border-style: none;
     border-width: medium;
-    color:#666666!important;
+    color:#fff!important;
     cursor: default;
 }
 .block-web .media-list .media { border-bottom: 1px solid #EAEAEA;padding:10px 20px; margin-top:0px;}
