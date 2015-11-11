@@ -1,22 +1,31 @@
+ <div class="row">
+  <div class="col-lg-12">
 <?php
-$form_attributes = array('id' => 'view_orderfm','method' =>'post');
-echo form_open('',$form_attributes);?>         
+$form_attributes = array('id' => 'view_orderfm','class'=>'form-inline','role'=>'form');
+echo form_open('',$form_attributes);?> 
+
+</div>
+ </div>
+<div class="well well-sm"><b>Order Details</b></div>
                   <!--Place order form -->
    <div id="order_infor">
 
-     	<table class="table table-bordered" id="store_infor_tbl">
+     	<table class="table table-bordered table-striped" id="store_infor_tbl">
      		<tr><td style="width:50%">Store Name : <?php  print_r($orderitems[0]['station_id']);  ?> </td><td>Order Date: <?php print_r($orderitems[0]['order_date']);?></td></tr>
           <tr>
           <td>Order By :<?php  print_r($orderitems[0]['station_id']); ?> </td>
           <td>Date: <?php echo date('Y-m-d',strtotime(date('Y-m-d')));?></td>
      
      	</table>
+
+      <div class="well well-sm"><b>Order Details</b></div>
+       <div class="table-responsive">
     <div id="order">
-   	<table class="table table-bordered" >
+   	<table class="table table-bordered table-striped" >
    		
    		<thead>
          <tr align="center">
-          <td>Vaccine</td><td>Stock On Hand</td><td>Minimum Stock</td><td>Maximum Stock</td><td>First Expiry Date</td><td>Quantity ordered(Doses)</td>
+          <th>Vaccine</th><th>Stock On Hand</th><th>Minimum Stock</th><th>Maximum Stock</th><th>First Expiry Date</th><th>Quantity ordered(Doses)</th>
         </tr>
       </thead>
           <tbody>
@@ -51,7 +60,7 @@ echo form_open('',$form_attributes);?>
         </tbody>
    	</table>
     </div>
-   </div> 
+   </div> </div> 
    <input type="button" value="Receive Order" class="btn btn-sm btn-danger" onclick="window.location.href='<?php echo base_url().'stock/stock/receive_stock'?>'" />
    <?php 
 echo form_close();

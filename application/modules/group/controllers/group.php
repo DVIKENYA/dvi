@@ -77,6 +77,7 @@ function create(){
            echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
 }
 
+
 function get_data_from_post(){
             $data['name']=$this->input->post('name', TRUE);
 			$data['description']=$this->input->post('description', TRUE);
