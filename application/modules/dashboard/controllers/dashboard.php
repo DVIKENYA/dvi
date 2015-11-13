@@ -13,13 +13,15 @@ Modules::run('secure_tings/is_logged_in');
 function home() {
   Modules::run('secure_tings/is_logged_in');
   $data['chart'] = $this->get_chart();
+ // $data['coverage1'] = $this->get_coveragesub();
+  $data['wastage'] = $this->get_wastage();
   $data['mavaccine'] = $this->vaccines();
   $data['coverage'] = $this->get_coverage();
   $data['section'] = "DVI Kenya";
   $data['subtitle'] = "Dashboard";
   $user_level=$this->session->userdata['logged_in']['user_level'];
-  $data['page_title'] = "Dashboard View";
-  if($user_level!='1'){
+  //$data['page_title'] = "Baringo County";
+  if($user_level!=='1'){
        $data['view_file'] = "dashboard_view";
     } else if($user_level=='1'){
        $data['view_file'] = "national_dashboard_view";
@@ -51,7 +53,7 @@ function get_chart() {
     return $json_array;
   }
 
-  function get_coverage() {
+function get_coverage() {
     $this->load->model('mdl_dashboard');
     $query = $this->mdl_dashboard->getCoverage();
         
@@ -69,6 +71,59 @@ function get_chart() {
     return $json_array;
   }
 
+  function get_coveragesub() {
+    $this->load->model('mdl_dashboard');
+    $query = $this->mdl_dashboard->get_Coverage(113);
+    $json_array= array();     
+    foreach ($query as $row) {
+      
+       $data['label']=$row->Months;
+       $data['value']=(float)$row->totalbcg;
+
+      $json_array[] = $data;
+
+    }
+   
+    //echo json_encode($json_array);
+    return $json_array;
+  }
+
+function get_wastage() {
+    $this->load->model('mdl_dashboard');
+    $query = $this->mdl_dashboard->wastage();
+
+      
+    foreach ($query->result() as $row) {
+      $json_array[]= array(
+       "label"=>'BCG',
+       "value"=>(int)$row->totalbcg
+       /*"totalopv"=>(int)$row->totalopv,
+       "totalbcg"=>(int)$row->totalbcg,
+       "totalpcv"=>(int)$row->totalpcv,
+       "totaltt"=>(int)$row->totaltt,
+       "totalvita1"=>(int)$row->totalvita1,
+       "totalvita2"=>(int)$row->totalvita2,
+       "totalvita5"=>(int)$row->totalvita5,
+       "totalyellowfev"=>(int)$row->totalyellowfev*/
+       );
+
+      /*$value = array();
+      
+      $value[] = (int)$row->totalbcg;
+      $value[] = (int)$row->totalopv;
+      $value[] = (int)$row->totalbcg;
+      $value[] = (int)$row->totalpcv;
+      $value[] = (int)$row->totaltt;
+      $value[] = (int)$row->totalvita1;
+      $value[] = (int)$row->totalvita2;
+      $value[] = (int)$row->totalvita5;
+      $value[] = (int)$row->totalvita5;
+     
+      $json_array[] = $value;*/
+    }
+    //echo json_encode($json_array);
+    return $json_array;
+  }
 
 
   function get_linechart() {

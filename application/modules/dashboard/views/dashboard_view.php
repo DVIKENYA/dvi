@@ -59,7 +59,7 @@
 
 </br>
 
- 
+
 
 <script type="text/javascript">
 $(document).ready(function(){
@@ -151,7 +151,7 @@ function load_linechart(vaccine){
 $(document).ready(function(){
   Morris.Donut({
   element: 'morris-donut-chart',
-  data: <?php echo json_encode($chart)?>,
+  data: <?php echo json_encode($wastage)?>,
   colors:['#54cdb4','#0BA462','#95D7BB'],
   labelColor: '#333300'
     });
