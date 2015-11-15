@@ -94,34 +94,19 @@ function get_wastage() {
 
       
     foreach ($query->result() as $row) {
-      $json_array[]= array(
-       "label"=>'BCG',
-       "value"=>(int)$row->totalbcg
-       /*"totalopv"=>(int)$row->totalopv,
-       "totalbcg"=>(int)$row->totalbcg,
-       "totalpcv"=>(int)$row->totalpcv,
-       "totaltt"=>(int)$row->totaltt,
-       "totalvita1"=>(int)$row->totalvita1,
-       "totalvita2"=>(int)$row->totalvita2,
-       "totalvita5"=>(int)$row->totalvita5,
-       "totalyellowfev"=>(int)$row->totalyellowfev*/
+      $json_array= array(
+      array( 'value'=>(int)$row->totalbcg, 'label'=>'BCG'),
+      array( 'value'=>(int)$row->totalopv,'label'=>'OPV'),
+      array( 'value'=>(int)$row->totalpcv, 'label'=>'PCV'),
+      array( 'value'=>(int)$row->totaltt, 'label'=>'TT'),
+      array( 'value'=>(int)$row->totalvita1, 'label'=>'VITA1'),
+      array( 'value'=>(int)$row->totalvita2,'label'=>'VITA2'),
+      array( 'value'=>(int)$row->totalvita5, 'label'=>'VITA5'),
+      array( 'value'=>(int)$row->totalyellowfev, 'label'=>'YELLOWFEV')
        );
 
-      /*$value = array();
-      
-      $value[] = (int)$row->totalbcg;
-      $value[] = (int)$row->totalopv;
-      $value[] = (int)$row->totalbcg;
-      $value[] = (int)$row->totalpcv;
-      $value[] = (int)$row->totaltt;
-      $value[] = (int)$row->totalvita1;
-      $value[] = (int)$row->totalvita2;
-      $value[] = (int)$row->totalvita5;
-      $value[] = (int)$row->totalvita5;
-     
-      $json_array[] = $value;*/
-    }
-    //echo json_encode($json_array);
+      }
+  // echo json_encode($json_array);
     return $json_array;
   }
 

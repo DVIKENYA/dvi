@@ -147,12 +147,11 @@ function load_linechart(vaccine){
 
 
 <script type="text/javascript">
-
 $(document).ready(function(){
   Morris.Donut({
   element: 'morris-donut-chart',
   data: <?php echo json_encode($wastage)?>,
-  colors:['#54cdb4','#0BA462','#95D7BB'],
+  colors:['#54cdb4'],
   labelColor: '#333300'
     });
 });
