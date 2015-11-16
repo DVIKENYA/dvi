@@ -102,13 +102,28 @@ function get_vaccine_details(){
 
 function getCoverage(){
     $query = $this->db->query("SELECT `periodname` AS Months, `BCG` , `DPT1` , `PCV1` , `OPV` , `ROTA` ,`Measles` FROM `total_doses_adm`");
-    
     return $query;
+    }
+
+function get_Coverage($subcounty_id){
+    $this->db->select(' `periodname` AS Months, `totalbcg`');
+    $u = array('subcounty_id' => $subcounty_id);
+    $this->db->where($u);
+    $this->db->order_by('periodname');
+    $query = $this->db->get('view_subcountycov_calculated');
+    return $query->result();
     }
 
 function mofstock(){
     $query = $this->db->query("SELECT sum( bcgdoseadm ) AS totalbcg,sum( opv1dosesadm ) AS totalopv1, sum( pneumococal1adm ) AS totalpneumococal1, sum( rotavirus1dosesadministered ) AS totalrotavirus1
 FROM dhis_usage;");
+    return $query;
+}
+
+function wastage(){
+    $query = $this->db->query("SELECT BCG AS Vaccine, BCG AS totalbcg, DPT AS totaldpt, MEASLES AS totalmeasles, OPV AS totalopv,
+       PCV AS totalpcv,TT AS totaltt,VITA1 AS totalvita1,VITA2 AS totalvita2,VITA5 AS totalvita5,YELLOWFEVER AS totalyellowfev
+FROM total_wastage;");
     return $query;
 }
 

@@ -13,13 +13,15 @@ Modules::run('secure_tings/is_logged_in');
 function home() {
   Modules::run('secure_tings/is_logged_in');
   $data['chart'] = $this->get_chart();
+ // $data['coverage1'] = $this->get_coveragesub();
+  $data['wastage'] = $this->get_wastage();
   $data['mavaccine'] = $this->vaccines();
   $data['coverage'] = $this->get_coverage();
   $data['section'] = "DVI Kenya";
   $data['subtitle'] = "Dashboard";
   $user_level=$this->session->userdata['logged_in']['user_level'];
-  $data['page_title'] = "Dashboard View";
-  if($user_level!='1'){
+  //$data['page_title'] = "Baringo County";
+  if($user_level!=='1'){
        $data['view_file'] = "dashboard_view";
     } else if($user_level=='1'){
        $data['view_file'] = "national_dashboard_view";
@@ -51,7 +53,7 @@ function get_chart() {
     return $json_array;
   }
 
-  function get_coverage() {
+function get_coverage() {
     $this->load->model('mdl_dashboard');
     $query = $this->mdl_dashboard->getCoverage();
         
@@ -69,6 +71,44 @@ function get_chart() {
     return $json_array;
   }
 
+  function get_coveragesub() {
+    $this->load->model('mdl_dashboard');
+    $query = $this->mdl_dashboard->get_Coverage(113);
+    $json_array= array();     
+    foreach ($query as $row) {
+      
+       $data['label']=$row->Months;
+       $data['value']=(float)$row->totalbcg;
+
+      $json_array[] = $data;
+
+    }
+   
+    //echo json_encode($json_array);
+    return $json_array;
+  }
+
+function get_wastage() {
+    $this->load->model('mdl_dashboard');
+    $query = $this->mdl_dashboard->wastage();
+
+      
+    foreach ($query->result() as $row) {
+      $json_array= array(
+      array( 'value'=>(int)$row->totalbcg, 'label'=>'BCG'),
+      array( 'value'=>(int)$row->totalopv,'label'=>'OPV'),
+      array( 'value'=>(int)$row->totalpcv, 'label'=>'PCV'),
+      array( 'value'=>(int)$row->totaltt, 'label'=>'TT'),
+      array( 'value'=>(int)$row->totalvita1, 'label'=>'VITA1'),
+      array( 'value'=>(int)$row->totalvita2,'label'=>'VITA2'),
+      array( 'value'=>(int)$row->totalvita5, 'label'=>'VITA5'),
+      array( 'value'=>(int)$row->totalyellowfev, 'label'=>'YELLOWFEV')
+       );
+
+      }
+  // echo json_encode($json_array);
+    return $json_array;
+  }
 
 
   function get_linechart() {
