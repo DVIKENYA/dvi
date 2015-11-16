@@ -127,9 +127,9 @@ FROM dhis_usage;");
 }
 
 function wastage(){
-    $query = $this->db->query("SELECT BCG AS Vaccine, BCG AS totalbcg, DPT AS totaldpt, MEASLES AS totalmeasles, OPV AS totalopv,
-       PCV AS totalpcv,TT AS totaltt,VITA1 AS totalvita1,VITA2 AS totalvita2,VITA5 AS totalvita5,YELLOWFEVER AS totalyellowfev
-FROM total_wastage;");
+    $query = $this->db->query("SELECT sum(BCG) AS totalbcg, sum(DPT) AS totaldpt, sum(MEASLES) AS totalmeasles, sum(OPV) AS totalopv,
+      sum(PCV) AS totalpcv,sum(TT) AS totaltt,sum(VITA1) AS totalvita1,sum(VITA2) AS totalvita2,sum(VITA5) AS totalvita5,sum(YELLOWFEVER) AS totalyellowfev
+FROM wastage_all;");
     return $query;
 }
 
