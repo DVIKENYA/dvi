@@ -4,7 +4,7 @@
 @import url(http://fonts.googleapis.com/css?family=Raleway:400,200,300,500,100,600);
 
 h1, h2, h3, h4, h5, h6{margin:0px; padding:0px;}
-body { font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;font-size: 13px; background-color:#262a33;background-image: url("../images/bg/bg2.jpg");}
+body { font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;font-size: 13px; background-color:#F1F1F1;}
 .container {width: 100%;}
 h1,.h1{font-size:35px;}
 h2,.h2{font-size:31px;}
@@ -126,7 +126,7 @@ img {border: 0!important;}
 
 .inner{}
 
-.left_nav{ display: inline-block;float: left;position: relative; width: 210px; min-height:1106px;}
+.left_nav{ display: inline-block;float: left;position: relative; width: 210px;height: 100%}
 .left_nav_slidebar{}
 
 .search_bar{margin:14px 14px 14px 14px; border-bottom:1px solid #343434; padding:5px 10px; font-size:14px;}

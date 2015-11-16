@@ -133,6 +133,7 @@ Modules::run('secure_tings/is_logged_in');
     if ($this->form_validation->run() == FALSE)
     {   
         redirect('users/create_user');         
+
     }
     else
     {       
@@ -166,7 +167,8 @@ Modules::run('secure_tings/is_logged_in');
         if(isset($this->session->userdata['logged_in'])){
             redirect('dashboard/home');
         }else{
-           redirect('users'); 
+            redirect('users'); 
+
         }
     } else {
          $data['username']=$this->input->post('username', TRUE);

@@ -22,6 +22,7 @@
                 </ul>
                 <div class="tab-content" id="myTabContent">
                   <div id="tab1" class="tab-pane fade in active">
+                   <div class="table-responsive">
                    <form id="list_orders_fm">
 <!--Listing Submitted Orders-->
 
@@ -50,10 +51,12 @@
 
         </tbody>
         </table>
+        
 
-</form>
+</form></div>
                   </div>
                   <div id="tab2" class="tab-pane fade">
+                  <div class="table-responsive">
                    <form id="list_orders_fm">
 <!--Listing Placed Orders-->
 
@@ -84,6 +87,7 @@
         </table>
 
 </form>
+</div>
                   </div>
                   
                 </div>

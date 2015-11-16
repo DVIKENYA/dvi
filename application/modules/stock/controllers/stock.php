@@ -21,13 +21,13 @@ class Stock extends MY_Controller
        'amt_issued'=>$this->input->post('amt_issued'),
        'vvm_status'=>$this->input->post('vvm_status')
       );
-      echo json_encode($dat);
+      echo json_encode($data);
 
     } 
 
 
     function receive_stock(){
-    
+    Modules::run('secure_tings/is_logged_in');
       $this->load->model('vaccines/mdl_vaccines');
       $data['vaccines']= $this->mdl_vaccines->getVaccine();
       $this->load->model('stock/mdl_vvmstatus');
@@ -60,7 +60,7 @@ class Stock extends MY_Controller
     }
 
     function issue_stock(){
-
+Modules::run('secure_tings/is_logged_in');
           $this->load->model('vaccines/mdl_vaccines');
           $data['vaccines']= $this->mdl_vaccines->getVaccine();
         	$data['module'] = "stock";
@@ -89,6 +89,7 @@ class Stock extends MY_Controller
     }
 
     function list_inventory(){
+      Modules::run('secure_tings/is_logged_in');
           $this->load->model('vaccines/mdl_vaccines');
           $data['vaccines']= $this->mdl_vaccines->get_vaccine_details();
           $data['module'] = "stock";
@@ -104,7 +105,7 @@ class Stock extends MY_Controller
     function get_vaccine_ledger($selected_vaccine){
   // This function gets the ledger of the selected vaccine
       /*alert ($selected_vaccine); */
-      
+      Modules::run('secure_tings/is_logged_in');
           $this->load->model('stock/mdl_stock');
           $data['ledgers']= $this->mdl_stock->get_vaccine_ledger($selected_vaccine);
           $this->load->model('vaccines/mdl_vaccines');
@@ -128,6 +129,7 @@ class Stock extends MY_Controller
     }
 
     function physical_count(){
+      Modules::run('secure_tings/is_logged_in');
         $this->load->model('vaccines/mdl_vaccines');
         $data['vaccines']= $this->mdl_vaccines->getVaccine();
         $data['module'] = "stock";
@@ -155,6 +157,7 @@ class Stock extends MY_Controller
 
     }
     function transfer_stock(){
+      Modules::run('secure_tings/is_logged_in');
         $data['module'] = "stock";
         $data['view_file'] = "transfer_stock";
         $data['section'] = "stock";

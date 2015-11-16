@@ -1,11 +1,12 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');?>
 
-<div class="col-lg-4 col-lg-offset-7">
+<div class="col-md-4 col-md-offset-7 col-sm-6">
  <div class="login_page">
   <div class="registration">
      
 
   <div class="panel-heading border login_heading">SIGN IN</div> 
+
        <?php 
       echo $this->session->flashdata('msg');?>
       <?php echo validation_errors('<div class="alert alert-danger alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><b>',' </b></div>');?>     
