@@ -23,7 +23,7 @@
                 <div class="tab-content" id="myTabContent">
                   <div id="tab1" class="tab-pane fade in active">
                    <form id="list_orders_fm">
-<!--Listing Placed Orders-->
+<!--Listing Submitted Orders-->
 
 
     <table class="table table-bordered table-striped" id="list_orders_tbl">
@@ -32,9 +32,10 @@
         </thead>
 
         <tbody>
-
-        <?php foreach ($orders as $order) { 
-         $ledger_url = base_url().'order/view_orders/'.$order['order_by'].'/'.$order['date_created'];
+          <?php $option=1 ; ?>
+        <?php foreach ($submitted_orders as $order) { 
+         $ledger_url = base_url().'order/view_orders/'.$order['order_by'].'/'.$order['date_created'].'/'.$option;
+         
          ?>
         
               <tr>
@@ -63,9 +64,10 @@
         </thead>
 
         <tbody>
-
+        <?php $option=2 ; ?>
         <?php foreach ($orders as $order) { 
-         $ledger_url = base_url().'order/view_orders/'.$order['order_by'].'/'.$order['date_created'];
+         $ledger_url = base_url().'order/view_orders/'.$order['order_by'].'/'.$order['date_created'].'/'.$option;
+        
          ?>
         
               <tr>
@@ -90,30 +92,3 @@
                </div>
                </div>
 
-
-
-
-
-
-
-<script>
-     var formURL="<?php echo base_url();?>order/view_orders";
-    $.ajax({
-              url : formURL,
-              type: "POST",
-              data : {
-                "vaccines":$order['order_by'],
-                "stock_on_hand":$order['date_created']    
-             },/* dataType : json,*/
-              success:function(data, textStatus, jqXHR) 
-              {
-                  console.log(data);
-               // window.location.replace('<?php// echo base_url().'order/list_orders'?>');
-                  //data: return data from server
-              },
-              error: function(jqXHR, textStatus, errorThrown) 
-              {
-                  console.log("Error");
-              }
-          });
-</script>
