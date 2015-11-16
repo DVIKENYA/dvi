@@ -53,7 +53,7 @@ function get_chart() {
     return $json_array;
   }
 
-function get_coverage() {
+/*function get_coverage() {
     $this->load->model('mdl_dashboard');
     $query = $this->mdl_dashboard->getCoverage();
         
@@ -65,6 +65,31 @@ function get_coverage() {
        "PCV1"=>(int)$row->PCV1,
        "ROTA"=>(int)$row->ROTA,
        "Measles"=>(int)$row->Measles
+       );    
+    }
+    //echo json_encode($json_array);
+    return $json_array;
+  }*/
+
+  function get_coverage() {
+    $this->load->model('mdl_dashboard');
+    $query = $this->mdl_dashboard->get_Coverage();
+    foreach ($query->result() as $row) {
+      $json_array[]= array(
+       "label"=>$row->Months,
+       "BCG"=>(float)$row->totalbcg,
+       "DPT2"=>(float)$row->totaldpt2,
+       "DPT3"=>(float)$row->totaldpt3,
+       "Measles"=>(float)$row->totalmeasles,
+       "OPV"=>(float)$row->totalopv,
+       "OPV1"=>(float)$row->totalopv1,
+       "OPV2"=>(float)$row->totalopv2,
+       "OPV3"=>(float)$row->totalopv3,
+       "PCV1"=>(float)$row->totalpcv1,
+       "PCV2"=>(float)$row->totalpcv2,
+       "PCV3"=>(float)$row->totalpcv3,
+       "ROTA1"=>(float)$row->totalrota1,
+       "ROTA2"=>(float)$row->totalrota2
        );    
     }
     //echo json_encode($json_array);

@@ -105,14 +105,20 @@ function getCoverage(){
     return $query;
     }
 
-function get_Coverage($subcounty_id){
+/*function get_Coverage1($subcounty_id){
     $this->db->select(' `periodname` AS Months, `totalbcg`');
     $u = array('subcounty_id' => $subcounty_id);
     $this->db->where($u);
     $this->db->order_by('periodname');
     $query = $this->db->get('view_subcountycov_calculated');
     return $query->result();
+    }*/
+
+function get_Coverage(){
+    $query = $this->db->query("SELECT `periodname` AS Months, `totalbcg` , `totaldpt2` , `totaldpt3` , `totalmeasles` , `totalopv` ,`totalopv1`,`totalopv2`,`totalopv3`,`totalpcv1`,`totalpcv2`, `totalpcv3`,`totalrota1`,`totalrota2` FROM `subcounty_coverage`");
+    return $query;
     }
+
 
 function mofstock(){
     $query = $this->db->query("SELECT sum( bcgdoseadm ) AS totalbcg,sum( opv1dosesadm ) AS totalopv1, sum( pneumococal1adm ) AS totalpneumococal1, sum( rotavirus1dosesadministered ) AS totalrotavirus1
@@ -127,11 +133,6 @@ FROM total_wastage;");
     return $query;
 }
 
-function getMonths(){
-$query = $this->db->query("SELECT DISTINCT periodname AS months from dhis_usage");
- return $query;
-
-}
 
 function get($order_by){
 $table = $this->get_table();
