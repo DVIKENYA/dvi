@@ -11,24 +11,29 @@ function get_table() {
     $table = "tablename";
     return $table;
 }
-function get_orders(){
-    
-	$query = $this->db->get('order');
-       $this->db->select('DISTINCT(date_created),station_id,order_by');
-       $this->db->from('m_order');
-       $query=$this->db->get(); 
-	return $query->result_array();
-      /*  $call_procedure="CALL get_placed_orders($station,$station_id)";
-        $query=$this->db->query($call_procedure);
-        $query->next_result();
-        return $query->result_array();*/
-}
+// Get a list of orders placed to your station
 function get_placed_orders($station,$station_id){
         $call_procedure="CALL get_placed_orders($station,'$station_id')";
         $query=$this->db->query($call_procedure);
         $query->next_result();
         return $query->result_array();
 }
+// Get listof orders you have submitted 
+function get_submitted_orders($station,$station_id){
+    $call_procedure="CALL get_submitted_orders($station,'$station_id')";
+        $query=$this->db->query($call_procedure);
+        $query->next_result();
+        return $query->result_array();
+}
+// This function calculates the values of maxstock, minstock
+function calc_orders($station_id,$station_level){
+        $call_procedure="CALL calc_orders('$station_id',$station_level)";
+        $query=$this->db->query($call_procedure);
+        $query->next_result();
+        return $query->result_array();
+
+    }
+// Get a list of items in an order 
 function get_orderitems($order_by,$date_created){
     
         $this->db->select('o.order_by,o.date_created as order_date,o.station_id,mv.Vaccine_name,oi.stock_on_hand, oi.min_stock, oi.max_stock,oi.first_expiry, oi.qty_order_doses as quantity_ordered');
@@ -38,14 +43,7 @@ function get_orderitems($order_by,$date_created){
 	$this->db->where(array('o.order_by' => $order_by,'o.date_created'=>$date_created));
         $query = $this->db->get();
         return $query->result_array();
-}
-function get_order_values($station,$selected_vaccine,$station_id){
-    	$call_procedure="CALL get_prepare_order_values($station,$selected_vaccine,'$station_id')";
-        $query=$this->db->query($call_procedure);
-        $query->next_result();
-        return $query->result_array();
-}
-        
+}                    
 function get($order_by){
 $table = $this->get_table();
 $this->db->order_by($order_by);
