@@ -100,11 +100,11 @@ function get_vaccine_details(){
         return $query;
     }
 
-function getCoverage(){
+/*function getCoverage(){
     $query = $this->db->query("SELECT `periodname` AS Months, `BCG` , `DPT1` , `PCV1` , `OPV` , `ROTA` ,`Measles` FROM `total_doses_adm`");
     return $query;
     }
-
+*/
 /*function get_Coverage1($subcounty_id){
     $this->db->select(' `periodname` AS Months, `totalbcg`');
     $u = array('subcounty_id' => $subcounty_id);
@@ -126,13 +126,54 @@ FROM dhis_usage;");
     return $query;
 }
 
-function wastage(){
+function wastage($location, $id){
     $query = $this->db->query("SELECT sum(BCG) AS totalbcg, sum(DPT) AS totaldpt, sum(MEASLES) AS totalmeasles, sum(OPV) AS totalopv,
       sum(PCV) AS totalpcv,sum(TT) AS totaltt,sum(VITA1) AS totalvita1,sum(VITA2) AS totalvita2,sum(VITA5) AS totalvita5,sum(YELLOWFEVER) AS totalyellowfev
-FROM wastage_all;");
+FROM wastage_all where ".$location."=".$id.";");
     return $query;
 }
 
+
+function get_region_base(){
+        $this->db->select('id, region_name as location');
+        $query=$this->db->get('m_region');
+        return $query->result();
+    }
+
+    function get_county_wastage($id){
+        $this->db->select('sum( BCG ) AS totalbcg, sum( DPT ) AS totaldpt, sum( MEASLES ) AS totalmeasles,
+         sum( OPV ) AS totalopv, sum( PCV ) AS totalpcv, sum( TT ) AS totaltt, sum( VITA1 ) AS totalvita1,
+         sum( VITA2 ) AS totalvita2, sum( VITA5 ) AS totalvita5, sum( YELLOWFEVER ) AS totalyellowfev, m_county.id, county_name');
+        $this->db->from('wastage_all');
+        $this->db->join('m_county', 'm_county.id = wastage_all.county');
+        $this->db->join('user_base',' user_base.county=wastage_all.county');
+        $this->db->where('user_id',$id);
+        $query = $this->db->get();
+        return $query->result();
+    }
+    
+     function get_subcounty_wastage($id){
+        $this->db->select('sum(BCG) AS totalbcg, sum(DPT) AS totaldpt, sum(MEASLES) AS totalmeasles,
+                           sum(OPV) AS totalopv, sum(PCV) AS totalpcv,sum(TT) AS totaltt,
+                           sum(VITA1) AS totalvita1,sum(VITA2) AS totalvita2,sum(VITA5) AS totalvita5,
+                           sum(YELLOWFEVER) AS totalyellowfev, m_subcounty.id, subcounty_name');
+        $this->db->from('wastage_all');
+        $this->db->join('m_subcounty', 'm_subcounty.id = wastage_all.subcounty');
+        $this->db->join('user_base',' user_base.subcounty=wastage_all.subcounty');
+        $this->db->where('user_id',$id);
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    function get_facility_base($user_id){
+        $this->db->select('m_facility.id, m_facility.facility_name as location');
+        $this->db->from('m_subcounty');
+        $this->db->join('subcounty_userbase', 'm_subcounty.id = subcounty_userbase.subcounty');
+        $this->db->join('m_facility', 'm_subcounty.id =  m_facility.subcounty_id ');
+        $this->db->where('user_id',$user_id);
+        $query = $this->db->get();
+        return $query->result();
+    }
 
 function get($order_by){
 $table = $this->get_table();

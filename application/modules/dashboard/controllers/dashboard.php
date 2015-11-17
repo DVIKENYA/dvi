@@ -99,6 +99,35 @@ function get_chart() {
   function get_coveragesub() {
     $this->load->model('mdl_dashboard');
     $query = $this->mdl_dashboard->get_Coverage(113);
+
+     $user_level = $this->session->userdata['logged_in']['user_level'];
+          $user_id = $this->session->userdata['logged_in']['user_id'];
+          if($user_level==1){
+            /* 
+            user_level = national
+            retrieve all regions 
+            */
+            $data['locations'] = $this->mdl_stock->get_region_base();
+          }elseif ($user_level==2) {
+            /* 
+            user_level = regional
+            retrieve all counties 
+            */
+            $data['locations'] = $this->mdl_stock->get_county_base($user_id);
+          }elseif ($user_level==3) {
+            /* 
+            user_level = county
+            retrieve all subcounties 
+            */
+            $data['locations'] = $this->mdl_stock->get_subcounty_base($user_id);
+          }elseif ($user_level==4) {
+            /* 
+            user_level = subounty
+            retrieve all facilities 
+            */
+            $data['locations'] = $this->mdl_stock->get_facility_base($user_id);
+          }
+
     $json_array= array();     
     foreach ($query as $row) {
       
@@ -115,10 +144,15 @@ function get_chart() {
 
 function get_wastage() {
     $this->load->model('mdl_dashboard');
-    $query = $this->mdl_dashboard->wastage();
-
-      
-    foreach ($query->result() as $row) {
+    $user_id = $this->session->userdata['logged_in']['user_id'];
+    $user_level=$this->session->userdata['logged_in']['user_level'];
+     if($user_level=='3'){
+    $query = $this->mdl_dashboard->get_county_wastage($user_id);
+    } else if($user_level=='4'){
+    $query = $this->mdl_dashboard->get_subcounty_wastage($user_id);
+    }
+   
+    foreach ($query as $row) {
       $json_array= array(
       array( 'value'=>(int)$row->totalbcg, 'label'=>'BCG'),
       array( 'value'=>(int)$row->totalopv,'label'=>'OPV'),
@@ -131,8 +165,8 @@ function get_wastage() {
        );
 
       }
-  // echo json_encode($json_array);
-    return $json_array;
+   //echo json_encode($json_array);
+   return $json_array;
   }
 
 
