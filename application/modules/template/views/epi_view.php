@@ -5,21 +5,24 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title><?php echo $main_title;?></title>
   <!--<META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">-->
-  
   <link href="<?php echo base_url() ?>assets/css/font-awesome.css" rel="stylesheet" type="text/css" />
   <link href="<?php echo base_url() ?>assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
   <link href="<?php echo base_url() ?>assets/css/animate.css" rel="stylesheet" type="text/css" />
   <link href="<?php echo base_url() ?>assets/css/admin.css" rel="stylesheet" type="text/css" />
-  
+  <link href="<?php echo base_url() ?>assets/plugins/data-tables/DT_bootstrap.css" rel="stylesheet">
+
+  <link href="<?php echo base_url() ?>assets/plugins/advanced-datatable/css/demo_page.css" rel="stylesheet">
+  <link href="<?php echo base_url() ?>assets/css/jquery-ui.css" rel="stylesheet" >
+  <link href="<?php echo base_url() ?>assets/plugins/advanced-datatable/css/demo_table.css" rel="stylesheet">
+
   <script type="text/javascript" src="http://code.jquery.com/jquery.js"></script>
   <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
   <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script> 
   <script src="<?php echo base_url();?>assets/js/bootbox.min.js"></script>
-  <script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
-  <link rel="stylesheet" href="<?php echo base_url();?>assets/css/jquery-ui.css">
-  <script src="<?php echo base_url();?>assets/js/jquery-ui.min.js"></script>
+  
   <script src="<?php echo base_url() ?>assets/js/jquery-2.1.0.js"></script>
- 
+  <script src="<?php echo base_url();?>assets/js/jquery-ui.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
 
 </head>
 <body class="light_theme  fixed_header left_nav_fixed">
@@ -167,10 +170,8 @@ if ($user_object['user_level']=='1') {?>
           </div><!--\\\\\\\ contentpanel end \\\\\\-->
     </div><!--\\\\\\\ inner end\\\\\\-->
   </div><!--\\\\\\\ wrapper end\\\\\\-->
-<script src="<?php echo base_url() ?>assets/js/jquery-2.1.0.js"></script>
 <script src="<?php echo base_url() ?>assets/js/bootstrap.min.js"></script>
 <script src="<?php echo base_url() ?>assets/js/common-script.js"></script>
-<script src="<?php echo base_url() ?>assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"></script> 
 <script src="<?php echo base_url() ?>assets/js/jquery.slimscroll.min.js"></script>
 <script src="<?php echo base_url() ?>assets/js/jPushMenu.js"></script> 
 <!--<script src="js/side-chats.js"></script>-->
@@ -179,14 +180,13 @@ if ($user_object['user_level']=='1') {?>
 <script src="<?php echo base_url() ?>assets/js/graph.js"></script>
 <script src="<?php echo base_url() ?>assets/js/edit-graph.js"></script>
 <script src="<?php echo base_url() ?>assets/plugins/sparkline/jquery.sparkline.js" type="text/javascript"></script>
-<script src="<?php echo base_url() ?>assets/plugins/data-tables/jquery.dataTables.min.js"></script>
-<script src="<?php echo base_url() ?>assets/plugins/data-tables/DT_bootstrap.js"></script>
 <script src="<?php echo base_url() ?>assets/plugins/sparkline/jquery.customSelect.min.js" ></script> 
 <script src="<?php echo base_url() ?>assets/plugins/sparkline/sparkline-chart.js"></script> 
-<script src="<?php echo base_url() ?>assets/<?php echo base_url() ?>assets/plugins/sparkline/easy-pie-chart.js"></script>
 <script src="<?php echo base_url() ?>assets/plugins/morris/morris.min.js" type="text/javascript"></script> 
 <script src="<?php echo base_url() ?>assets/plugins/morris/raphael-min.js" type="text/javascript"></script>  
 <script src="<?php echo base_url() ?>assets/plugins/morris/morris-script.js"></script> 
+<script src="<?php echo base_url() ?>assets/plugins/data-tables/jquery.dataTables.min.js"></script>
+<script src="<?php echo base_url() ?>assets/plugins/data-tables/DT_bootstrap.js"></script>
 <script src="<?php echo base_url() ?>assets/plugins/demo-slider/demo-slider.js"></script>
 <script src="<?php echo base_url() ?>assets/plugins/knob/jquery.knob.min.js"></script> 
 </body>
