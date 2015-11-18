@@ -114,22 +114,15 @@ function get_vaccine_details(){
     return $query->result();
     }*/
 
-function get_Coverage(){
+/*function get_Coverage(){
     $query = $this->db->query("SELECT `periodname` AS Months, `totalbcg` , `totaldpt2` , `totaldpt3` , `totalmeasles` , `totalopv` ,`totalopv1`,`totalopv2`,`totalopv3`,`totalpcv1`,`totalpcv2`, `totalpcv3`,`totalrota1`,`totalrota2` FROM `subcounty_coverage`");
     return $query;
-    }
+    }*/
 
 
 function mofstock(){
     $query = $this->db->query("SELECT sum( bcgdoseadm ) AS totalbcg,sum( opv1dosesadm ) AS totalopv1, sum( pneumococal1adm ) AS totalpneumococal1, sum( rotavirus1dosesadministered ) AS totalrotavirus1
 FROM dhis_usage;");
-    return $query;
-}
-
-function wastage($location, $id){
-    $query = $this->db->query("SELECT sum(BCG) AS totalbcg, sum(DPT) AS totaldpt, sum(MEASLES) AS totalmeasles, sum(OPV) AS totalopv,
-      sum(PCV) AS totalpcv,sum(TT) AS totaltt,sum(VITA1) AS totalvita1,sum(VITA2) AS totalvita2,sum(VITA5) AS totalvita5,sum(YELLOWFEVER) AS totalyellowfev
-FROM wastage_all where ".$location."=".$id.";");
     return $query;
 }
 
@@ -140,7 +133,7 @@ function get_region_base(){
         return $query->result();
     }
 
-    function get_county_wastage($id){
+function get_county_wastage($id){
         $this->db->select('sum( BCG ) AS totalbcg, sum( DPT ) AS totaldpt, sum( MEASLES ) AS totalmeasles,
          sum( OPV ) AS totalopv, sum( PCV ) AS totalpcv, sum( TT ) AS totaltt, sum( VITA1 ) AS totalvita1,
          sum( VITA2 ) AS totalvita2, sum( VITA5 ) AS totalvita5, sum( YELLOWFEVER ) AS totalyellowfev, m_county.id, county_name');
@@ -152,7 +145,7 @@ function get_region_base(){
         return $query->result();
     }
     
-     function get_subcounty_wastage($id){
+    function get_subcounty_wastage($id){
         $this->db->select('sum(BCG) AS totalbcg, sum(DPT) AS totaldpt, sum(MEASLES) AS totalmeasles,
                            sum(OPV) AS totalopv, sum(PCV) AS totalpcv,sum(TT) AS totaltt,
                            sum(VITA1) AS totalvita1,sum(VITA2) AS totalvita2,sum(VITA5) AS totalvita5,
@@ -163,6 +156,37 @@ function get_region_base(){
         $this->db->where('user_id',$id);
         $query = $this->db->get();
         return $query->result();
+    }
+
+
+    function get_subcounty_coverage($id){
+        $this->db->select('`periodname` AS Months, `totalbcg` , `totaldpt2` , 
+            `totaldpt3` , `totalmeasles` , `totalopv` ,`totalopv1`,`totalopv2`,
+            `totalopv3`,`totalpcv1`,`totalpcv2`, `totalpcv3`,`totalrota1`,`totalrota2`,m_subcounty.id, subcounty_name');
+        $this->db->from('view_subcountycov_calculated');
+        $this->db->join('m_subcounty', 'm_subcounty.id = view_subcountycov_calculated.subcounty_id');
+        $this->db->join('user_base',' user_base.subcounty=view_subcountycov_calculated.subcounty_id');
+        $this->db->where('user_id',$id);
+        $this->db->group_by('periodname');
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    function get_county_coverage($id){
+        $this->db->distinct();
+        $this->db->select('`periodname` AS Months, sum(totalbcg) as totalbcg, sum(totaldpt2) as totaldpt2, sum(totaldpt3) as totaldpt3, 
+                           sum(totalmeasles) as totalmeasles, sum(totalopv) as totalopv, sum(totalopv1) as totalopv1, 
+                           sum(totalopv2) as totalopv2,  sum(totalopv3) as totalopv3,  sum(totalpcv1) as totalpcv1,
+                           sum(totalpcv2) as totalpcv2,  sum(totalpcv3) as totalpcv3,  sum(totalrota1) as totalrota1,
+                           sum(totalrota2) as totalrota2, m_county.id, county_name');
+        $this->db->from('view_subcountycov_calculated');
+        $this->db->join('m_county', 'm_county.id = view_subcountycov_calculated.county_id');
+        $this->db->join('user_base',' view_subcountycov_calculated.county_id');
+        $this->db->where('user_id',$id);
+        $this->db->group_by('periodname');
+        $query = $this->db->get();
+        return $query->result();
+        
     }
 
     function get_facility_base($user_id){

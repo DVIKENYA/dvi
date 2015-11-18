@@ -53,25 +53,8 @@ function get_chart() {
     return $json_array;
   }
 
-/*function get_coverage() {
-    $this->load->model('mdl_dashboard');
-    $query = $this->mdl_dashboard->getCoverage();
-        
-    foreach ($query->result() as $row) {
-      $json_array[]= array(
-       "label"=>$row->Months,
-       "BCG"=>(int)$row->BCG,
-       "OPV"=>(int)$row->OPV,
-       "PCV1"=>(int)$row->PCV1,
-       "ROTA"=>(int)$row->ROTA,
-       "Measles"=>(int)$row->Measles
-       );    
-    }
-    //echo json_encode($json_array);
-    return $json_array;
-  }*/
 
-  function get_coverage() {
+  /*function get_coverage() {
     $this->load->model('mdl_dashboard');
     $query = $this->mdl_dashboard->get_Coverage();
     foreach ($query->result() as $row) {
@@ -94,52 +77,38 @@ function get_chart() {
     }
     //echo json_encode($json_array);
     return $json_array;
-  }
+  }*/
 
-  function get_coveragesub() {
+  function get_coverage() {
     $this->load->model('mdl_dashboard');
-    $query = $this->mdl_dashboard->get_Coverage(113);
-
-     $user_level = $this->session->userdata['logged_in']['user_level'];
-          $user_id = $this->session->userdata['logged_in']['user_id'];
-          if($user_level==1){
-            /* 
-            user_level = national
-            retrieve all regions 
-            */
-            $data['locations'] = $this->mdl_stock->get_region_base();
-          }elseif ($user_level==2) {
-            /* 
-            user_level = regional
-            retrieve all counties 
-            */
-            $data['locations'] = $this->mdl_stock->get_county_base($user_id);
-          }elseif ($user_level==3) {
-            /* 
-            user_level = county
-            retrieve all subcounties 
-            */
-            $data['locations'] = $this->mdl_stock->get_subcounty_base($user_id);
-          }elseif ($user_level==4) {
-            /* 
-            user_level = subounty
-            retrieve all facilities 
-            */
-            $data['locations'] = $this->mdl_stock->get_facility_base($user_id);
-          }
-
-    $json_array= array();     
+    $user_id = $this->session->userdata['logged_in']['user_id'];
+    $user_level=$this->session->userdata['logged_in']['user_level'];
+     if($user_level=='3'){
+    $query = $this->mdl_dashboard->get_county_coverage($user_id);
+     } else if($user_level=='4'){
+    $query = $this->mdl_dashboard->get_subcounty_coverage($user_id);
+     }
     foreach ($query as $row) {
-      
-       $data['label']=$row->Months;
-       $data['value']=(float)$row->totalbcg;
-
-      $json_array[] = $data;
-
+      $json_array[]= array(
+       "label"=>$row->Months,
+       "BCG"=>(float)$row->totalbcg,
+       "DPT2"=>(float)$row->totaldpt2,
+       "DPT3"=>(float)$row->totaldpt3,
+       "Measles"=>(float)$row->totalmeasles,
+       "OPV"=>(float)$row->totalopv,
+       "OPV1"=>(float)$row->totalopv1,
+       "OPV2"=>(float)$row->totalopv2,
+       "OPV3"=>(float)$row->totalopv3,
+       "PCV1"=>(float)$row->totalpcv1,
+       "PCV2"=>(float)$row->totalpcv2,
+       "PCV3"=>(float)$row->totalpcv3,
+       "ROTA1"=>(float)$row->totalrota1,
+       "ROTA2"=>(float)$row->totalrota2
+       );    
     }
-   
     //echo json_encode($json_array);
     return $json_array;
+
   }
 
 function get_wastage() {
@@ -239,37 +208,6 @@ function get_data() {
     echo json_encode($output);
   }
 
-/*function m_of_stock(){
-
-  $this->load->model('mdl_dashboard');
-    $query = $this->mdl_dashboard->mofstock();
-    foreach ($query->result() as $row) {
-      $json_array[]= array(
-       "value"=>(int)$row->totalbcg,"label"="BCG",
-       "value"=>(int)$row->totalopv1,"label"=>"OPV",
-       "value"=>(int)$row->totalpneumococal1,"label"=>"PCV1",
-       "value"=>(int)$row->totalrotavirus1,"label"=>"ROTA" );    
-    }
-
-        
-    return $json_array;
-}
-*/
-
-//   function m_of_stock(){
-
-//   $this->load->model('mdl_dashboard');
-//     $query = $this->mdl_dashboard->mofstock();
-//     foreach ($query as $row) {
-//       for($i=0; $i<count($query); $i++){
-
-//       }
-//     }
-        
-//     return count($query);
-
-
-// }
 
 function vaccines(){
     $query = $this->mdl_dashboard->get_vaccine_details();
