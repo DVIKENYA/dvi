@@ -37,8 +37,8 @@ parent::__construct();
 		$data['module']="fridges";
 		$data['view_file']="list_fridges_view";
         $data['user_object'] = $this->get_user_object();
-           $data['main_title'] = $this->get_title();
-           echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);	
+        $data['main_title'] = $this->get_title();
+        echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);	
 	}
    	
 	
@@ -77,7 +77,7 @@ parent::__construct();
 	        $data['view_file'] = "create_fridges_form";
 			$data['user_object'] = $this->get_user_object();
 
- echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
+ 			echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
 			
 		}
 	function get_data_from_db($update_id){
@@ -85,13 +85,11 @@ parent::__construct();
 		foreach ($query->result() as $row){
 		  $data['model'] = $row->Model;
 		  $data['date_added'] = $row->date_added;
-		  
-		  
-
-
+	
 		  }
 		  return $data;
 	  }
+	
 	function get_data_from_post(){
 		
 		$data['Model'] = $this->input->post('Model', TRUE);
