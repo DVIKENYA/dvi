@@ -13,7 +13,7 @@ Modules::run('secure_tings/is_logged_in');
 function home() {
   Modules::run('secure_tings/is_logged_in');
   $data['chart'] = $this->get_chart();
- // $data['coverage1'] = $this->get_coveragesub();
+ //$data['coverage1'] = $this->get_coveragesub();
   $data['wastage'] = $this->get_wastage();
   $data['mavaccine'] = $this->vaccines();
   $data['coverage'] = $this->get_coverage();

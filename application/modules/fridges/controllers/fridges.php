@@ -52,24 +52,21 @@ parent::__construct();
             
             if (!isset($update_id )){
                 $update_id = $this->input->post('update_id', $id);
-				$data['mafridge']  = $this->mdl_fridges->getModel();
+				$data['mafridge']  = $this->mdl_fridges->get_fridge_details($user_id);
 
             }
             
             if (is_numeric($update_id)){
                 $data = $this->get_data_from_db($update_id);
                 $data['update_id'] = $update_id;
-				$data['mafridge']  = $this->mdl_fridges->getModel();
-
+				$data['mafridge']  = $this->mdl_fridges->get_fridge_details($user_id);
                 
             } else {
-            $data= $this->get_data_from_post();
-			$data['mafridge']  = $this->mdl_fridges->getModel();
-
-
+	            $data= $this->get_data_from_post();
+				$data['mafridge']  = $this->mdl_fridges->get_fridge_details($user_id);
             }
            
-            
+        
             $data['section'] = "Configuration";
             $data['subtitle'] = "Fridges";
             $data['page_title'] = "Add Fridge";
@@ -81,11 +78,12 @@ parent::__construct();
 			
 		}
 	function get_data_from_db($update_id){
+		$user_id = ($this->session->userdata['logged_in']['user_id']);
 		$query = $this->get_where($update_id);
 		foreach ($query->result() as $row){
 		  $data['model'] = $row->Model;
 		  $data['date_added'] = $row->date_added;
-	
+		  
 		  }
 		  return $data;
 	  }
@@ -97,38 +95,20 @@ parent::__construct();
 		return $data;
 	}
 	function submit(){
-    //fridge Information
-	        $this->load->library('form_validation');
+	  $this->load->library('form_validation');
+	  $user_id = ($this->session->userdata['logged_in']['user_id']);
 
-       $data2['user_object2'] = $this->get_user_object();
-       $data3['user_object3'] = $this->get_user_object();
-       //print_r($data2); die();
-       $user_level= $data2['user_object2']['user_level'];
-       $station_name=$data3['user_object3']['user_statiton'];
-	   $model = $this -> input -> post('Model');
-       $date_added = $this -> input -> post('date_added');
-       $user_id= $this->input->post('user');
-       $fridge_array['station_level']=$user_level;
-       $fridge_array['station_id']=$station_name;
-       $fridge_array['date_added']=$date_added;
-       $fridge_array['user_id']=$user_id;
-	   $fridge_array['Model']=$model;
-       $this->db->insert('m_mfridge', $fridge_array);
-	   
+
 	  $data = array(
       'date_added'=>$this->input->post('date_added'),
-      //'transaction_date'=>$this->input->post('date_received'),
-     // 'source'=>$this->input->post('received_from'),
+      'transaction_date'=>$this->input->post('date_received'),
       'model' => $this->input->post('Model'),
-       
-       'user_id'=>$user_id,
-       'station_level'=>$user_level,
-       'station_id'=>$station_name
+      'user_id'=>$user_id,
       );
-     /* echo json_encode($data);*/
+      
       $this->db->insert('m_mfridge',$data);  
       $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">Fridge  added Successfully!</div>');
-      redirect('fridges/');
+      redirect('fridges');
 		}
 	
 	function delete($id){

@@ -19,10 +19,11 @@ function getModel()
 
 		return $query->result();
 }
-function get_fridge_details(){
+function get_fridge_details($user_id){
 	    $this->db->select('id,model,date_added');
-            $query = $this->db->get('m_mfridge');
-            return $query->result_array();
+        $this->db->where("user_id", $user_id);
+        $query = $this->db->get('m_mfridge');
+        return $query->result_array();
 	}
 
 function get($order_by){
