@@ -91,7 +91,9 @@ parent::__construct();
 	function get_data_from_post(){
 		
 		$data['Model'] = $this->input->post('Model', TRUE);
-		$data['date_added'] = $this->input->post('date_added', TRUE);		
+		$data['date_added'] = $this->input->post('date_added', TRUE);
+		$data['user_id'] = $this->input->post('user_id', TRUE);
+
 		return $data;
 	}
 	function submit(){

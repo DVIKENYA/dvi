@@ -13,7 +13,6 @@ Modules::run('secure_tings/is_logged_in');
 function home() {
   Modules::run('secure_tings/is_logged_in');
   $data['chart'] = $this->get_chart();
- //$data['coverage1'] = $this->get_coveragesub();
   $data['wastage'] = $this->get_wastage();
   $data['mavaccine'] = $this->vaccines();
   $data['coverage'] = $this->get_coverage();
@@ -294,9 +293,15 @@ function count_all() {
             return $query;
       }
 
-      function count_filtered() {
+function count_filtered() {
             $this->load->model('mdl_dashboard');
             $query = $this->mdl_dashboard->count_filtered();
             return $query;
       }
+
+
+
 }
+
+
+
