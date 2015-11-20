@@ -1,3 +1,5 @@
+
+
 <div class="row">
     <div class="col-lg-12 col-sm-12">
 
@@ -41,7 +43,7 @@
         
               <tr>
 <!--              <td><?php // echo $order['order_id']?></td>-->
-              <td><?php echo $order['station_id']?></td>
+              <td><?php //echo $order['order_id']?></td>
               <td><?php echo $order['date_created']?></td>
               <td style="color:red">Pending</td>
               <td><a href="<?php  echo $ledger_url ?>" class="btn btn-danger btn-xs">View <i class="fa fa-eye"></i></a></td>
@@ -74,10 +76,10 @@
          ?>
         
               <tr>
-<!--              <td><?php // echo $order['order_id']?></td>-->
+            <td><?php //echo $order['order_id']?></td>
               <td><?php echo $order['station_id']?></td>
               <td><?php echo $order['date_created']?></td>
-              <td style="color:red">Pending</td>
+              
               <td><a href="<?php  echo $ledger_url ?>" class="btn btn-danger btn-xs">View <i class="fa fa-eye"></i></a></td>
 <!--              <td><a href="<?php  echo $ledger_url ?>">View</a><span class="divider"> | </span><a href="#">Download</a></td>-->
         <?php }?>
