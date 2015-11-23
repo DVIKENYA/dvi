@@ -10,24 +10,29 @@ parent::__construct();
 function get_table() {
 $table = "m_fridges";
 return $table;
-}
 
-function getRefrigerator(){
-$this->db->select("id, Model, Manufacturer");
-$this->db->from("m_fridges");
-$query = $this->db->get();
-return $query->result();
 }
+function getModel()
+{
+	    $this->db->select('id, Model');
+		$query = $this->db->get("m_fridges");
 
+		return $query->result();
+}
+function get_fridge_details(){
+	    $this->db->select('id,Model,Manufacturer');
+		$this->db->join('m_mfridge', 'm_fridges.id = m_mfridge.model');
+            $query = $this->db->get();
+            return $query->result_array();
+	}
 function get_all($id){
-$this->db->select('*');
-$this->db->from('m_facility');
-$this->db->where('region_id', $id);
-$this->db->join('m_region', 'm_region.region_name = m_facility.region_id');
-$query = $this->db->get();
-return $query->result_array();
+    $this->db->select('*');
+    $this->db->from('m_facility');
+    $this->db->where('region_id', $id);
+    $this->db->join('m_region', 'm_region.region_name = m_facility.region_id');
+    $query = $this->db->get();
+    return $query->result_array();
 }
-
 
 function get($order_by){
 $table = $this->get_table();

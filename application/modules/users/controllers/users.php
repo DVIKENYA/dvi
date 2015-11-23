@@ -143,7 +143,11 @@ Modules::run('secure_tings/is_logged_in');
 
         $result = $this->mdl_users->_insert($data, $data_base);
         if ($result == TRUE) {
+<<<<<<< HEAD
+            //$this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">User Added Successfuly</div>');
+=======
             $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">User Added Successfuly</div>');
+>>>>>>> 5ce27d877dfd339616208f10ca68f5e09044c455
             redirect('users/create_user', 'refresh');
         } else {
             $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-danger text-center">Username already in use. Try a different one!</div>');
