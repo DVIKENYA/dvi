@@ -24,6 +24,8 @@ function home() {
        $data['view_file'] = "dashboard_view";
     } else if($user_level=='1'){
        $data['view_file'] = "national_dashboard_view";
+    }else if($user_level=='5'){
+       $data['view_file'] = "facility_dashboard_view";
     }
 
   $data['module'] = "dashboard";
@@ -53,31 +55,6 @@ function get_chart() {
   }
 
 
-  /*function get_coverage() {
-    $this->load->model('mdl_dashboard');
-    $query = $this->mdl_dashboard->get_Coverage();
-    foreach ($query->result() as $row) {
-      $json_array[]= array(
-       "label"=>$row->Months,
-       "BCG"=>(float)$row->totalbcg,
-       "DPT2"=>(float)$row->totaldpt2,
-       "DPT3"=>(float)$row->totaldpt3,
-       "Measles"=>(float)$row->totalmeasles,
-       "OPV"=>(float)$row->totalopv,
-       "OPV1"=>(float)$row->totalopv1,
-       "OPV2"=>(float)$row->totalopv2,
-       "OPV3"=>(float)$row->totalopv3,
-       "PCV1"=>(float)$row->totalpcv1,
-       "PCV2"=>(float)$row->totalpcv2,
-       "PCV3"=>(float)$row->totalpcv3,
-       "ROTA1"=>(float)$row->totalrota1,
-       "ROTA2"=>(float)$row->totalrota2
-       );    
-    }
-    //echo json_encode($json_array);
-    return $json_array;
-  }*/
-
   function get_coverage() {
     $this->load->model('mdl_dashboard');
     $user_id = $this->session->userdata['logged_in']['user_id'];
@@ -85,6 +62,8 @@ function get_chart() {
      if($user_level=='3'){
     $query = $this->mdl_dashboard->get_county_coverage($user_id);
      } else if($user_level=='4'){
+    $query = $this->mdl_dashboard->get_subcounty_coverage($user_id);
+     }else if($user_level=='5'){
     $query = $this->mdl_dashboard->get_subcounty_coverage($user_id);
      }
     foreach ($query as $row) {
@@ -118,6 +97,8 @@ function get_wastage() {
     $query = $this->mdl_dashboard->get_county_wastage($user_id);
     } else if($user_level=='4'){
     $query = $this->mdl_dashboard->get_subcounty_wastage($user_id);
+    }else if($user_level=='5'){
+    $query = $this->mdl_dashboard->get_facility_wastage($user_id);
     }
    
     foreach ($query as $row) {
@@ -166,21 +147,7 @@ function getLineChart($vaccine, $user_id){
     return $json_array;
     //echo json_encode($json_array);
 }
-// function get_data() {
-//     $this->load->model('mdl_dashboard');
-//     $query = $this->mdl_dashboard->getData();
-//     $datatables=array(); 
-//     foreach ($query->result() as $row) {
-//        $data['quantity_in'] = (int)$row->quantity_in;
-//        $data['quantity_out'] = (int)$row->quantity_out;
-//       $data['VVM_status'] = $row->VVM_status;
 
-//         array_push($datatables,$data);
-//     }
-        
-//   echo json_encode($datatables) ;
- 
-//  }
 
 function get_data() {
     $query = $this->getData();
