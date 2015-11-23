@@ -20,7 +20,7 @@ function home() {
   $data['subtitle'] = "Dashboard";
   $user_level=$this->session->userdata['logged_in']['user_level'];
   //$data['page_title'] = "Baringo County";
-  if($user_level!=='1'){
+   if($user_level!=='1'){
        $data['view_file'] = "dashboard_view";
     } else if($user_level=='1'){
        $data['view_file'] = "national_dashboard_view";
@@ -65,6 +65,8 @@ function get_chart() {
     $query = $this->mdl_dashboard->get_subcounty_coverage($user_id);
      }else if($user_level=='5'){
     $query = $this->mdl_dashboard->get_subcounty_coverage($user_id);
+     }else if($user_level=='1'){
+   $query = $this->mdl_dashboard->get_county_coverage($user_id);
      }
     foreach ($query as $row) {
       $json_array[]= array(
@@ -93,12 +95,15 @@ function get_wastage() {
     $this->load->model('mdl_dashboard');
     $user_id = $this->session->userdata['logged_in']['user_id'];
     $user_level=$this->session->userdata['logged_in']['user_level'];
-     if($user_level=='3'){
+    
+    if($user_level=='3'){
     $query = $this->mdl_dashboard->get_county_wastage($user_id);
     } else if($user_level=='4'){
     $query = $this->mdl_dashboard->get_subcounty_wastage($user_id);
     }else if($user_level=='5'){
     $query = $this->mdl_dashboard->get_facility_wastage($user_id);
+    }else if($user_level=='1'){
+    $query = $this->mdl_dashboard->get_subcounty_wastage($user_id);
     }
    
     foreach ($query as $row) {
