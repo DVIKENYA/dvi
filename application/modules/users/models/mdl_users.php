@@ -258,4 +258,26 @@ class Mdl_users extends CI_Model {
             return $query;
         }
 
+        function getCountyByRegion($id){
+            $this->db->select("id, county_name");
+            $this->db->from('m_county');
+            $this->db->where('region_id', $id);
+            $query = $this->db->get();
+            return $query->result();
+        }
+        function getSubcountyByCounty($id){
+            $this->db->select("id, subcounty_name");
+            $this->db->from('m_subcounty');
+            $this->db->where('county_id', $id);
+            $query = $this->db->get();
+            return $query->result();
+        }
+
+        function getFacilityBySubcounty($id){
+            $this->db->select("id, facility_name");
+            $this->db->from('m_facility');
+            $this->db->where('subcounty_id', $id);
+            $query = $this->db->get();
+            return $query->result();
+        }
         }
