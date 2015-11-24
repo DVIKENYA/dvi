@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.2.11
+-- version 4.4.7
 -- http://www.phpmyadmin.net
 --
--- Host: 127.0.0.1
--- Generation Time: Nov 16, 2015 at 12:32 PM
--- Server version: 5.6.21
--- PHP Version: 5.6.3
+-- Host: localhost:3306
+-- Generation Time: Nov 23, 2015 at 10:24 PM
+-- Server version: 5.6.25
+-- PHP Version: 5.5.27
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Database: `dvisat`
+-- Database: `dvi`
 --
 
 DELIMITER $$
@@ -308,6 +308,7 @@ CREATE TABLE IF NOT EXISTS `calc_county_orders` (
 ,`county_name` varchar(255)
 ,`population_one` int(11)
 );
+
 -- --------------------------------------------------------
 
 --
@@ -324,6 +325,7 @@ CREATE TABLE IF NOT EXISTS `calc_facility_order` (
 ,`facility_name` text
 ,`population_one` int(11)
 );
+
 -- --------------------------------------------------------
 
 --
@@ -340,6 +342,7 @@ CREATE TABLE IF NOT EXISTS `calc_subcounty_orders` (
 ,`subcounty_name` varchar(255)
 ,`population_one` int(48)
 );
+
 -- --------------------------------------------------------
 
 --
@@ -350,6 +353,7 @@ CREATE TABLE IF NOT EXISTS `children_immunized` (
 ,`Above2yrs` double
 ,`Above1yr` double
 );
+
 -- --------------------------------------------------------
 
 --
@@ -369,7 +373,7 @@ CREATE TABLE IF NOT EXISTS `ci_sessions` (
 --
 
 INSERT INTO `ci_sessions` (`session_id`, `ip_address`, `user_agent`, `last_activity`, `user_data`) VALUES
-('35efef26ec80fa5e05694eb63d47c999', '::1', 'Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36', 1447670665, 'a:2:{s:9:"user_data";s:0:"";s:9:"logged_in";a:6:{s:7:"user_id";s:2:"15";s:10:"user_fname";s:7:"Baringo";s:10:"user_lname";s:5:"North";s:10:"user_group";s:1:"3";s:10:"user_level";s:1:"4";s:9:"logged_in";b:1;}}');
+('c883de5e559bbd452c531ad404293fce', '::1', 'Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Firefox/31.0 Iceweasel/31.8.0', 1448345824, 'a:3:{s:9:"user_data";s:0:"";s:9:"logged_in";a:6:{s:7:"user_id";s:1:"2";s:10:"user_fname";s:5:"Admin";s:10:"user_lname";s:8:"Dvikenya";s:10:"user_group";s:1:"1";s:10:"user_level";s:1:"1";s:9:"logged_in";b:1;}s:13:"flash:old:msg";s:92:"<div id="alert-message" class="alert alert-success text-center">User Added Successfuly</div>";}');
 
 -- --------------------------------------------------------
 
@@ -384,6 +388,7 @@ CREATE TABLE IF NOT EXISTS `county_userbase_view` (
 ,`region` int(11)
 ,`county` int(11)
 );
+
 -- --------------------------------------------------------
 
 --
@@ -391,7 +396,7 @@ CREATE TABLE IF NOT EXISTS `county_userbase_view` (
 --
 
 CREATE TABLE IF NOT EXISTS `dhis_usage` (
-`id` int(14) NOT NULL,
+  `id` int(14) NOT NULL,
   `periodid` int(6) DEFAULT NULL,
   `periodname` varchar(14) DEFAULT NULL,
   `periodcode` int(6) DEFAULT NULL,
@@ -1117,6 +1122,7 @@ CREATE TABLE IF NOT EXISTS `facility_userbase_view` (
 ,`subcounty` int(11)
 ,`facility` int(11)
 );
+
 -- --------------------------------------------------------
 
 --
@@ -1211,18 +1217,45 @@ CREATE TABLE IF NOT EXISTS `m_depot` (
   `depot_location` varchar(255) NOT NULL,
   `region_id` varchar(255) NOT NULL,
   `county_id` varchar(255) NOT NULL,
-  `subcounty_id` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `subcounty_id` varchar(255) NOT NULL,
+  `depot_level` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_depot`
 --
 
-INSERT INTO `m_depot` (`id`, `depot_location`, `region_id`, `county_id`, `subcounty_id`) VALUES
-(0, 'Kajiado', 'Coast', 'Kikuyu', 'Kwale'),
-(0, 'Kajiado', 'Coast', 'Kikuyu', 'Kwale'),
-(0, 'Kajiado', 'Coast', 'Kikuyu', 'Kwale'),
-(0, 'Kajiado', 'Coast', 'Kikuyu', 'Kwale');
+INSERT INTO `m_depot` (`id`, `depot_location`, `region_id`, `county_id`, `subcounty_id`, `depot_level`, `user_id`) VALUES
+(3, 'Nairobi', '', '', '', 1, 2),
+(6, 'Baringo', '', '', '', 3, 14);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `m_depot_fridges`
+--
+
+CREATE TABLE IF NOT EXISTS `m_depot_fridges` (
+  `id` int(10) NOT NULL,
+  `fridge_id` int(11) NOT NULL,
+  `temperature_monitor_no` int(11) NOT NULL,
+  `main_power_source` varchar(50) NOT NULL,
+  `age` int(11) NOT NULL,
+  `user_id` int(10) NOT NULL,
+  `date_added` date NOT NULL,
+  `station_level` int(10) NOT NULL,
+  `station_id` varchar(100) NOT NULL,
+  `depot_id` int(11) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `m_depot_fridges`
+--
+
+INSERT INTO `m_depot_fridges` (`id`, `fridge_id`, `temperature_monitor_no`, `main_power_source`, `age`, `user_id`, `date_added`, `station_level`, `station_id`, `depot_id`) VALUES
+(52, 2, 10, 'Electricity', 1, 2, '2015-11-23', 1, 'KENYA', 3),
+(53, 0, 0, '', 0, 14, '2015-11-23', 3, 'Baringo County', 6);
 
 -- --------------------------------------------------------
 
@@ -1231,7 +1264,7 @@ INSERT INTO `m_depot` (`id`, `depot_location`, `region_id`, `county_id`, `subcou
 --
 
 CREATE TABLE IF NOT EXISTS `m_facility` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `facility_name` text NOT NULL,
   `type` varchar(100) NOT NULL,
   `owner` varchar(100) NOT NULL,
@@ -11053,7 +11086,7 @@ INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mf
 --
 
 CREATE TABLE IF NOT EXISTS `m_facility_fridges` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `facility_id` int(11) NOT NULL,
   `refrigerator_id` int(11) NOT NULL,
   `temperature_monitor_no` int(11) NOT NULL,
@@ -11165,11 +11198,19 @@ INSERT INTO `m_fridges` (`id`, `Model`, `Manufacturer`, `Technology Type`, `Vacc
 -- --------------------------------------------------------
 
 --
+-- Stand-in structure for view `m_fridges_view`
+--
+CREATE TABLE IF NOT EXISTS `m_fridges_view` (
+);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `m_group`
 --
 
 CREATE TABLE IF NOT EXISTS `m_group` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
   `description` varchar(50) NOT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
@@ -11193,7 +11234,7 @@ INSERT INTO `m_group` (`id`, `name`, `description`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `m_inventory` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `Vaccine_name` varchar(30) NOT NULL,
   `max_stock` int(11) NOT NULL,
   `min_stock` int(11) NOT NULL,
@@ -11207,7 +11248,7 @@ CREATE TABLE IF NOT EXISTS `m_inventory` (
 --
 
 CREATE TABLE IF NOT EXISTS `m_order` (
-`order_id` int(11) NOT NULL,
+  `order_id` int(11) NOT NULL,
   `order_by` varchar(100) NOT NULL,
   `date_created` date NOT NULL,
   `station_level` int(11) NOT NULL,
@@ -11234,7 +11275,7 @@ INSERT INTO `m_order` (`order_id`, `order_by`, `date_created`, `station_level`, 
 --
 
 CREATE TABLE IF NOT EXISTS `m_physical_count` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `vaccine_id` int(11) NOT NULL,
   `batch_number` varchar(20) NOT NULL,
   `date_of_count` date NOT NULL,
@@ -11264,7 +11305,7 @@ INSERT INTO `m_physical_count` (`id`, `vaccine_id`, `batch_number`, `date_of_cou
 --
 -- Triggers `m_physical_count`
 --
-DELIMITER //
+DELIMITER $$
 CREATE TRIGGER `new_physical_count` AFTER INSERT ON `m_physical_count`
  FOR EACH ROW begin
 UPDATE m_stock_movement
@@ -11275,7 +11316,7 @@ UPDATE m_stock_balance
 SET stock_balance = new.physical_count 
 WHERE vaccine_id = new.vaccine_id AND batch_number=new.batch_number;
 end
-//
+$$
 DELIMITER ;
 
 -- --------------------------------------------------------
@@ -11285,7 +11326,7 @@ DELIMITER ;
 --
 
 CREATE TABLE IF NOT EXISTS `m_region` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `region_name` varchar(100) NOT NULL,
   `region_headquarter` varchar(100) NOT NULL,
   `region_manager` varchar(255) NOT NULL,
@@ -11314,7 +11355,7 @@ INSERT INTO `m_region` (`id`, `region_name`, `region_headquarter`, `region_manag
 --
 
 CREATE TABLE IF NOT EXISTS `m_stock_balance` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `vaccine_id` int(11) NOT NULL,
   `batch_number` varchar(11) NOT NULL,
   `expiry_date` date NOT NULL,
@@ -11350,7 +11391,7 @@ INSERT INTO `m_stock_balance` (`id`, `vaccine_id`, `batch_number`, `expiry_date`
 --
 
 CREATE TABLE IF NOT EXISTS `m_stock_movement` (
-`stock_id` int(11) NOT NULL,
+  `stock_id` int(11) NOT NULL,
   `vaccine_id` int(11) DEFAULT NULL,
   `batch_number` varchar(11) DEFAULT NULL,
   `expiry_date` date DEFAULT NULL,
@@ -11391,7 +11432,7 @@ INSERT INTO `m_stock_movement` (`stock_id`, `vaccine_id`, `batch_number`, `expir
 --
 -- Triggers `m_stock_movement`
 --
-DELIMITER //
+DELIMITER $$
 CREATE TRIGGER `new_stock_balance` AFTER INSERT ON `m_stock_movement`
  FOR EACH ROW begin
  IF (new.transaction_type = 1) THEN 
@@ -11407,7 +11448,7 @@ WHERE batch_number= new.batch_number AND expiry_date=new.expiry_date;
 END IF;
 END IF;
 END
-//
+$$
 DELIMITER ;
 
 -- --------------------------------------------------------
@@ -11760,7 +11801,7 @@ INSERT INTO `m_subcounty` (`id`, `subcounty_name`, `county_id`, `population`, `p
 --
 
 CREATE TABLE IF NOT EXISTS `m_transaction_type` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `transaction_type` varchar(20) NOT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
@@ -11780,7 +11821,7 @@ INSERT INTO `m_transaction_type` (`id`, `transaction_type`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `m_uploads` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `file_name` varchar(200) NOT NULL,
   `raw_name` varchar(200) NOT NULL,
   `file_type` varchar(20) NOT NULL,
@@ -11806,7 +11847,7 @@ INSERT INTO `m_uploads` (`id`, `file_name`, `raw_name`, `file_type`, `full_path`
 --
 
 CREATE TABLE IF NOT EXISTS `m_users` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `f_name` varchar(50) NOT NULL,
   `l_name` varchar(50) NOT NULL,
   `username` varchar(50) NOT NULL,
@@ -11815,7 +11856,7 @@ CREATE TABLE IF NOT EXISTS `m_users` (
   `password` varchar(255) NOT NULL,
   `user_group` int(12) NOT NULL,
   `user_level` int(11) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_users`
@@ -11838,7 +11879,7 @@ INSERT INTO `m_users` (`id`, `f_name`, `l_name`, `username`, `phone`, `email`, `
 --
 
 CREATE TABLE IF NOT EXISTS `m_vaccines` (
-`ID` int(11) NOT NULL,
+  `ID` int(11) NOT NULL,
   `Vaccine_name` varchar(45) DEFAULT NULL,
   `Doses_required` int(15) NOT NULL,
   `Wastage_factor` decimal(14,2) NOT NULL,
@@ -11872,7 +11913,7 @@ INSERT INTO `m_vaccines` (`ID`, `Vaccine_name`, `Doses_required`, `Wastage_facto
 --
 
 CREATE TABLE IF NOT EXISTS `m_vvm_status` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `name` varchar(10) NOT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
@@ -11934,6 +11975,7 @@ CREATE TABLE IF NOT EXISTS `region_userbase_view` (
 ,`national` int(11)
 ,`region` int(11)
 );
+
 -- --------------------------------------------------------
 
 --
@@ -11948,6 +11990,7 @@ CREATE TABLE IF NOT EXISTS `subcounty_userbase` (
 ,`county` int(11)
 ,`subcounty` int(11)
 );
+
 -- --------------------------------------------------------
 
 --
@@ -11970,6 +12013,7 @@ CREATE TABLE IF NOT EXISTS `total_doses_adm` (
 ,`ROTA` double
 ,`ROTA2` double
 );
+
 -- --------------------------------------------------------
 
 --
@@ -11977,14 +12021,14 @@ CREATE TABLE IF NOT EXISTS `total_doses_adm` (
 --
 
 CREATE TABLE IF NOT EXISTS `user_base` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `user_id` int(11) DEFAULT NULL,
   `national` int(11) DEFAULT NULL,
   `region` int(11) DEFAULT NULL,
   `county` int(11) DEFAULT NULL,
   `subcounty` int(11) DEFAULT NULL,
   `facility` int(11) DEFAULT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `user_base`
@@ -11998,7 +12042,12 @@ INSERT INTO `user_base` (`id`, `user_id`, `national`, `region`, `county`, `subco
 (14, 14, 1, 6, 12, 0, 0),
 (15, 15, 1, 6, 12, 190, 0),
 (16, 16, 1, 6, 12, 190, 70),
-(17, 17, 1, 6, 12, 190, 118);
+(17, 17, 1, 6, 12, 190, 118),
+(18, 18, 1, 0, 0, 0, 0),
+(19, 19, 1, 0, 0, 0, 0),
+(20, 20, 1, 0, 0, 0, 0),
+(21, 21, 0, 0, 0, 0, 0),
+(22, 22, 0, 0, 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -12007,7 +12056,7 @@ INSERT INTO `user_base` (`id`, `user_id`, `national`, `region`, `county`, `subco
 --
 
 CREATE TABLE IF NOT EXISTS `user_levels` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `name` varchar(20) NOT NULL,
   `description` varchar(50) NOT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
@@ -12038,6 +12087,7 @@ CREATE TABLE IF NOT EXISTS `vaccine_movement` (
 ,`quantity_out` int(11)
 ,`user_id` varchar(30)
 );
+
 -- --------------------------------------------------------
 
 --
@@ -12048,6 +12098,7 @@ CREATE TABLE IF NOT EXISTS `vaccine_stockbalance` (
 ,`Stock_Balance` int(11)
 ,`User_id` varchar(30)
 );
+
 -- --------------------------------------------------------
 
 --
@@ -12063,6 +12114,7 @@ CREATE TABLE IF NOT EXISTS `view_county_orders` (
 ,`region` int(11)
 ,`region_name` varchar(100)
 );
+
 -- --------------------------------------------------------
 
 --
@@ -12078,6 +12130,7 @@ CREATE TABLE IF NOT EXISTS `view_facility_orders` (
 ,`subcounty` int(11)
 ,`subcounty_name` varchar(255)
 );
+
 -- --------------------------------------------------------
 
 --
@@ -12091,6 +12144,7 @@ CREATE TABLE IF NOT EXISTS `view_region_orders` (
 ,`region` int(11)
 ,`region_name` varchar(100)
 );
+
 -- --------------------------------------------------------
 
 --
@@ -12105,6 +12159,7 @@ CREATE TABLE IF NOT EXISTS `view_subcounty_orders` (
 ,`county` int(11)
 ,`county_name` varchar(255)
 );
+
 -- --------------------------------------------------------
 
 --
@@ -12158,6 +12213,15 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 DROP TABLE IF EXISTS `facility_userbase_view`;
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `facility_userbase_view` AS select `m_facility`.`id` AS `id`,`m_facility`.`facility_name` AS `facility_name`,`user_base`.`user_id` AS `user_id`,`user_base`.`national` AS `national`,`user_base`.`region` AS `region`,`user_base`.`county` AS `county`,`user_base`.`subcounty` AS `subcounty`,`user_base`.`facility` AS `facility` from (`m_facility` join `user_base` on((`m_facility`.`id` = `user_base`.`facility`)));
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `m_fridges_view`
+--
+DROP TABLE IF EXISTS `m_fridges_view`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `m_fridges_view` AS select distinct `m_fridges`.`id` AS `id`,`m_fridges`.`Model` AS `Model`,`m_mfridge`.`date_added` AS `date_added` from (`m_fridges` join `m_mfridge`);
 
 -- --------------------------------------------------------
 
@@ -12248,127 +12312,141 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 -- Indexes for table `ci_sessions`
 --
 ALTER TABLE `ci_sessions`
- ADD PRIMARY KEY (`session_id`), ADD KEY `last_activity_idx` (`last_activity`);
+  ADD PRIMARY KEY (`session_id`),
+  ADD KEY `last_activity_idx` (`last_activity`);
 
 --
 -- Indexes for table `dhis_usage`
 --
 ALTER TABLE `dhis_usage`
- ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `m_county`
 --
 ALTER TABLE `m_county`
- ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `m_depot`
+--
+ALTER TABLE `m_depot`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `m_depot_fridges`
+--
+ALTER TABLE `m_depot_fridges`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `m_facility`
 --
 ALTER TABLE `m_facility`
- ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `m_facility_fridges`
 --
 ALTER TABLE `m_facility_fridges`
- ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `m_group`
 --
 ALTER TABLE `m_group`
- ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `m_inventory`
 --
 ALTER TABLE `m_inventory`
- ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `m_order`
 --
 ALTER TABLE `m_order`
- ADD PRIMARY KEY (`order_id`);
+  ADD PRIMARY KEY (`order_id`);
 
 --
 -- Indexes for table `m_physical_count`
 --
 ALTER TABLE `m_physical_count`
- ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `m_region`
 --
 ALTER TABLE `m_region`
- ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `m_stock_balance`
 --
 ALTER TABLE `m_stock_balance`
- ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `m_stock_movement`
 --
 ALTER TABLE `m_stock_movement`
- ADD PRIMARY KEY (`stock_id`);
+  ADD PRIMARY KEY (`stock_id`);
 
 --
 -- Indexes for table `m_subcounty`
 --
 ALTER TABLE `m_subcounty`
- ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `m_transaction_type`
 --
 ALTER TABLE `m_transaction_type`
- ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `m_uploads`
 --
 ALTER TABLE `m_uploads`
- ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `m_users`
 --
 ALTER TABLE `m_users`
- ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `m_vaccines`
 --
 ALTER TABLE `m_vaccines`
- ADD PRIMARY KEY (`ID`), ADD UNIQUE KEY `ID_UNIQUE` (`ID`);
+  ADD PRIMARY KEY (`ID`),
+  ADD UNIQUE KEY `ID_UNIQUE` (`ID`);
 
 --
 -- Indexes for table `m_vvm_status`
 --
 ALTER TABLE `m_vvm_status`
- ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `order_item`
 --
 ALTER TABLE `order_item`
- ADD KEY `order_id` (`order_id`);
+  ADD KEY `order_id` (`order_id`);
 
 --
 -- Indexes for table `user_base`
 --
 ALTER TABLE `user_base`
- ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `user_levels`
 --
 ALTER TABLE `user_levels`
- ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -12378,87 +12456,97 @@ ALTER TABLE `user_levels`
 -- AUTO_INCREMENT for table `dhis_usage`
 --
 ALTER TABLE `dhis_usage`
-MODIFY `id` int(14) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=637;
+  MODIFY `id` int(14) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=637;
+--
+-- AUTO_INCREMENT for table `m_depot`
+--
+ALTER TABLE `m_depot`
+  MODIFY `id` int(14) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
+--
+-- AUTO_INCREMENT for table `m_depot_fridges`
+--
+ALTER TABLE `m_depot_fridges`
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=54;
 --
 -- AUTO_INCREMENT for table `m_facility`
 --
 ALTER TABLE `m_facility`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=9758;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=9758;
 --
 -- AUTO_INCREMENT for table `m_facility_fridges`
 --
 ALTER TABLE `m_facility_fridges`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=11;
 --
 -- AUTO_INCREMENT for table `m_group`
 --
 ALTER TABLE `m_group`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT for table `m_inventory`
 --
 ALTER TABLE `m_inventory`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `m_order`
 --
 ALTER TABLE `m_order`
-MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
+  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT for table `m_physical_count`
 --
 ALTER TABLE `m_physical_count`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=25;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=25;
 --
 -- AUTO_INCREMENT for table `m_region`
 --
 ALTER TABLE `m_region`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=10;
 --
 -- AUTO_INCREMENT for table `m_stock_balance`
 --
 ALTER TABLE `m_stock_balance`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=14;
 --
 -- AUTO_INCREMENT for table `m_stock_movement`
 --
 ALTER TABLE `m_stock_movement`
-MODIFY `stock_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=17;
+  MODIFY `stock_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=17;
 --
 -- AUTO_INCREMENT for table `m_transaction_type`
 --
 ALTER TABLE `m_transaction_type`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `m_uploads`
 --
 ALTER TABLE `m_uploads`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `m_users`
 --
 ALTER TABLE `m_users`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=23;
 --
 -- AUTO_INCREMENT for table `m_vaccines`
 --
 ALTER TABLE `m_vaccines`
-MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=16;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=16;
 --
 -- AUTO_INCREMENT for table `m_vvm_status`
 --
 ALTER TABLE `m_vvm_status`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT for table `user_base`
 --
 ALTER TABLE `user_base`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=23;
 --
 -- AUTO_INCREMENT for table `user_levels`
 --
 ALTER TABLE `user_levels`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
 --
 -- Constraints for dumped tables
 --
@@ -12467,7 +12555,7 @@ MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
 -- Constraints for table `order_item`
 --
 ALTER TABLE `order_item`
-ADD CONSTRAINT `order_item_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `m_order` (`order_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `order_item_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `m_order` (`order_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

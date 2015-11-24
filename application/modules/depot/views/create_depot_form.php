@@ -1,10 +1,10 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');?>
 <?php 
-$location = array();
-$location[]="Select Location";
-  foreach($locations as $row ){
-    $location[$row->id] = $row->location; 
-  }
+// $location = array();
+// $location[]="Select Location";
+//   foreach($locations as $row ){
+//     $location[$row->location] = $row->location; 
+//   }
 
 ?>
   <div class="row">
@@ -13,10 +13,13 @@ $location[]="Select Location";
       <h1>Add New Depot</h1>
        <?php echo form_open('depot/submit',array('class'=>'form-horizontal'));?>
       <div class="form-group">
-        <?php
-        echo form_label('Depot Location','depot_location');
-        echo form_error('depot_location');
-        echo form_dropdown('depot_location', $location, 'id="depot_location" class="form-control"'); 
+          <?php
+          echo form_label('Depot Location','depot_location');
+          //echo form_error('depot_location');
+          echo form_input(['name' => 'depot_location', 'id' => 'depot_location',  'value' =>  $depot_location,'class' => 'form-control', 'type' => 'text']);     
+        // echo form_label('Depot Location','depot_location');
+        // echo form_error('depot_location');
+        // echo form_dropdown('depot_location', $location, 'id="depot_location" class="form-control"'); 
         ?>
       </div>
      

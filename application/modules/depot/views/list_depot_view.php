@@ -1,5 +1,4 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');?>
-<?php  echo form_hidden('level', $level); ?>
   <div class="row">
     <div class="col-lg-12">
       <a href="<?php echo site_url('depot/create');?>" class="btn btn-primary">Add Depot</a>
@@ -91,5 +90,13 @@
     </div><!-- /.modal -->
   <!-- End Bootstrap modal -->
 
+<script type="text/javascript">
+
+               window.setTimeout(function() {
+                  $("#alert-message").fadeTo(500, 0).slideUp(500, function(){
+                      $(this).remove(); 
+                  });
+              }, 5000);
+        </script> 
   </body>
 </html>

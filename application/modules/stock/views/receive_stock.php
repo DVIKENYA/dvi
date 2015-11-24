@@ -31,7 +31,7 @@ echo form_open('',$form_attributes);?>
 </div>
 <div class="col-lg-3">
   <div class="panel-body">
-  <b>S11 #</b>
+  <b>S11 Code</b>
     <?php $data=array('name' => 's11','id'=> 's11','class'=>'form-control'); echo form_input($data);?>
     </div>
 </div>
@@ -134,8 +134,9 @@ echo form_open('',$form_attributes);?>
 
                       var expiry_id = "expiry_date" + next_receive_row;
                       var expiry = cloned_object.find(".expiry_date");
-                      expiry.attr('id',expiry_id);
+                      expiry.removeClass("hasDatepicker").attr('id',expiry_id).datepicker({dateFormat: "yy-mm-dd",  minDate: 0}).datepicker('setDate', null);
                       
+
                       var quantity_received_id = "quantity_received" + next_receive_row;
                       var quantity_received = cloned_object.find(".quantity_received");
                       quantity_received.attr('id',quantity_received_id);
@@ -145,6 +146,7 @@ echo form_open('',$form_attributes);?>
                       vvm_status.attr('id',vvm_status_id);
 
                 cloned_object .insertAfter( thisRow ).find( 'input' ).val( '' );
+                //cloned_object .insertAfter( thisRow ).find('#expiry_date').datepicker();
                 });
 
        $('#stock_receive_tbl').delegate('.remove', 'click', function(){

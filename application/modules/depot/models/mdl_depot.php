@@ -3,8 +3,8 @@
 
 class Mdl_Depot extends CI_Model {
 var $order = array('id' => 'desc');
-var $column = array('id', 'depot_location', 'region_id', 'county_id', 'subcounty_id');
-var $fridge_columns = array('m_depot.depot_location', 'm_depot_fridges.id', 'Model', 'Manufacturer', 'temperature_monitor_no', 'main_power_source');
+var $column = array('id', 'depot_location', 'region_id', 'county_id', 'subcounty_id', 'user_id');
+var $fridge_columns = array('m_depot_fridges.id', 'Model', 'Manufacturer', 'temperature_monitor_no', 'main_power_source');
 var $depot_fridges = array('m_depot_fridges.fridge_id',  'm_fridges.Model', 'm_fridges.Manufacturer', 'temperature_monitor_no', 'main_power_source','age');
 
 function __construct() {
@@ -18,14 +18,14 @@ $table = "m_depot";
 return $table;
 }
 
-private function _get_datatables_query(){
-
+private function _get_datatables_query($user_id){
 $this->db->from($this->get_table());
+$this->db->where('user_id', $user_id);
 $this->search_order();
 }
 
-function getDepot(){
-$this->_get_datatables_query();
+function getDepot($user_id){
+$this->_get_datatables_query($user_id);
 if($_POST['length'] != -1)
 $this->db->limit($_POST['length'], $_POST['start']);
 $query = $this->db->get();
@@ -40,8 +40,8 @@ $query = $this->db->get();
 return $query->result();
 }
 
-function count_filtered(){
-$this->_get_datatables_query();
+function count_filtered($user_id){
+$this->_get_datatables_query($user_id);
 $query = $this->db->get();
 return $query->num_rows();
 }
@@ -49,9 +49,9 @@ return $query->num_rows();
 private function _get_fridges_query($id){
 $this->db->select($this->depot_fridges);    
 $this->db->from('m_depot');
-$this->db->join('m_depot_fridges', 'm_depot.id = m_depot_fridges.station_id');
+$this->db->join('m_depot_fridges', 'm_depot_fridges.depot_id = m_depot.id');
 $this->db->join('m_fridges', 'm_depot_fridges.fridge_id = m_fridges.id');
-$this->db->where('m_depot.id',$id);
+$this->db->where('m_depot_fridges.user_id',$id);
 
 $i = 0;
 
@@ -192,8 +192,9 @@ $num_rows = $query->num_rows();
 return $num_rows;
 }
 
-function count_all() {
+function count_all($user_id) {
 $table = $this->get_table();
+$this->db->where('user_id', $user_id);
 $query=$this->db->get($table);
 $num_rows = $query->num_rows();
 return $num_rows;

@@ -52,20 +52,14 @@ class Depot extends MY_Controller {
                   user_level = regional
                   retrieve all counties 
                   */
-                  $data['locations'] = $this->mdl_stock->get_region_base();
+                  $data['locations'] = $this->mdl_stock->get_county_base($user_id);
                 }elseif ( $data['level']==3) {
                   /* 
                   user_level = county
                   retrieve all subcounties 
                   */
-                  $data['locations'] = $this->mdl_stock->get_county_base($user_id);
-                }elseif ( $data['level']==4) {
-                  /* 
-                  user_level = subounty
-                  retrieve all facilities 
-                  */
                   $data['locations'] = $this->mdl_stock->get_subcounty_base($user_id);
-                }
+               }
                   echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);   
 
       }
@@ -92,11 +86,11 @@ class Depot extends MY_Controller {
                    
                    if(is_numeric($update_id)){
                        $this->_update($update_id, $data);
-                       //$this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">Depot details updated successfully!</div>');
+                       $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">Depot details updated successfully!</div>');
 
                    } else {
                        $this->_insert($data);
-                       //$this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">New Depot added successfully!</div>');
+                       $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">New Depot added successfully!</div>');
                    }
 
                    redirect('depot');
@@ -107,6 +101,7 @@ class Depot extends MY_Controller {
 
         $data['depot_location']=$this->input->post('depot_location', TRUE);
         $data['depot_level']  = $this->session->userdata['logged_in']['user_level'];         
+        $data['user_id']  = $this->session->userdata['logged_in']['user_id'];         
         return $data;
       }
 
@@ -119,6 +114,7 @@ class Depot extends MY_Controller {
         }
 
       public function action_list(){
+           
             $this->load->model('mdl_depot');
 
             $list = $this->getDepot();
@@ -171,7 +167,8 @@ class Depot extends MY_Controller {
         $info['user_object'] = $this->get_user_object();
         $station_id=$info['user_object']['user_statiton'];
         $this->load->model('mdl_depot');
-        $list = $this->mdl_depot->get_fridges_by_id($station_id);
+        $user_id = $this->session->userdata['logged_in']['user_id'];    
+        $list = $this->mdl_depot->get_fridges_by_id($user_id);
         $data = array();
         $no = $_POST['start'];
         foreach ($list as $fridge) {
@@ -182,11 +179,11 @@ class Depot extends MY_Controller {
               $row[] = $fridge->Manufacturer;
               $row[] = $fridge->temperature_monitor_no;
               $row[] = $fridge->main_power_source;
-              $row[] = $fridge->refrigerator_age;
+              $row[] = $fridge->age;
               //add html for action
               
-              $row[] = '  <a class="btn btn-sm btn-primary" title="Edit" onclick="edit_fridge('."'".$fridge->refrigerator_id."'".')"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
-                          <a class="btn btn-sm btn-danger"  title="Delete" onclick="delete_fridge('."'".$fridge->refrigerator_id."'".')"><i class="glyphicon glyphicon-trash"></i> Delete</a>';
+              $row[] = '  <a class="btn btn-sm btn-primary" title="Edit" onclick="edit_fridge('."'".$fridge->fridge_id."'".')"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
+                          <a class="btn btn-sm btn-danger"  title="Delete" onclick="delete_fridge('."'".$fridge->fridge_id."'".')"><i class="glyphicon glyphicon-trash"></i> Delete</a>';
               
 
               $data[] = $row;
@@ -194,8 +191,8 @@ class Depot extends MY_Controller {
 
         $output = array(
           "draw" => $_POST['draw'],
-          "recordsTotal" => $this->count_fridges("station_id", $station_id),
-          "recordsFiltered" => $this->count_fridges_filtered($station_id),
+          "recordsTotal" => $this->count_fridges("user_id", $user_id),
+          "recordsFiltered" => $this->count_fridges_filtered($user_id),
           "data" => $data,
         );
             
@@ -210,13 +207,23 @@ class Depot extends MY_Controller {
       }
 
       public function add_fridge(){
-       
-        $data = array(
-            'station_id'         =>$this->input->post('level'),
+
+       $id= $this->uri->segment(3);
+       $data2['user_object2'] = $this->get_user_object();
+       $data3['user_object3'] = $this->get_user_object();
+       $user_id = $this->session->userdata['logged_in']['user_id'];
+       $user_level= $data2['user_object2']['user_level'];
+       $station_name=$data3['user_object3']['user_statiton'];
+       $data = array(
+            'user_id' => $user_id,
+            'station_id'=> $station_name,
+            'station_level' => $user_level,
+            'date_added' => date('Y-m-d',strtotime(date('Y-m-d'))),
             'fridge_id'     => $this->input->post('model'),
             'temperature_monitor_no'   => $this->input->post('temperature_monitor_no'),
             'main_power_source'   => $this->input->post('main_power_source'),
             'age'    => $this->input->post('refrigerator_age'),
+            'depot_id'=> $id,
           );
         $insert = $this->_insert_fridge($data);
         echo json_encode(array("status" => TRUE));
@@ -233,8 +240,9 @@ class Depot extends MY_Controller {
       }
 
       function getDepot(){
+            $user_id = $this->session->userdata['logged_in']['user_id'];
             $this->load->model('mdl_depot');
-            $query = $this->mdl_depot->getDepot();
+            $query = $this->mdl_depot->getDepot($user_id);
             return $query;
       }
 
@@ -252,29 +260,31 @@ class Depot extends MY_Controller {
       }
 
       function count_all() {
+            $user_id = $this->session->userdata['logged_in']['user_id'];
             $this->load->model('mdl_depot');
-            $query = $this->mdl_depot->count_all();
+            $query = $this->mdl_depot->count_all($user_id);
             return $query;
       }
 
       function count_filtered() {
+            $user_id = $this->session->userdata['logged_in']['user_id'];
             $this->load->model('mdl_depot');
-            $query = $this->mdl_depot->count_filtered();
+            $query = $this->mdl_depot->count_filtered($user_id);
             return $query;
       }
 
       function delete($id){
             $this->_delete($id);
-            //$this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">Depot details deleted successfully!</div>');
-            redirect('data');
+            $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">Depot details deleted successfully!</div>');
+            redirect('depot');
       }
 
       function delete_fridge(){
             $id= $this->uri->segment(3);
             $this->_delete_fridge($id);
-            echo json_encode(array("status" => TRUE));
-            //$this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">Depot details deleted successfully!</div>');
-            //redirect('data');
+            //echo json_encode(array("status" => TRUE));
+            $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">Depot details deleted successfully!</div>');
+            redirect('depot/list_fridge');
       }
         
       function get($order_by){
