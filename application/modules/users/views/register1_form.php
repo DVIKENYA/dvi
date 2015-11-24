@@ -27,24 +27,24 @@ $region[]="Select One";
     $region[$row->id] = $row->region_name; 
   }
 
-$county = array();
-$county[]="Select One";
-  foreach($macounties as $row ){
-    $county[$row->id] = $row->county_name; 
-  }
+// $county = array();
+// $county[]="Select One";
+//   foreach($macounties as $row ){
+//     $county[$row->id] = $row->county_name; 
+//   }
 
 
-  $subcounty = array();
-  $subcounty[]="Select One";
-  foreach($masubcounty as $row ){
-    $subcounty[$row->id] = $row->subcounty_name; 
-  }
+//   $subcounty = array();
+//   $subcounty[]="Select One";
+//   foreach($masubcounty as $row ){
+//     $subcounty[$row->id] = $row->subcounty_name; 
+//   }
 
-  $facility = array();
-  $facility[]="Select One";
-  foreach($mafacilities as $row ){
-    $facility[$row->id] = $row->facility_name;
-  }
+//   $facility = array();
+//   $facility[]="Select One";
+//   foreach($mafacilities as $row ){
+//     $facility[$row->id] = $row->facility_name;
+//   }
 
   $nation = array('Select One','Kenya');
   $national = "";
@@ -158,27 +158,32 @@ $county[]="Select One";
         ?>
       </div>
       <div class="form-group" id="base3">
+      <label>Enter County Base</label>
+      <select name="countyuser" class="form-control" id="countyuser"></select>
         <?php
-        echo form_label('Enter County Base ','countyuser');
-        echo form_error('countyuser');
-        //echo form_input(['name' => 'user_group', 'id' => 'user_group',  'value' => $user_group ,'class' => 'form-control', 'placeholder' => 'Enter User Group ID']);
-       echo form_dropdown('countyuser', $county, $countyuser, 'id="countyuser" class="form-control"'); 
+        // echo form_label('Enter County Base ','countyuser');
+        // echo form_error('countyuser');
+        //echo form_dropdown('countyuser', $county, $countyuser, 'id="countyuser" class="form-control"'); 
         ?>
       </div>
       <div class="form-group" id="base4">
+      <label>Enter Sub County Base</label>
+      <select name="subcountyuser" class="form-control" id="subcountyuser"></select>
         <?php
-        echo form_label('Enter Sub County Base ','subcountyuser');
-        echo form_error('subcountyuser');
+        // echo form_label('Enter Sub County Base ','subcountyuser');
+        // echo form_error('subcountyuser');
         //echo form_input(['name' => 'user_group', 'id' => 'user_group',  'value' => $user_group ,'class' => 'form-control', 'placeholder' => 'Enter User Group ID']);
-       echo form_dropdown('subcountyuser', $subcounty, $subcountyuser, 'id="subcountyuser" class="form-control"'); 
+        //echo form_dropdown('subcountyuser', $subcounty, $subcountyuser, 'id="subcountyuser" class="form-control"'); 
         ?>
       </div>
       <div class="form-group" id="base5">
+      <label>Enter Facility Base</label>
+      <select name="facilityuser" class="form-control" id="facilityuser"></select>
         <?php
-        echo form_label('Enter Facility Base ','facilityuser');
-        echo form_error('facilityuser');
-        //echo form_input(['name' => 'user_group', 'id' => 'user_group',  'value' => $user_group ,'class' => 'form-control', 'placeholder' => 'Enter User Group ID']);
-       echo form_dropdown('facilityuser', $facility, $facilityuser, 'id="facilityuser" class="form-control"'); 
+       //  echo form_label('Enter Facility Base ','facilityuser');
+       //  echo form_error('facilityuser');
+       //  //echo form_input(['name' => 'user_group', 'id' => 'user_group',  'value' => $user_group ,'class' => 'form-control', 'placeholder' => 'Enter User Group ID']);
+       // echo form_dropdown('facilityuser', $facility, $facilityuser, 'id="facilityuser" class="form-control"'); 
         ?>
       </div>
       <button class="btn btn-lg btn-danger btn-block" name="submit" type="submit">ADD USER</button>
@@ -262,8 +267,84 @@ $county[]="Select One";
             //End of user basestation assignment
 
             });
-               
-               
-               
+              
+
+              $(document).ready(function() {
+                $("#regional").change(function(){
+                var regional = $(this).val();
+                console.log(regional);
+                var request = $.ajax({
+                  url:"<?php echo base_url(); ?>users/getCountyByRegion/"+regional,
+                  data: regional,
+                  type: "POST",
+                });
+                request.done(function(data){
+                  data=JSON.parse(data);
+                  console.log(data);
+                    $("#countyuser option").remove();
+                    $('#countyuser').append("<option value=''>--Select County Base--</option> ");
+                  $.each(data, function(key,value){
+                    $('#countyuser').append("<option value='"+value.county_id+"'>"+value.county_name+"</option>");
+                  });
+                });
+                request.fail(function(jqXHR, textStatus) {
+                  });
+                });
+              });
+
+              $(document).ready(function() {
+                $("#countyuser").change(function(){
+                  var countyuser = $(this).val();
+                  console.log(countyuser);
+                  var request = $.ajax({
+                    url:"<?php echo base_url(); ?>users/getSubcountyByCounty/"+countyuser,
+                    data: countyuser,
+                    type: "POST",
+                  });
+                request.done(function(data){
+                  data=JSON.parse(data);
+                  console.log(data);
+                  $("#subcountyuser option").remove();
+                  $('#subcountyuser').append("<option value=''>--Select Sub County Base--</option> ");
+                    $.each(data, function(key,value){
+                     $('#subcountyuser').append("<option value='"+value.subcounty_id+"'>"+value.subcounty_name+"</option>");
+                    });
+                });
+                request.fail(function(jqXHR, textStatus) {
+                 });
+                });
+              });
+
+              $(document).ready(function() {
+                $("#subcountyuser").change(function(){
+                  var subcountyuser = $(this).val();
+                  console.log(subcountyuser);
+                  var request = $.ajax({
+                    url:"<?php echo base_url(); ?>users/getFacilityBySubcounty/"+subcountyuser,
+                    data: subcountyuser,
+                    type: "POST",
+                  });
+                request.done(function(data){
+                  data=JSON.parse(data);
+                  console.log(data);
+                  $("#facilityuser option").remove();
+                  $('#facilityuser').append("<option value=''>--Select Facility Base--</option> ");
+                    $.each(data, function(key,value){
+                     $('#facilityuser').append("<option value='"+value.facility_id+"'>"+value.facility_name+"</option>");
+                    });
+                });
+                request.fail(function(jqXHR, textStatus) {
+                 });
+                });
+              });
+
         </script>  
        
+       <script type="text/javascript">
+
+               window.setTimeout(function() {
+                  $("#alert-message").fadeTo(500, 0).slideUp(500, function(){
+                      $(this).remove(); 
+                  });
+              }, 5000);
+        </script> 

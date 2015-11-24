@@ -16,12 +16,20 @@
   <!--\\\\\\\ wrapper Start \\\\\\-->
   
  <div class="row">
-   
+    <div class="col-lg-4 col-lg-offset-7">
+ <div class="login_page">
+  <div class="registration">
         <?php 
 		$this->load->view($module.'/'.$view_file);
 		
 		 ?>
- 
+        <hr/>
+    <img src="<?php echo base_url() ?>assets/images/coat_of_arms.png" width="25" height="25" /><span class="theme_color">&nbsp;&nbsp;<b>DVI KENYA</b></span> &copy; <?PHP echo date("Y"); ?> <span class="plus"><i class="fa fa-2x fa-lock" title="secure website"></i></span>
+
+ </div>
+
+  </div>
+</div>
 
   </div>
 </div>

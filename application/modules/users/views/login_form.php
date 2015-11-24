@@ -1,10 +1,4 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');?>
-
-<div class="col-lg-4 col-lg-offset-7">
- <div class="login_page">
-  <div class="registration">
-     
-
   <div class="panel-heading border login_heading">SIGN IN</div> 
        <?php 
       echo $this->session->flashdata('msg');?>
@@ -27,19 +21,3 @@
       
       <button class="btn btn-lg btn-danger btn-block" name="submit" type="submit">LOGIN</button>
     <?php echo form_close();?>
-
-        <hr/>
-    <img src="<?php echo base_url() ?>assets/images/coat_of_arms.png" width="25" height="25" /><span class="theme_color">&nbsp;&nbsp;<b>DVI KENYA</b></span> &copy; <?PHP echo date("Y"); ?> <span class="plus"><i class="fa fa-2x fa-lock" title="secure website"></i></span>
-
- </div>
-
-  </div>
-</div>
-<script type="text/javascript">
-window.setTimeout(function() {
-    $("#alert-message").fadeTo(500, 0).slideUp(500, function(){
-        $(this).remove(); 
-    });
-}, 5000);
-
-</script>
