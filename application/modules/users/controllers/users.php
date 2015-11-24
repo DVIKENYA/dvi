@@ -59,7 +59,7 @@ class Users extends MY_Controller
 
 
 function create_user(){
-      //Modules::run('secure_tings/ni_admin');
+    	//Modules::run('secure_tings/ni_admin');
   Modules::run('secure_tings/is_logged_in');
    $data= $this->get_register_data_from_post();
    $data['magroups']  = $this->mdl_users->get_user_groups();
@@ -144,7 +144,7 @@ Modules::run('secure_tings/is_logged_in');
         $result = $this->mdl_users->_insert($data, $data_base);
         if ($result == TRUE) {
             $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">User Added Successfuly</div>');
-            redirect('users/create_user', 'refresh');
+            redirect('users/list_users');
         } else {
             $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-danger text-center">Username already in use. Try a different one!</div>');
             redirect('users/create_user'); 

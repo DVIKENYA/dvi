@@ -25,7 +25,7 @@
                                         $delete_url = base_url().'fridges/delete/'.$row->id;
                                       ?>
                                     <tr>
-                                        <td><?php echo $row->model ?></td>
+                                        <td><?php echo $row->Model ?></td>
                                         <td><?php echo $row->date_added;?></td>
                                         
                                         <td align="center"><a href="<?php echo $delete_url ?>"><i class="fa fa-trash-o"></i></td>

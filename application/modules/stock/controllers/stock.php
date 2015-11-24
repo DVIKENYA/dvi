@@ -26,6 +26,7 @@ class Stock extends MY_Controller
     } 
 
 
+
     function receive_stock(){
     
       $this->load->model('vaccines/mdl_vaccines');
@@ -65,6 +66,7 @@ class Stock extends MY_Controller
       $data['section'] = "stock";
       $data['subtitle'] = "Receive Stock";
       $data['page_title'] = "Receive Stock";
+      $data['orders'] = $this->get_orders();
       $data['user_object'] = $this->get_user_object();
       $data['main_title'] = $this->get_title();
       echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
@@ -132,6 +134,7 @@ class Stock extends MY_Controller
           $data['view_file'] = "issue_stock";
           $data['section'] = "stock";
           $data['subtitle'] = "Issue Stock";
+          $data['orders'] = $this->get_orders();
           $data['page_title'] = "Issue Stock";
           $data['user_object'] = $this->get_user_object();
           $data['main_title'] = $this->get_title();
@@ -276,11 +279,13 @@ class Stock extends MY_Controller
     }
 
 
-function get_order_number(){
-  
-      $this->load->model('stock/mdl_stock');
-      $data= $this->mdl_stock->get_order_number();
-      return $data;
+function get_orders(){
+    $data['user_object'] = $this->get_user_object();
+    $station_id=$data['user_object']['user_statiton'];
+    $this->load->model('stock/mdl_stock');
+    $query= $this->mdl_stock->get_orders($station_id);
+    return $query;
+    //var_dump($query);
     }
 
     function count_all() {

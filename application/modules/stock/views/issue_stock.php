@@ -1,3 +1,4 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed');?>
 <?php 
 $location = array();
 $location[]="Select Location";
@@ -5,6 +6,11 @@ $location[]="Select Location";
     $location[$row->id] = $row->location; 
   }
 
+$order = array();
+$order[]="Select Order Number";
+  foreach($orders as $row ){
+    $order[$row->order_id] = $row->order_id; 
+  }
 ?>
 
 
@@ -39,6 +45,16 @@ echo form_open('',$form_attributes);?>
 	   <?php  $data=array('name' => 'date_issued','required'=>'true','id'=>'datepicker','required'=>'true', 'class'=>'form-control'); echo form_input($data);?>
 	   
  		</div>
+	  </div>
+
+	  <div class="col-lg-3">
+		  <div class="panel-body">
+		  <b>Order Number</b>
+		    <?php
+	        echo form_error('order');
+	        echo form_dropdown('order', $order, 'id="order" class="form-control"'); 
+	        ?>
+	 			</div>
 	  </div>
 	
 <input type="hidden" name ="transaction_type" class="transaction_type" value="2">
@@ -80,8 +96,8 @@ echo form_open('',$form_attributes);?>
 	             background-color: #E0F2F7 !important }</style>
 	        <td class="small"><?php $data=array('name' => 'amt_ordered','id'=> 'amt_ordered', 'type' =>'number',' min' => '0', 'required'=>'true','class'=>'form-control amt_ordered'); echo form_input($data);?></td>
             <td><?php $data=array('name' => 'available_quantity','id'=> 'available_quantity','class'=>'form-control available_quantity','readonly'=>'', 'value'=>'' ); echo form_input($data);?></td>
-            <td><?php $data=array('name' => 'amt_issued','id'=> 'amt_issued','class'=>'form-control amt_issued', 'type' =>'number',' min' => '0', 'max' =>'1800','required'=>'true'); echo form_input($data);?></td>
-            <td><?php $data=array('name' => 'vvm_status','id'=> 'vvm_status','class'=>'form-control vvm_s','readonly'=>''); echo form_input($data);?></td>
+            <td><?php $data=array('name' => 'amt_issued','id'=> 'amt_issued','class'=>'form-control amt_issued', 'type' =>'number',' min' => '0','required'=>'true'); echo form_input($data);?></td>
+            <td><?php $data=array('name' => 'vvm_status','id'=> 'vvm_status','class'=>'form-control vvm_s'); echo form_input($data);?></td>
             <td class="small">
 		     			<a href="#" class="add btn"><span class="label label-success"><i class="fa fa-plus-square"></i> <b>ADD</b></span></a><br>
 		             	<a href="#" class="remove btn" ><span class="label label-danger"><i class="fa  fa-minus-square"></i> <b>REMOVE</b></span></a>
@@ -144,8 +160,8 @@ echo form_open('',$form_attributes);?>
 				vvm_status.attr('id',vvm_id);
 
 
-                cloned_object .insertAfter( thisRow ).find( 'input' ).val( '' );
-             
+                cloned_object .insertAfter( thisRow ).find('input').val( '' );
+
                 });
 // Remove a row from the form
            $('#stock_issue').delegate('.remove', 'click', function(){
@@ -274,6 +290,7 @@ echo form_open('',$form_attributes);?>
 			    		stock_row.closest("tr").find(".expiry_date").val(value.expiry_date);
 			    		stock_row.closest("tr").find(".available_quantity").val(value.stock_balance);
 			    		stock_row.closest("tr").find(".vvm_s").val(value.name);
+			    		stock_row.closest("tr").find(".amt_issued").attr('max', value.stock_balance);
 			    		
 			    	});
 			    });

@@ -5,6 +5,11 @@ $location[]="Select Location";
     $location[$row->id] = $row->location; 
   }
 
+$order = array();
+$order[]="Select Order Number";
+  foreach($orders as $row ){
+    $order[$row->order_id] = $row->order_id; 
+  }
 ?>
  <div class="row">
     <div class="col-lg-12">
@@ -14,8 +19,9 @@ echo form_open('',$form_attributes);?>
 
 <div class="well well-sm"><b>Transaction Details</b></div>
 
-<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-  <div class="form-group">
+<div class="row">
+<div class="col-lg-3">
+  <div class="panel-body">
   <b>Received From</b>
    <?php
         echo form_error('received_from');
@@ -23,18 +29,30 @@ echo form_open('',$form_attributes);?>
         ?>
     </div>
 </div>
-<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-  <div class="form-group">
-  <b>S11 #</b>
+<div class="col-lg-3">
+  <div class="panel-body">
+  <b>S11 Code</b>
     <?php $data=array('name' => 's11','id'=> 's11','class'=>'form-control'); echo form_input($data);?>
     </div>
 </div>
-<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-  <div class="form-group">
+<div class="col-lg-3">
+  <div class="panel-body">
   <b>Date Received</b>
    <?php $data=array('name' => 'date_received','id'=>'date_received','class'=>'form-control'); echo form_input($data);?>
     </div>
 </div> 
+
+<div class="col-lg-3">
+  <div class="panel-body">
+  <b>Order Number</b>
+   <?php
+          echo form_error('order');
+          echo form_dropdown('order', $order, 'id="order" class="form-control"'); 
+          ?>
+    </div>
+</div> 
+
+</div>
 <input type="hidden" name ="transaction_type" class="transaction_type" value="1">
 
 <br/>
@@ -96,7 +114,7 @@ echo form_open('',$form_attributes);?>
    <script type="text/javascript">
 
              $('#date_received').datepicker().datepicker('setDate', new Date());
-
+             $('#expiry_date').datepicker({dateFormat: "yy-mm-dd",  minDate: 0}).datepicker('setDate', null);
               $('#stock_receive_tbl').delegate( '.add', 'click', function () {
             
                        var thisRow =$('#stock_receive_tbl tr:last');
@@ -116,7 +134,8 @@ echo form_open('',$form_attributes);?>
 
                       var expiry_id = "expiry_date" + next_receive_row;
                       var expiry = cloned_object.find(".expiry_date");
-                      expiry.attr('id',expiry_id);
+                      expiry.removeClass("hasDatepicker").attr('id',expiry_id).datepicker({dateFormat: "yy-mm-dd",  minDate: 0}).datepicker('setDate', null);
+                      
 
                       var quantity_received_id = "quantity_received" + next_receive_row;
                       var quantity_received = cloned_object.find(".quantity_received");
@@ -127,7 +146,7 @@ echo form_open('',$form_attributes);?>
                       vvm_status.attr('id',vvm_status_id);
 
                 cloned_object .insertAfter( thisRow ).find( 'input' ).val( '' );
-             
+                //cloned_object .insertAfter( thisRow ).find('#expiry_date').datepicker();
                 });
 
        $('#stock_receive_tbl').delegate('.remove', 'click', function(){

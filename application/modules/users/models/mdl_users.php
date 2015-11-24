@@ -62,7 +62,7 @@ class Mdl_users extends CI_Model {
           }
 
           function getRegion(){
-            //$condition = "username =" . "'" . $username . "'";
+        	//$condition = "username =" . "'" . $username . "'";
               $this->db->select('id,region_name');
               $query = $this->db->get("m_region");
               return $query->result();
@@ -195,8 +195,8 @@ class Mdl_users extends CI_Model {
 
 
         function _insert($data, $data_base) {
-            $table = $this->get_table();
-            // Query to check whether username already exist or not
+        	$table = $this->get_table();
+        	// Query to check whether username already exist or not
             $condition = "username =" . "'" . $data['username'] . "'";
             $this->db->select('*');
             $this->db->from($table);

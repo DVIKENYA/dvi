@@ -78,5 +78,11 @@ class Mdl_Stock extends CI_Model
 		return $query->result();
 	}
 
-
+	function get_orders($station_id){
+		$this->db->select('order_id');
+		$this->db->from('m_order');
+		$this->db->where('station_id',$station_id);
+		$query = $this->db->get();
+		return $query->result();
+	}
 }

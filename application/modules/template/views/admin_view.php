@@ -140,7 +140,7 @@ if ( $user_object['user_level']=='1') {?>
                 <li> <a href="<?php echo site_url('subcounty/');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Add Sub-County</b> </a> </li>
                 <li> <a href="<?php echo site_url('depot');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Add Depot</b> </a> </li>
                 <li> <a href="<?php echo site_url('facility');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Add Facilities</b> </a> </li>
-                <li> <a href="<?php echo site_url('fridges');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Add Fridges</b> </a> </li>
+                <!--<li> <a href="<?php //echo site_url('fridges');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Add Fridges</b> </a> </li>-->
               </ul>
             </li>
             <li> <a href="javascript:void(0);"><img src="<?php echo base_url() ?>assets/images/coat_of_arms.png" width="30" height="30" /><span class="theme_color">&nbsp;&nbsp;<b>DVI KENYA</b></span>  <span class="plus"><i class="fa fa-plus"></i></span> </a>
@@ -188,11 +188,20 @@ if ( $user_object['user_level']=='1') {?>
 <script src="<?php echo base_url() ?>assets/js/common-script.js"></script>
 <script src="<?php echo base_url() ?>assets/js/jquery.slimscroll.min.js"></script>
 <script src="<?php echo base_url() ?>assets/js/jPushMenu.js"></script> 
+<!--<script src="js/side-chats.js"></script>-->
+<script src="<?php echo base_url() ?>assets/js/jquery.sparkline.js"></script>
+<script src="<?php echo base_url() ?>assets/js/sparkline-chart.js"></script>
+<script src="<?php echo base_url() ?>assets/js/graph.js"></script>
+<script src="<?php echo base_url() ?>assets/js/edit-graph.js"></script>
+<script src="<?php echo base_url() ?>assets/plugins/sparkline/jquery.sparkline.js" type="text/javascript"></script>
+<script src="<?php echo base_url() ?>assets/plugins/sparkline/jquery.customSelect.min.js" ></script> 
+<script src="<?php echo base_url() ?>assets/plugins/sparkline/sparkline-chart.js"></script> 
 <script src="<?php echo base_url() ?>assets/plugins/morris/morris.min.js" type="text/javascript"></script> 
 <script src="<?php echo base_url() ?>assets/plugins/morris/raphael-min.js" type="text/javascript"></script>  
 <script src="<?php echo base_url() ?>assets/plugins/morris/morris-script.js"></script> 
 <script src="<?php echo base_url() ?>assets/plugins/data-tables/jquery.dataTables.min.js"></script>
 <script src="<?php echo base_url() ?>assets/plugins/data-tables/DT_bootstrap.js"></script>
-
+<script src="<?php echo base_url() ?>assets/plugins/demo-slider/demo-slider.js"></script>
+<script src="<?php echo base_url() ?>assets/plugins/knob/jquery.knob.min.js"></script> 
 </body>
 </html>
