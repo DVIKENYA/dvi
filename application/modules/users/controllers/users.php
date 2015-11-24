@@ -10,12 +10,8 @@ class Users extends MY_Controller
     function index(){
         $data['module']="users";
         $data['view_file']="login_form";
-        $data['main_title'] = $this->get_title();   
-        if(!isset($this->session->userdata['logged_in'])){
-          echo Modules::run('template/home', $data); 
-        }else{
-          redirect('dashboard/home'); 
-        }
+        $data['main_title'] = $this->get_title();
+        echo Modules::run('template/home', $data); 
     }
 
     function list_users(){
@@ -63,7 +59,7 @@ class Users extends MY_Controller
 
 
 function create_user(){
-    	//Modules::run('secure_tings/ni_admin');
+      //Modules::run('secure_tings/ni_admin');
   Modules::run('secure_tings/is_logged_in');
    $data= $this->get_register_data_from_post();
    $data['magroups']  = $this->mdl_users->get_user_groups();
@@ -123,7 +119,7 @@ Modules::run('secure_tings/is_logged_in');
     $this->form_validation->set_rules('user_group', 'User Group', 'required|xss_clean');
     $this->form_validation->set_rules('user_level', 'Access Level', 'required|xss_clean');
     $this->form_validation->set_rules('password', 'Password', 'required|xss_clean|matches[passwordc]');
-    $this->form_validation->set_rules('passwordc', 'Password Confirm', 'required|xss_clean|matches[password]');
+    $this->form_validation->set_rules('passwordc', 'Password Confirm', 'required|xss_clean|matches[password');
     $this->form_validation->set_rules('national', 'National', 'xss_clean');
     $this->form_validation->set_rules('regional', 'Region', 'xss_clean');
     $this->form_validation->set_rules('countyuser', 'County', 'xss_clean');
@@ -132,7 +128,7 @@ Modules::run('secure_tings/is_logged_in');
 
     if ($this->form_validation->run() == FALSE)
     {   
-        redirect('users/create_user');         
+        $this->create_user();         
     }
     else
     {       
@@ -147,7 +143,11 @@ Modules::run('secure_tings/is_logged_in');
 
         $result = $this->mdl_users->_insert($data, $data_base);
         if ($result == TRUE) {
+<<<<<<< HEAD
+            //$this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">User Added Successfuly</div>');
+=======
             $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">User Added Successfuly</div>');
+>>>>>>> 5ce27d877dfd339616208f10ca68f5e09044c455
             redirect('users/create_user', 'refresh');
         } else {
             $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-danger text-center">Username already in use. Try a different one!</div>');
@@ -240,6 +240,64 @@ function get_userRegion($user_id){
 print_r($data) ;  
  return $data;
    //echo var_dump($data);
+}
+
+
+function getCountyByRegion(){
+$id = $this->uri->segment(3);
+if(!isset($id)){
+$data['error'] = "Region ID not received";
+echo json_encode($data);
+}else{
+$this->load->model('mdl_users');
+$query = $this->mdl_users->getCountyByRegion($id);
+foreach ($query as $row){
+  $array = array(
+      'county_id'=> $row->id,
+      'county_name'=>$row->county_name,
+    );  
+  $data[] = $array;
+}
+echo json_encode($data);
+}
+}
+
+function getSubcountyByCounty(){
+$id = $this->uri->segment(3);
+if(!isset($id)){
+$data['error'] = "County ID not received";
+echo json_encode($data);
+}else{
+$this->load->model('mdl_users');
+$query = $this->mdl_users->getSubcountyByCounty($id);
+foreach ($query as $row){
+$array = array(
+      'subcounty_id'=> $row->id,
+      'subcounty_name'=>$row->subcounty_name,
+    );  
+  $data[] = $array;
+}
+echo json_encode($data);
+}
+}
+
+function getFacilityBySubcounty(){
+$id = $this->uri->segment(3);
+if(!isset($id)){
+$data['error'] = "Subcounty ID not received";
+echo json_encode($data);
+}else{
+$this->load->model('mdl_users');
+$query = $this->mdl_users->getFacilityBySubcounty($id);
+foreach ($query as $row){
+$array = array(
+      'facility_id'=> $row->id,
+      'facility_name'=>$row->facility_name,
+    );  
+  $data[] = $array;
+}
+echo json_encode($data);
+}
 }
 
 function get_where($id){

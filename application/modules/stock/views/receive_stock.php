@@ -1,3 +1,16 @@
+<?php 
+$location = array();
+$location[]="Select Location";
+  foreach($locations as $row ){
+    $location[$row->id] = $row->location; 
+  }
+
+$order = array();
+$order[]="Select Order Number";
+  foreach($orders as $row ){
+    $order[$row->order_id] = $row->order_id; 
+  }
+?>
  <div class="row">
   <div class="col-lg-12">
     <?php
@@ -7,6 +20,44 @@
 </div>
 
 <div class="well well-sm"><b>Transaction Details</b></div>
+<<<<<<< HEAD
+
+<div class="row">
+<div class="col-lg-3">
+  <div class="panel-body">
+  <b>Received From</b>
+   <?php
+        echo form_error('received_from');
+        echo form_dropdown('received_from', $location, 'id="received_from" class="form-control"'); 
+        ?>
+    </div>
+</div>
+<div class="col-lg-3">
+  <div class="panel-body">
+  <b>S11 #</b>
+    <?php $data=array('name' => 's11','id'=> 's11','class'=>'form-control'); echo form_input($data);?>
+    </div>
+</div>
+<div class="col-lg-3">
+  <div class="panel-body">
+  <b>Date Received</b>
+   <?php $data=array('name' => 'date_received','id'=>'date_received','class'=>'form-control'); echo form_input($data);?>
+    </div>
+</div> 
+
+<div class="col-lg-3">
+  <div class="panel-body">
+  <b>Order Number</b>
+   <?php
+          echo form_error('order');
+          echo form_dropdown('order', $order, 'id="order" class="form-control"'); 
+          ?>
+    </div>
+</div> 
+
+</div>
+<input type="hidden" name ="transaction_type" class="transaction_type" value="1">
+=======
 <div class="row">
   <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
     <div class="form-group">
@@ -26,6 +77,7 @@
       <?php $data=array('name' => 'date_received','id'=>'date_received','class'=>'form-control'); echo form_input($data);?>
     </div>
   </div> 
+>>>>>>> 5ce27d877dfd339616208f10ca68f5e09044c455
 
   <input type="hidden" name ="transaction_type" class="transaction_type" value="1">
 </div>
@@ -52,6 +104,49 @@
 
      <tr align="center" receive_row="1"> 
 
+<<<<<<< HEAD
+<div id="stock_receive_tbl">
+	 
+	<table class="table table-bordered table-hover table-striped">
+		<thead>
+
+			        <th align="center">Vaccine/Diluents</th>
+							<th >Batch No.</th>
+							<th >Expiry&nbsp;Date</th>
+							<th >Quantity(doses)</th>
+							<th >VVM Status</th>
+							<th >Action</th>
+		</thead>
+		<tbody>
+
+			<tr align="center" receive_row="1"> 
+              
+              <td> <select name="vaccine" class="vaccine form-control" id="vaccine">
+                 <option value="">--Select One--</option>
+                 <?php foreach ($vaccines as $vaccine) { 
+                     echo "<option value='".$vaccine['ID']."'>".$vaccine['Vaccine_name']."</option>";
+                     }?>
+                </select></td>
+
+				
+             		<td><?php $data=array('name' => 'batch_no','id'=>'batch_no','class'=>'batch_no form-control'); echo form_input($data);?></td>
+             		<td><?php $data=array('name' => 'expiry_date','id'=> 'expiry_date','class'=>'form-control expiry_date', 'type'=>'date'); echo form_input($data);?></td>
+             		<td><?php $data=array('name' => 'quantity_received','id'=> 'quantity_received','class'=>'quantity_received form-control'); echo form_input($data);?></td>
+             		
+                <td>
+                <select name="vvm_status" class=" form-control vvm_status " id="vvm_status" name="vvm_status">
+                <option value=""> --Select One-- </option>
+                    <option value="1">Stage 1</option>
+                    <option value="2">Stage 2</option>
+                    <option value="3">Stage 3</option>
+                     <option value="3">Stage 4</option>
+                </select></td>
+             		<td ><a href="#" class="add"><span class="label label-success"><i class="fa  fa-plus-square"></i> <b>ADD</b></span></a><span class="divider">  </span><a href="#" class="remove"><span class="label label-danger"><i class="fa  fa-minus-square"></i> <b>REMOVE</b></span></a></td>
+			</tr>
+
+		</tbody>
+	</table>
+=======
       <td> <select name="vaccine" class="vaccine form-control" id="vaccine">
        <option value="">--Select One--</option>
        <?php foreach ($vaccines as $vaccine) { 
@@ -77,6 +172,7 @@
 
   </tbody>
 </table>
+>>>>>>> 5ce27d877dfd339616208f10ca68f5e09044c455
 
 
 </div>
@@ -95,6 +191,14 @@ echo form_close();?>
    var thisRow =$('#stock_receive_tbl tr:last');
    var cloned_object = $( thisRow ).clone();
 
+<<<<<<< HEAD
+             $('#date_received').datepicker().datepicker('setDate', new Date());
+             $('#expiry_date').datepicker({dateFormat: "yy-mm-dd",  minDate: 0}).datepicker('setDate', null);
+              $('#stock_receive_tbl').delegate( '.add', 'click', function () {
+            
+                       var thisRow =$('#stock_receive_tbl tr:last');
+                       var cloned_object = $( thisRow ).clone();
+=======
    var receive_row = cloned_object.attr("receive_row");
    var next_receive_row = parseInt(receive_row) + 1;
    cloned_object.attr("receive_row", next_receive_row);
@@ -102,6 +206,7 @@ echo form_close();?>
    var vaccine_id = "vaccine" + next_receive_row;
    var vaccine = cloned_object.find(".vaccine");
    vaccine.attr('id',vaccine_id);
+>>>>>>> 5ce27d877dfd339616208f10ca68f5e09044c455
 
    var batch_id = "batch_no" + next_receive_row;
    var batch = cloned_object.find(".batchno_");
@@ -115,16 +220,31 @@ echo form_close();?>
    var quantity_received = cloned_object.find(".quantity_received");
    quantity_received.attr('id',quantity_received_id);
 
+<<<<<<< HEAD
+                      var expiry_id = "expiry_date" + next_receive_row;
+                      var expiry = cloned_object.find(".expiry_date");
+                      expiry.attr('id',expiry_id);
+                      
+                      var quantity_received_id = "quantity_received" + next_receive_row;
+                      var quantity_received = cloned_object.find(".quantity_received");
+                      quantity_received.attr('id',quantity_received_id);
+=======
    var vvm_status_id = "vvm_status" + next_receive_row;
    var vvm_status = cloned_object.find(".vvm_status");
    vvm_status.attr('id',vvm_status_id);
 
    cloned_object .insertAfter( thisRow ).find( 'input' ).val( '' );
+>>>>>>> 5ce27d877dfd339616208f10ca68f5e09044c455
 
  });
 
+<<<<<<< HEAD
+                cloned_object .insertAfter( thisRow ).find( 'input' ).val( '' );
+                });
+=======
  $('#stock_receive_tbl').delegate('.remove', 'click', function(){
    $(this).closest('tr').remove();});
+>>>>>>> 5ce27d877dfd339616208f10ca68f5e09044c455
 
 
  

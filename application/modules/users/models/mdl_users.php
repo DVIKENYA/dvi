@@ -62,7 +62,7 @@ class Mdl_users extends CI_Model {
           }
 
           function getRegion(){
-        	//$condition = "username =" . "'" . $username . "'";
+            //$condition = "username =" . "'" . $username . "'";
               $this->db->select('id,region_name');
               $query = $this->db->get("m_region");
               return $query->result();
@@ -195,8 +195,8 @@ class Mdl_users extends CI_Model {
 
 
         function _insert($data, $data_base) {
-        	$table = $this->get_table();
-        	// Query to check whether username already exist or not
+            $table = $this->get_table();
+            // Query to check whether username already exist or not
             $condition = "username =" . "'" . $data['username'] . "'";
             $this->db->select('*');
             $this->db->from($table);
@@ -258,4 +258,26 @@ class Mdl_users extends CI_Model {
             return $query;
         }
 
+        function getCountyByRegion($id){
+            $this->db->select("id, county_name");
+            $this->db->from('m_county');
+            $this->db->where('region_id', $id);
+            $query = $this->db->get();
+            return $query->result();
+        }
+        function getSubcountyByCounty($id){
+            $this->db->select("id, subcounty_name");
+            $this->db->from('m_subcounty');
+            $this->db->where('county_id', $id);
+            $query = $this->db->get();
+            return $query->result();
+        }
+
+        function getFacilityBySubcounty($id){
+            $this->db->select("id, facility_name");
+            $this->db->from('m_facility');
+            $this->db->where('subcounty_id', $id);
+            $query = $this->db->get();
+            return $query->result();
+        }
         }
