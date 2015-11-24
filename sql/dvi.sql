@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost:3306
--- Generation Time: Nov 23, 2015 at 10:24 PM
+-- Generation Time: Nov 24, 2015 at 12:48 AM
 -- Server version: 5.6.25
 -- PHP Version: 5.5.27
 
@@ -373,7 +373,7 @@ CREATE TABLE IF NOT EXISTS `ci_sessions` (
 --
 
 INSERT INTO `ci_sessions` (`session_id`, `ip_address`, `user_agent`, `last_activity`, `user_data`) VALUES
-('c883de5e559bbd452c531ad404293fce', '::1', 'Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Firefox/31.0 Iceweasel/31.8.0', 1448345824, 'a:3:{s:9:"user_data";s:0:"";s:9:"logged_in";a:6:{s:7:"user_id";s:1:"2";s:10:"user_fname";s:5:"Admin";s:10:"user_lname";s:8:"Dvikenya";s:10:"user_group";s:1:"1";s:10:"user_level";s:1:"1";s:9:"logged_in";b:1;}s:13:"flash:old:msg";s:92:"<div id="alert-message" class="alert alert-success text-center">User Added Successfuly</div>";}');
+('fd4d44b0f0ab8751e6f7c4bfec09c29e', '::1', 'Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Firefox/31.0 Iceweasel/31.8.0', 1448354605, 'a:2:{s:9:"user_data";s:0:"";s:9:"logged_in";a:6:{s:7:"user_id";s:1:"2";s:10:"user_fname";s:5:"Admin";s:10:"user_lname";s:8:"Dvikenya";s:10:"user_group";s:1:"1";s:10:"user_level";s:1:"1";s:9:"logged_in";b:1;}}');
 
 -- --------------------------------------------------------
 
@@ -1220,7 +1220,7 @@ CREATE TABLE IF NOT EXISTS `m_depot` (
   `subcounty_id` varchar(255) NOT NULL,
   `depot_level` int(11) NOT NULL,
   `user_id` int(11) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_depot`
@@ -1228,7 +1228,8 @@ CREATE TABLE IF NOT EXISTS `m_depot` (
 
 INSERT INTO `m_depot` (`id`, `depot_location`, `region_id`, `county_id`, `subcounty_id`, `depot_level`, `user_id`) VALUES
 (3, 'Nairobi', '', '', '', 1, 2),
-(6, 'Baringo', '', '', '', 3, 14);
+(6, 'Baringo', '', '', '', 3, 14),
+(7, 'Kariobangi', '', '', '', 1, 2);
 
 -- --------------------------------------------------------
 
@@ -11198,14 +11199,6 @@ INSERT INTO `m_fridges` (`id`, `Model`, `Manufacturer`, `Technology Type`, `Vacc
 -- --------------------------------------------------------
 
 --
--- Stand-in structure for view `m_fridges_view`
---
-CREATE TABLE IF NOT EXISTS `m_fridges_view` (
-);
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `m_group`
 --
 
@@ -11856,7 +11849,7 @@ CREATE TABLE IF NOT EXISTS `m_users` (
   `password` varchar(255) NOT NULL,
   `user_group` int(12) NOT NULL,
   `user_level` int(11) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_users`
@@ -11870,7 +11863,8 @@ INSERT INTO `m_users` (`id`, `f_name`, `l_name`, `username`, `phone`, `email`, `
 (14, 'Baringo', 'County', 'baringocounty', '07070760675', 'baringo@dvikenya.com', '0a692f089b30b507bc881486d21a15f4ce7534ba02cf4d9bcc0062375fdcde1a364a9370593c274e0f0632fc7ae7448bdee5d267b64685f07bd7192128f6ff38', 3, 3),
 (15, 'Baringo', 'North', 'bnorth', '0703121212', 'bnorth@dvikenya.com', '0a692f089b30b507bc881486d21a15f4ce7534ba02cf4d9bcc0062375fdcde1a364a9370593c274e0f0632fc7ae7448bdee5d267b64685f07bd7192128f6ff38', 3, 4),
 (16, 'Samson', 'Peter', 'speter', '0703121212', 'speter@dvikenya.com', '0a692f089b30b507bc881486d21a15f4ce7534ba02cf4d9bcc0062375fdcde1a364a9370593c274e0f0632fc7ae7448bdee5d267b64685f07bd7192128f6ff38', 3, 5),
-(17, 'Magret', 'Awinyi', 'mawinyi', '079495955', 'maggie@dvikenya.com', '0a692f089b30b507bc881486d21a15f4ce7534ba02cf4d9bcc0062375fdcde1a364a9370593c274e0f0632fc7ae7448bdee5d267b64685f07bd7192128f6ff38', 3, 5);
+(17, 'Magret', 'Awinyi', 'mawinyi', '079495955', 'maggie@dvikenya.com', '0a692f089b30b507bc881486d21a15f4ce7534ba02cf4d9bcc0062375fdcde1a364a9370593c274e0f0632fc7ae7448bdee5d267b64685f07bd7192128f6ff38', 3, 5),
+(18, 'Test', 'User', 'User', '0712345678', 't@g.com', '0fa00577a7836a7caf09656edef44a5ba8477e5cde965059d4f88da0e9851c68f74036ecda61d3b5ec14426683e72851536f8828fb0cb6d2992a437d640b3b33', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -12028,7 +12022,7 @@ CREATE TABLE IF NOT EXISTS `user_base` (
   `county` int(11) DEFAULT NULL,
   `subcounty` int(11) DEFAULT NULL,
   `facility` int(11) DEFAULT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `user_base`
@@ -12047,7 +12041,8 @@ INSERT INTO `user_base` (`id`, `user_id`, `national`, `region`, `county`, `subco
 (19, 19, 1, 0, 0, 0, 0),
 (20, 20, 1, 0, 0, 0, 0),
 (21, 21, 0, 0, 0, 0, 0),
-(22, 22, 0, 0, 0, 0, 0);
+(22, 22, 0, 0, 0, 0, 0),
+(23, 18, 1, 0, 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -12213,15 +12208,6 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 DROP TABLE IF EXISTS `facility_userbase_view`;
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `facility_userbase_view` AS select `m_facility`.`id` AS `id`,`m_facility`.`facility_name` AS `facility_name`,`user_base`.`user_id` AS `user_id`,`user_base`.`national` AS `national`,`user_base`.`region` AS `region`,`user_base`.`county` AS `county`,`user_base`.`subcounty` AS `subcounty`,`user_base`.`facility` AS `facility` from (`m_facility` join `user_base` on((`m_facility`.`id` = `user_base`.`facility`)));
-
--- --------------------------------------------------------
-
---
--- Structure for view `m_fridges_view`
---
-DROP TABLE IF EXISTS `m_fridges_view`;
-
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `m_fridges_view` AS select distinct `m_fridges`.`id` AS `id`,`m_fridges`.`Model` AS `Model`,`m_mfridge`.`date_added` AS `date_added` from (`m_fridges` join `m_mfridge`);
 
 -- --------------------------------------------------------
 
@@ -12461,7 +12447,7 @@ ALTER TABLE `dhis_usage`
 -- AUTO_INCREMENT for table `m_depot`
 --
 ALTER TABLE `m_depot`
-  MODIFY `id` int(14) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
+  MODIFY `id` int(14) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
 --
 -- AUTO_INCREMENT for table `m_depot_fridges`
 --
@@ -12526,7 +12512,7 @@ ALTER TABLE `m_uploads`
 -- AUTO_INCREMENT for table `m_users`
 --
 ALTER TABLE `m_users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=23;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=19;
 --
 -- AUTO_INCREMENT for table `m_vaccines`
 --
@@ -12541,7 +12527,7 @@ ALTER TABLE `m_vvm_status`
 -- AUTO_INCREMENT for table `user_base`
 --
 ALTER TABLE `user_base`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=23;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=24;
 --
 -- AUTO_INCREMENT for table `user_levels`
 --
