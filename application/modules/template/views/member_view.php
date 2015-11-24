@@ -55,7 +55,7 @@
               </ul>
             </div>
           </div>
-          <div class="user_admin dropdown"> <a href="javascript:void(0);" data-toggle="dropdown"> <img src="<?php echo base_url() ?>assets/images/user.jpg" />  <span class="user_adminname"><?php echo '<b> Hi '.$user_object['user_fname'].' </b>' ;?></span><b class="caret"></b>  </a>
+          <div class="user_admin dropdown"> <a href="javascript:void(0);" data-toggle="dropdown"><span class="user_adminname"><?php echo '<b> Hello '.$user_object['user_fname'].' </b>' ;?></span> <img src="<?php echo base_url() ?>assets/images/user.jpg" /> <b class="caret"></b> </a>
             <ul class="dropdown-menu">
               <div class="top_pointer"></div>
               <li> <a href="<?php //echo site_url('admin/user/profile');?>"><i class="fa fa-user"></i> Profile</a> </li>
@@ -133,7 +133,6 @@
   </div><!--\\\\\\\ wrapper end\\\\\\-->
 <script src="<?php echo base_url() ?>assets/js/jquery-2.1.0.js"></script>
 <script src="<?php echo base_url() ?>assets/js/bootstrap.min.js"></script>
-<script src="<?php echo base_url() ?>assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"></script> 
 <script src="<?php echo base_url() ?>assets/js/common-script.js"></script>
 <script src="<?php echo base_url() ?>assets/js/jquery.slimscroll.min.js"></script>
 <script src="<?php echo base_url() ?>assets/js/jPushMenu.js"></script> 
@@ -151,7 +150,5 @@
 <script src="<?php echo base_url() ?>assets/plugins/morris/morris-script.js"></script> 
 <script src="<?php echo base_url() ?>assets/plugins/demo-slider/demo-slider.js"></script>
 <script src="<?php echo base_url() ?>assets/plugins/knob/jquery.knob.min.js"></script> 
-<script src="<?php echo base_url() ?>assets/plugins/data-tables/jquery.dataTables.min.js"></script>
-<script src="<?php echo base_url() ?>assets/plugins/data-tables/DT_bootstrap.js"></script>
 </body>
 </html>

@@ -62,7 +62,7 @@
         
         // Load data for the table's content from an Ajax source
         "ajax": {
-            "url": "<?php echo site_url('facility/get_fridges_by_id/')."/".$id?>",
+            "url": "<?php echo site_url('depot/get_fridges_by_id/')."/".$id?>",
             "type": "POST"
         },
 
@@ -97,7 +97,7 @@
 
       //Ajax Load data from ajax
       $.ajax({
-        url : "<?php echo site_url('facility/edit_fridge/')?>/" + id,
+        url : "<?php echo site_url('depot/edit_fridge/')?>/" + id,
         type: "POST",
         dataType: "JSON",
         success: function(data){
@@ -126,7 +126,7 @@
       var url;
       if(save_method == 'add') 
       {
-          url = "<?php echo site_url('facility/add_fridge')."/".$id?>";
+          url = "<?php echo site_url('depot/add_fridge')."/".$id?>";
           $.ajax({
             url : url,
             type: "POST",
@@ -146,7 +146,7 @@
       }
       else
       {
-        url = "<?php echo site_url('facility/update_fridge')."/".$id?>";
+        url = "<?php echo site_url('depot/update_fridge')."/".$id?>";
         $.ajax({
             url : url,
             type: "POST",
@@ -190,7 +190,7 @@
       {
         // ajax delete data to database
           $.ajax({
-            url : "<?php echo site_url('facility/delete_fridge/')?>/"+id,
+            url : "<?php echo site_url('depot/delete_fridge/')?>/"+id,
             type: "POST",
             dataType: "JSON",
             success: function(data)
