@@ -25,7 +25,7 @@ public function get_order_values(){
 }
 // Function to create order. Fetches the list of vaccines and calculations of max stock, minstock
 public function create_order(){
-Modules::run('secure_tings/is_logged_in');
+
   $this->load->model('vaccines/mdl_vaccines');
   $this->load->model('order/mdl_order');
   $data['vaccines']= $this->mdl_vaccines->getVaccine();
@@ -47,7 +47,7 @@ Modules::run('secure_tings/is_logged_in');
 
 // Function lists the orders placed or submitted
 public function list_orders(){
- Modules::run('secure_tings/is_logged_in');
+ 
   $this->load->model('order/mdl_order');
   $data2['user_object2'] = $this->get_user_object();
   $data3['user_object3'] = $this->get_user_object();
@@ -69,7 +69,6 @@ public function list_orders(){
 // The function accepts two arguments, order_by and date when order was created,
 //  to list the order items on viewing an order
 public function view_orders($order_by,$date_created,$option){
-  Modules::run('secure_tings/is_logged_in');
   $this->load->model('order/mdl_order');
   $data['section'] = "Stock";
   $data['subtitle'] = "View Orders";
@@ -84,7 +83,7 @@ public function view_orders($order_by,$date_created,$option){
   
 }
 public function prepare_orders($content_array = array()){  
-Modules::run('secure_tings/is_logged_in');
+
  $this->load->model('vaccines/mdl_vaccines');
  $data['vaccines']= $this->mdl_vaccines->getVaccine();
 

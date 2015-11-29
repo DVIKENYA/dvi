@@ -11,20 +11,11 @@ class MY_Controller extends MX_Controller
 
 	}
 
-
  	function getUserRegion(){
         $this->load->model('users/mdl_users');
         $user_id = ($this->session->userdata['logged_in']['user_id']);
         $result=$this->mdl_users->get_userRegion($user_id)->row();
         $data = $result->region_name;        
-       return $data;      
-    }
-
-    function getUserRegionid(){
-        $this->load->model('users/mdl_users');
-        $user_id = ($this->session->userdata['logged_in']['user_id']);
-        $result=$this->mdl_users->get_userRegion_id($user_id)->row();
-        $data = $result->id;        
        return $data;      
     }
     
@@ -36,14 +27,6 @@ class MY_Controller extends MX_Controller
        return $data;      
     }
 
-    function getUserCountyid(){
-        $this->load->model('users/mdl_users');
-        $user_id = ($this->session->userdata['logged_in']['user_id']);
-        $result=$this->mdl_users->get_userCounty_id($user_id)->row();
-        $data = $result->id;        
-       return $data;      
-    }
-
     function getUserSubcounty(){
         $this->load->model('users/mdl_users');
         $user_id = ($this->session->userdata['logged_in']['user_id']);
@@ -52,27 +35,11 @@ class MY_Controller extends MX_Controller
        return $data;      
     }
 
-    function getUserSubcountyid(){
-        $this->load->model('users/mdl_users');
-        $user_id = ($this->session->userdata['logged_in']['user_id']);
-        $result=$this->mdl_users->get_userSubcounty_id($user_id)->row();
-        $data = $result->id;        
-       return $data;      
-    }
-
     function getUserFacility(){
         $this->load->model('users/mdl_users');
         $user_id = ($this->session->userdata['logged_in']['user_id']);
         $result=$this->mdl_users->get_userFacility($user_id)->row();
         $data = $result->facility_name;        
-       return $data;      
-    }
-
-    function getUserFacilityid(){
-        $this->load->model('users/mdl_users');
-        $user_id = ($this->session->userdata['logged_in']['user_id']);
-        $result=$this->mdl_users->get_userFacility_id($user_id)->row();
-        $data = $result->id;        
        return $data;      
     }
 
@@ -91,32 +58,26 @@ class MY_Controller extends MX_Controller
 			    $nation = "KENYA";
 			    $path = $nation;
 			    $user_statiton = $nation;
-			    $user_statiton_id = 'KENYA';
 			} else if ($user_level=='2') {
 			    $nation = "KENYA";
 			    $region = $this->getUserRegion();
-			    $region_id = $this->getUserRegionid();
 			    $path = $nation." / ". $region;
 			    $user_statiton = $region;
-			    $user_statiton_id = $region_id;
 			} else if ($user_level=='3'){
 			    $nation = "KENYA";
 			    $region = $this->getUserRegion();
+			    // $county = Modules::run('template/getUserCounty');
 			    $county = $this->getUserCounty();
-			    $county_id = $this->getUserCountyid();
 			    $path = $region." / ". $county;
 				$user_statiton = $county;
-				$user_statiton_id = $county_id;
 
 			}else if ($user_level=='4'){
 			    $nation = "KENYA";
 			    $region = $this->getUserRegion();
 			    $county = $this->getUserCounty();
 			    $subcounty = $this->getUserSubcounty();
-			    $subcounty_id = $this->getUserSubcountyid();
 			    $path = $county." / ". $subcounty;
 				$user_statiton = $subcounty;
-				$user_statiton_id = $subcounty_id;
 			}
 			else {
 			    $nation = "KENYA";
@@ -124,17 +85,14 @@ class MY_Controller extends MX_Controller
 			    $county = $this->getUserCounty();
 			    $subcounty = $this->getUserSubcounty();
 			    $facility = $this->getUserFacility();
-			    $facility_id = $this->getUserFacilityid();
 			    $path = $subcounty." / ". $facility;
-				$user_statiton = $facility;
-				$user_statiton_id = $facility_id;    
+				$user_statiton = $facility;    
 			}
 			$data = array('user_fname' =>$user_fname ,
 						'user_group' =>$user_group ,
 						'user_level' =>$user_level ,
 						'user_id' =>$user_id ,
 						'user_statiton' =>$user_statiton ,
-						'user_statiton_id' =>$user_statiton_id ,
 						'path' =>$path  );
 			return $data;
 

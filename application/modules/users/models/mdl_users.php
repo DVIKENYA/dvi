@@ -101,6 +101,15 @@ class Mdl_users extends CI_Model {
             return $query->result();
         }
 
+        function get_userRegion_id($user_id){
+
+            $this->db->select('id');
+            $this->db->from('region_userbase_view');
+            $this->db->where('user_id',$user_id);
+            return $this->db->get();
+
+        }
+
         function get_userRegion($user_id){
 
             $this->db->select('region_name');
@@ -109,6 +118,16 @@ class Mdl_users extends CI_Model {
             return $this->db->get();
 
         }
+
+         function get_userCounty_id($user_id){
+
+            $this->db->select('id');
+            $this->db->from('county_userbase_view');
+            $this->db->where('user_id',$user_id);
+            return $this->db->get();
+
+        }
+
 
         function get_userCounty($user_id){
 
@@ -119,10 +138,28 @@ class Mdl_users extends CI_Model {
 
         }
 
+         function get_userSubcounty_id($user_id){
+
+            $this->db->select('id');
+            $this->db->from('subcounty_userbase');
+            $this->db->where('user_id',$user_id);
+            return $this->db->get();
+
+        }
+
         function get_userSubcounty($user_id){
 
             $this->db->select('subcounty_name');
             $this->db->from('subcounty_userbase');
+            $this->db->where('user_id',$user_id);
+            return $this->db->get();
+
+        }
+
+        function get_userFacility_id($user_id){
+
+            $this->db->select('id');
+            $this->db->from('facility_userbase_view');
             $this->db->where('user_id',$user_id);
             return $this->db->get();
 
