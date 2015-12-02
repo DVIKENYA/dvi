@@ -102,7 +102,7 @@
                 <!--  <li> <a href="#" class="left_nav_sub_active"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Arrival Tracking</b> </a> </li> -->
                 <!-- <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Settings</b> </a> </li> -->
               </ul>
-            </li>;
+            </li>
             <li> <a href="javascript:void(0);"> <i class="fa fa-th"></i>COLD CHAIN<span class="plus"><i class="fa fa-plus"></i></span> </a>
               <ul>
                 <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Log Reports</b> </a> </li> 
@@ -199,6 +199,7 @@ if ( $user_object['user_level']=='1') {?>
 <script src="<?php echo base_url() ?>assets/plugins/morris/morris.min.js" type="text/javascript"></script> 
 <script src="<?php echo base_url() ?>assets/plugins/morris/raphael-min.js" type="text/javascript"></script>  
 <script src="<?php echo base_url() ?>assets/plugins/morris/morris-script.js"></script> 
+<script src="<?php echo base_url() ?>assets/plugins/highcharts/highcharts.js" type="text/javascript"></script>
 <script src="<?php echo base_url() ?>assets/plugins/data-tables/jquery.dataTables.min.js"></script>
 <script src="<?php echo base_url() ?>assets/plugins/data-tables/DT_bootstrap.js"></script>
 <script src="<?php echo base_url() ?>assets/plugins/demo-slider/demo-slider.js"></script>

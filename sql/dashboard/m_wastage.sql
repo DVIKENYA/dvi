@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 18, 2015 at 03:57 PM
+-- Generation Time: Nov 25, 2015 at 08:40 AM
 -- Server version: 5.5.32
 -- PHP Version: 5.4.16
 
@@ -23,13 +23,13 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Structure for view `wastage_all`
+-- Structure for view `m_wastage`
 --
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `wastage_all` AS select `v`.`UnitId` AS `UnitID`,`v`.`bcgwastage` AS `BCG`,`v`.`dptwastage` AS `DPT`,`v`.`measleswastage` AS `MEASLES`,`v`.`opvwastage` AS `OPV`,`v`.`pcvwastage` AS `PCV`,`v`.`ttwastage` AS `TT`,`v`.`vita1wastage` AS `VITA1`,`v`.`vita2wastage` AS `VITA2`,`v`.`vita5wastage` AS `VITA5`,`v`.`yellowfevwastage` AS `YELLOWFEVER`,`s`.`id` AS `facility`,`s`.`region_id` AS `region`,`s`.`county_id` AS `county`,`s`.`subcounty_id` AS `subcounty` from (`view_wastage_unitid` `v` join `m_facility` `s`) where (`v`.`UnitId` = convert(`s`.`dhis_id` using utf8));
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `m_wastage` AS select `v`.`BCG` AS `BCG`,`v`.`DPT1` AS `DPT1`,`v`.`DPT2` AS `DPT2`,`v`.`Measles` AS `Measles`,`v`.`OPV` AS `OPV`,`v`.`OPV1` AS `OPV1`,`v`.`OPV2` AS `OPV2`,`v`.`OPV3` AS `OPV3`,`v`.`PCV1` AS `PCV1`,`v`.`PCV2` AS `PCV2`,`v`.`PCV3` AS `PCV3`,`v`.`ROTA` AS `ROTA`,`v`.`ROTA2` AS `ROTA2`,`s`.`population` AS `TotalPopulation`,`s`.`population_one` AS `PopulationOne`,`s`.`population_women` AS `PopulationWomen` from (`total_doses_adm` `v` join `m_county` `s`) where (`s`.`id` = 12);
 
 --
--- VIEW  `wastage_all`
+-- VIEW  `m_wastage`
 -- Data: None
 --
 

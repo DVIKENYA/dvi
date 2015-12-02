@@ -88,7 +88,7 @@
               <ul>
                 <li> <a href="<?php echo site_url('stock/list_inventory');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Vaccines Ledger View</b> </a> </li>
               </ul>
-            </li>;
+            </li>
             <li> <a href="javascript:void(0);"> <i class="fa fa-th"></i>COLD CHAIN<span class="plus"><i class="fa fa-plus"></i></span> </a>
               <ul>
                 <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Log Reports</b> </a> </li> 

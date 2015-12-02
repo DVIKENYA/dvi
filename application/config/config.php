@@ -16,7 +16,7 @@
 | environments.
 |
 */
-$config['base_url'] = 'http://'.$_SERVER['SERVER_NAME'].':8080/dvi/';
+$config['base_url'] = 'http://'.$_SERVER['SERVER_NAME'].':8080/dvikenya/';
 
 /*
 |--------------------------------------------------------------------------

@@ -1,4 +1,5 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');?>
+
 <script src="<?php echo base_url() ?>assets/js/xepOnline.jqPlugin.js"></script> 
 
 <div class="row">
@@ -152,7 +153,8 @@ $(document).ready(function(){
   element: 'morris-donut-chart',
   data: <?php echo json_encode($wastage)?>,
   colors:['#54cdb4'],
-  labelColor: '#333300'
+  labelColor: '#333300',
+  formatter: function (value, data) { return (value) + '%'; }
     });
 });
 </script>

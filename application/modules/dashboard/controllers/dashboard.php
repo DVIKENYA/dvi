@@ -66,24 +66,24 @@ function get_chart() {
      }else if($user_level=='5'){
     $query = $this->mdl_dashboard->get_subcounty_coverage($user_id);
      }else if($user_level=='1'){
-   $query = $this->mdl_dashboard->get_county_coverage($user_id);
+   $query = $this->mdl_dashboard->get_national_coverage($user_id);
      }
     foreach ($query as $row) {
       $json_array[]= array(
-       "label"=>$row->Months,
-       "BCG"=>(float)$row->totalbcg,
-       "DPT2"=>(float)$row->totaldpt2,
-       "DPT3"=>(float)$row->totaldpt3,
-       "Measles"=>(float)$row->totalmeasles,
-       "OPV"=>(float)$row->totalopv,
-       "OPV1"=>(float)$row->totalopv1,
-       "OPV2"=>(float)$row->totalopv2,
-       "OPV3"=>(float)$row->totalopv3,
-       "PCV1"=>(float)$row->totalpcv1,
-       "PCV2"=>(float)$row->totalpcv2,
-       "PCV3"=>(float)$row->totalpcv3,
-       "ROTA1"=>(float)$row->totalrota1,
-       "ROTA2"=>(float)$row->totalrota2
+      "label"=>$row->Months,
+      "BCG"=>(float)$row->totalbcg,
+      "DPT2"=>(float)$row->totaldpt2,
+      "DPT3"=>(float)$row->totaldpt3,
+      "Measles"=>(float)$row->totalmeasles,
+      "OPV"=>(float)$row->totalopv,
+      "OPV1"=>(float)$row->totalopv1,
+      "OPV2"=>(float)$row->totalopv2,
+      "OPV3"=>(float)$row->totalopv3,
+      "PCV1"=>(float)$row->totalpcv1,
+      "PCV2"=>(float)$row->totalpcv2,
+      "PCV3"=>(float)$row->totalpcv3,
+      "ROTA1"=>(float)$row->totalrota1,
+      "ROTA2"=>(float)$row->totalrota2 
        );    
     }
     //echo json_encode($json_array);
@@ -103,7 +103,7 @@ function get_wastage() {
     }else if($user_level=='5'){
     $query = $this->mdl_dashboard->get_facility_wastage($user_id);
     }else if($user_level=='1'){
-    $query = $this->mdl_dashboard->get_subcounty_wastage($user_id);
+    $query = $this->mdl_dashboard->get_national_wastage($user_id);
     }
    
     foreach ($query as $row) {
@@ -111,10 +111,7 @@ function get_wastage() {
       array( 'value'=>(int)$row->totalbcg, 'label'=>'BCG'),
       array( 'value'=>(int)$row->totalopv,'label'=>'OPV'),
       array( 'value'=>(int)$row->totalpcv, 'label'=>'PCV'),
-      array( 'value'=>(int)$row->totaltt, 'label'=>'TT'),
-      array( 'value'=>(int)$row->totalvita1, 'label'=>'VITA1'),
-      array( 'value'=>(int)$row->totalvita2,'label'=>'VITA2'),
-      array( 'value'=>(int)$row->totalvita5, 'label'=>'VITA5'),
+      array( 'value'=>(int)$row->totalmeasles, 'label'=>'MEASLES'),
       array( 'value'=>(int)$row->totalyellowfev, 'label'=>'YELLOWFEV')
        );
 
