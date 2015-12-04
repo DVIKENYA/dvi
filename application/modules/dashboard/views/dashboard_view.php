@@ -167,7 +167,7 @@ $(document).ready(function(){
   data: <?php echo json_encode($wastage)?>,
   colors:['#54cdb4'],
   labelColor: '#333300',
- formatter: function (value, data) { return (value) + '%'; }
+ formatter: function (value, data) { return (value/100) + '%'; }
     });
 });
 </script>

@@ -6,7 +6,7 @@
     <div class="block-web">
         <div class="col-lg-12">
           <div class="col-md-6">
-            <h5 class="content-header text-info">National Wastage</h5>
+            <h5 class="content-header text-info">National Wastage(Doses)</h5>
             </br>
             <div id="morris-donut-chart" ></div>
           </div>
