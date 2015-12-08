@@ -30,7 +30,7 @@ echo form_open('',$form_attributes);?>
 		                     echo "<option value='".$vaccine['ID']."'>".$vaccine['Vaccine_name']."</option>";
 		                     }?>
                 </select></td>
-             		<td> <select name="batch_no" class="form-control batch_no" id="batch_no" >
+             		<td> <select name="batch_no" class="form-control batch_no" id="batch_no" ></select></td>
              		<td><?php $data=array('name' => 'expiry_date','id'=> 'expiry_date','class'=>'form-control expiry_date'); echo form_input($data);?></td>
              		 <style type="text/css">
 		                input[id="available_quantity"]{
@@ -52,8 +52,22 @@ echo form_open('',$form_attributes);?>
 </div>
 </div>
 </div>
+
 <script type="text/javascript">
-	// Add another row in the form on click add
+            var selectedItem = sessionStorage.getItem("SelectedItem");  
+			$('#batch_no').val(selectedItem);
+
+			$('#batch_no').change(function() { 
+			    var dropVal = $(this).val();
+			    sessionStorage.setItem("SelectedItem", dropVal);
+			});
+
+
+
+</script>
+<script type="text/javascript">
+
+			// Add another row in the form on click add
 
            $('#physical_stock').delegate( '.add', 'click', function () {
 
@@ -124,7 +138,8 @@ echo form_open('',$form_attributes);?>
 					       /* dataType : json,*/
 					     success:function(data, textStatus, jqXHR) 
 					        {
-					        	window.location.replace('<?php echo base_url().'stock/list_inventory'?>');
+					        	console.log(data);
+					        	//window.location.replace('<?php echo base_url().'stock/list_inventory'?>');
 					            //data: return data from server
 					        },
 					     error: function(jqXHR, textStatus, errorThrown) 
@@ -138,9 +153,9 @@ echo form_open('',$form_attributes);?>
 
 		
 			$(document).on( 'change','.vaccine', function () {
-						var stock_row=$(this);
-					   var selected_vaccine=$(this).val();
-					   load_batches(selected_vaccine,stock_row);
+				var stock_row=$(this);
+				var selected_vaccine=$(this).val();
+				load_batches(selected_vaccine,stock_row);
 		     });
 
 		function load_batches(selected_vaccine,stock_row){
@@ -232,6 +247,5 @@ echo form_open('',$form_attributes);?>
                       return dump;
             }
 
-
-
 </script>
+

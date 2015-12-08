@@ -1,111 +1,132 @@
  <div class="row">
-    <div class="col-lg-12">
+    
 <?php
 $form_attributes = array('id' => 'vaccine_ledger','class'=>'form-inline','role'=>'form');
 echo form_open('',$form_attributes);?>
 
 
-<div class="well well-sm"><b>Vaccines</b></div>
-<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-  <div class="form-group">
-  <b>Vaccine/Diluents</b>
-   <select name="v_list" class="form-control v_list" id="v_list">
-                 <option value="">--Select One--</option>
-                 <?php foreach ($vaccines as $vaccine) { 
-                     echo "<option value='".$vaccine['ID']."'>".$vaccine['Vaccine_name']."</option>";
-                     }?>
-                </select>
-    </div>
-</div>
-<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-  <div class="form-group">
-  
-    </div>
-</div>
-<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-  <div class="form-group">
-  
-    </div>
-</div>
-<br/>
-<br/><br/>
-<div class="table-responsive">
-<div class="well well-sm"><b>Vaccine Ledger</b></div>
+<div class="row">
+  </br>
+  </br>
+<div class="col-lg-12">    
+	<div class="table-responsive">
+		<div class="well well-sm"><b>Vaccine Ledger</b></div>
 
-						
-<table class="table table-bordered table-hover table-striped" id="v_ledger_tbl">
-
-		
-	<thead>
+<div class="row">
+	<div class="col-lg-3">
+		  <div class="panel-body">
+		   <b>Vaccine/Diluents</b><br>
+			   <select name="v_list" class="form-control v_list" id="v_list">
+			                 <option value="0">--Select One--</option>
+			                 <?php foreach ($vaccines as $vaccine) { 
+			                     echo "<option value='".$vaccine['ID']."'>".$vaccine['Vaccine_name']."</option>";
+			                     }?>
+			                </select>
+		    </div>
+		</div> 
+	<div class="col-lg-3">
+		<div class="panel-body">
+		   <b>Store Balance</b><br>
+			   <input type="text" class="form-control balance" id="balance" name="balance" readonly="true">
+		    </div>
+		</div> 
+</div>
 	
-		<th>Vaccines/Diluents (Origin/Destination)</th>
-		                    <th >Batch Number</th>
-							<th >Transaction Date</th>
-							<th> Stock Received </th>
-							<th >Stock Issued</th>
-							<th>Store Balance</th>
-							<th >Expiry Date</th>
-							<th >VVM Status</th>
-	</thead>
-	<tbody>
-	<?php foreach ($ledgers as $ledger) { ?>
+<div class="margin-top-10"></div>
 
-		<tr align="center" ledger_row="1">
-				
-             	    
-             	    <td><?php echo $ledger['Vaccine_name']?></td>
-             	    <td><?php echo $ledger['batch_number']?></td>
-             	    <td><?php echo $ledger['transaction_date']?></td>
-             	    <td><?php echo $ledger['quantity_in']?></td>
-             	    <td><?php echo $ledger['quantity_out']?></td>
-             	    <td><?php echo $ledger['stock_balance']?></td>
-             	    <td><?php echo $ledger['expiry_date']?></td>
-             	    <td><?php echo $ledger['name']?></td>
-             		
-			</tr>
-			<?php } ?>
-	</tbody>
-</table>
+ <table id="table" class="display table table-bordered table-striped table-hover" cellspacing="0" width="100%">
+      <thead>
+      <tr class="button"></tr>
+
+        <tr>
+		    <th>Transaction Date</th>
+		    <th>Transaction Type</th>
+		    <th>Origin</th>
+		    <th>Destination</th>
+		    <th>Vaccines/Diluents</th>
+		    <th>Quantity In</th>
+		    <th>Quantity Out</th>
+		    <th >Batch Number</th>
+			<th >Expiry Date</th>
+		</tr>
+      </thead>
+      <tbody>
+      </tbody>
+
+      <tfoot>
+        <tr>
+	        <th>Transaction Date</th>
+		    <th>Transaction Type</th>
+		    <th>Origin</th>
+		    <th>Destination</th>
+		    <th>Vaccines/Diluents</th>
+		    <th>Quantity In</th>
+		    <th>Quantity Out</th>
+		    <th >Batch Number</th>
+			<th >Expiry Date</th>
+        </tr>
+      </tfoot>
+    </table>						
 
 <?php echo form_close();?>
-</div></div></div>
+</div>
+</div>
+</div>
+</div>
 <script type="text/javascript">
-$('#v_ledger_tbl > tbody  > tr').each(function(key,value) {
-/*console.log(value);
-celval= value.cells;
-console.log(celval);*/
-var cellLength= value.cells.length;
-console.log(cellLength);
-for(var y=0; y<cellLength; y+=1){
-    var cell = value.cells[y];
-    console.log(cell);
 
+ 	$(document).ready(function() {
+ 		
+		table = $('#table').DataTable({ 
+		"processing": true, //Feature control the processing indicator.
+		"serverSide": true, //Feature control DataTables' server-side processing mode.
 
-    //do something with every cell here
-  }
-});
+		// Load data for the table's content from an Ajax source
+		"ajax": {
+		    "url": "<?php echo site_url('stock/ledger/')."/".$id?>",
+		    "type": "POST"
+		},
+		"dom": 'Bfrtip',
+        "buttons": [
+            'excelHtml5',
+            'csvHtml5',
+            'pdfHtml5',
+			],	
+		"responsive": {
+		    "details": {
+		        "type": 'column'
+		    }
+		},
+		//Set column definition initialisation properties.
+		"columnDefs": [
+		{ 
+		  "targets": [ -1 ], //last column
+		  "orderable": false, //set not orderable
+		},
+		],
+
+		});
+
+		
+    });
+
 	
 	$(document).on( 'change','#v_list', function () {
-		   var selected_vaccine=$(this).val();
-		   get_ledger(selected_vaccine);
+		var selected_vaccine=$(this).val();
+		get_ledger(selected_vaccine);
 		});
 
 			function get_ledger(selected_vaccine){
-				var _url="<?php echo base_url();?>stock/get_vaccine_ledger/"+ selected_vaccine;
+				var _url="<?php echo base_url();?>stock/store_balance/"+ selected_vaccine;
 				   var request=$.ajax({
 						     url: _url,
 						     type: 'post',
 						    });
 				   request.done(function(data){
 			    	data=JSON.parse(data);
-			    	console.log(data);
-			    	$.each(data,function(key,value){
-			    		console.log(value);
-			    		/*alert($("table td:gt(0)").length);*/
-			    		
-			    		/*console.log(value.Vaccine_name);*/
-	                  /* $('#myDiv table table td').eq(0).text('Picked');*/
-			    		
+			    	$(".balance").val("");
+			    	  	$.each(data,function(key,value){
+			    		$(".balance").val(value.balance);
 			    	});
 			    });
 			    request.fail(function(jqXHR, textStatus) {
@@ -113,4 +134,13 @@ for(var y=0; y<cellLength; y+=1){
 				});
 			   
 			}
+
+		$(document).on( 'change','#v_list', function () {
+		var selected_vaccine=$(this).val();	
+		var _url="<?php echo site_url('stock/ledger/')?>/"+ selected_vaccine;
+		table.ajax.url( _url).load();
+		});	
+	
+			
 </script>
+

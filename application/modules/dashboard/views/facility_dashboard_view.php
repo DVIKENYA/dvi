@@ -1,5 +1,5 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');?>
-<script src="<?php echo base_url() ?>assets/plugins/highcharts/highcharts.js" type="text/javascript"></script>
+
 <script src="<?php echo base_url() ?>assets/js/xepOnline.jqPlugin.js"></script> 
 
 <div class="row">
@@ -59,19 +59,6 @@
 </div>
 
 </br>
-
-<div class="row">
-    <div class="block-web">
-        <div class="col-lg-12">
-  
-            <h5 class="content-header text-info">Coverage</h5>
-            </br>
-            <div id="container"></div>
-        
-
-        </div>
-       </div>
-</div>
 
 
 
@@ -228,34 +215,6 @@ var morris = Morris.Line({
  });    
 </script>
 
-<script type="text/javascript">
-$(function () {
-    $('#container').highcharts({
-        title: {
-            text: 'Coverage of Vaccines',
-            x: -20 //center
-        },
-        subtitle: {
-            text: 'Source: DHIS',
-            x: -20
-        },
-       
-        yAxis: {
-            title: {
-                text: 'Coverage (%)'
-            },
-            plotLines: [{
-                value: 0,
-                width: 1,
-                color: '#808080'
-            }]
-        },
-        
-        series: [{
-         data: [<?php echo json_encode($coverage)?>]
-      }]
-    });
-});
-    </script>
+
 
 
