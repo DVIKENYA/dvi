@@ -91,7 +91,7 @@
             </li>
             <li> <a href="javascript:void(0);"> <i class="fa fa-cubes"></i>MANAGE STOCK<span class="plus"><i class="fa fa-plus"></i></span></a>
               <ul>
-                <li> <a href="<?php echo site_url('stock/c_physical_stock/physical_count');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Physical Count</b> </a> </li>
+                <li> <a href="<?php echo site_url('stock/physical_count');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Physical Count</b> </a> </li>
                 <li> <a href="<?php echo site_url('stock/list_inventory');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Vaccines Ledger View</b> </a> </li>
                 <li> <a href="<?php echo site_url('stock/receive_stock');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Receive Stocks</b> </a> </li>
                 <li> <a href="<?php echo site_url('stock/issue_stock');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Issue Stocks</b> </a> </li>
@@ -173,6 +173,8 @@ if ($user_object['user_level']=='1') {?>
     </div><!--\\\\\\\ inner end\\\\\\-->
   </div><!--\\\\\\\ wrapper end\\\\\\-->
 <script src="<?php echo base_url() ?>assets/js/bootstrap.min.js"></script>
+<script src="<?php echo base_url() ?>assets/plugins/datatables/datatables.min.js"></script>                  
+<script src="<?php echo base_url() ?>assets/js/bootstrap.min.js"></script>
 <script src="<?php echo base_url() ?>assets/js/common-script.js"></script>
 <script src="<?php echo base_url() ?>assets/js/jquery.slimscroll.min.js"></script>
 <script src="<?php echo base_url() ?>assets/js/jPushMenu.js"></script> 
@@ -187,9 +189,10 @@ if ($user_object['user_level']=='1') {?>
 <script src="<?php echo base_url() ?>assets/plugins/morris/morris.min.js" type="text/javascript"></script> 
 <script src="<?php echo base_url() ?>assets/plugins/morris/raphael-min.js" type="text/javascript"></script>  
 <script src="<?php echo base_url() ?>assets/plugins/morris/morris-script.js"></script> 
-<script src="<?php echo base_url() ?>assets/plugins/data-tables/jquery.dataTables.min.js"></script>
+
+<script src="<?php echo base_url() ?>assets/js/jPushMenu.js"></script> 
 <script src="<?php echo base_url() ?>assets/plugins/data-tables/DT_bootstrap.js"></script>
 <script src="<?php echo base_url() ?>assets/plugins/demo-slider/demo-slider.js"></script>
-<script src="<?php echo base_url() ?>assets/plugins/knob/jquery.knob.min.js"></script> 
+<script src="<?php echo base_url() ?>assets/plugins/knob/jquery.knob.min.js"></script> > 
 </body>
 </html>
