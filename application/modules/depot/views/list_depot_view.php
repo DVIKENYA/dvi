@@ -8,36 +8,87 @@
   </br>
   </br>
   <?php echo $this->session->flashdata('msg');  ?>
-    <div class="col-lg-12" style="margin-top: 10px;">
-     <div class="table-responsive">
-    <table id="table" class="table table-bordered table-hover table-striped" cellspacing="0" width="100%">
-      <thead>
-      <tr class="button"></tr>
-        <tr>
-          <th>Depot Location</th>
-          
-          <th style="width:250px;">Action</th>
-        </tr>
-      </thead>
-      <tbody>
-      </tbody>
 
-      <tfoot>
-        <tr>
-          <th>Depot Location</th>
-          
-          <th>Action</th>
-        </tr>
-      </tfoot>
-    </table>
-  </div>
+    <div class="col-lg-12 col-sm-12">
+     <div class="panel default blue_title h2">
+        <div class="panel-body">
+        <ul class="nav nav-tabs">
+
+        <li class="active"><a data-toggle="tab" href="#tab1"><b>My Depots</b></a></li>
+        <li><a data-toggle="tab" href="#tab2"><b>Other Depots</b></a></li>
+        </ul>
+        <div class="tab-content">
+        <div id="tab1" class="tab-pane fade in active">
+        <form id="my_depots">
+
+          <div class="table-responsive">
+              <table id="table1" class="table table-bordered table-hover table-striped" cellspacing="0" width="100%">
+                <thead>
+                <tr class="button"></tr>
+                  <tr>
+                    <th>Depot Location</th>
+                    
+                    <th style="width:250px;">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+
+                <tfoot>
+                  <tr>
+                    <th>Depot Location</th>
+                    
+                    <th>Action</th>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+
+        </form>
+        </div>
+        <div id="tab2" class="tab-pane fade">
+        <form id="other_depots">
+        <div class="table-responsive">
+          <table id="table2" class="table table-bordered table-hover table-striped" cellspacing="0" width="100%">
+            <thead>
+            <tr class="button"></tr>
+              <tr>
+                <th >Depot Location</th>
+                
+                <th style="width:250px;">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+
+            <tfoot>
+              <tr>
+                <th>Depot Location</th>
+                
+                <th>Action</th>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        </form>
+    </div>
+
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+
+
+    <div class="col-lg-12" style="margin-top: 10px;">
+     
 
   <script type="text/javascript">
 
-    var save_method; //for save method string
-    var table;
+    var table1;
     $(document).ready(function() {
-      table = $('#table').DataTable({ 
+      table1 = $('#table1').DataTable({ 
         "processing": true, //Feature control the processing indicator.
         "serverSide": true, //Feature control DataTables' server-side processing mode.
         
@@ -57,40 +108,34 @@
 
       });
     });
-   
-  </script>
- <!-- Bootstrap modal -->
-  <div class="modal fade" id="fridge_modal_form" role="dialog">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h3 class="modal-title"></h3>
-      </div>
-      <div class="modal-body form">
-        <form action="#" id="fridge_form" class="form-horizontal">
-          <div class="form-body">
-            
-            <div class="form-group">
-              <label class="control-label col-md-4">Refrigerator</label>
-              <div class="col-md-8">
-                <input name="refrigerator" placeholder="Refrigerator" class="form-control" type="text">
-              </div>
-            </div>
-           
-          </div>
-        </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" id="btnSave" onclick="save()" class="btn btn-primary">Save</button>
-            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-          </div>
-        </div><!-- /.modal-content -->
-      </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-  <!-- End Bootstrap modal -->
+   </script>
 
-<script type="text/javascript">
+     <script type="text/javascript">
+
+    var table2;
+    $(document).ready(function() {
+      table2 = $('#table2').DataTable({ 
+        "processing": true, //Feature control the processing indicator.
+        "serverSide": true, //Feature control DataTables' server-side processing mode.
+        
+        // Load data for the table's content from an Ajax source
+        "ajax": {
+            "url": "<?php echo site_url('depot/action_list')?>",
+            "type": "POST"
+        },
+
+        //Set column definition initialisation properties.
+        "columnDefs": [
+        { 
+          "targets": [ -1 ], //last column
+          "orderable": true, //set not orderable
+        },
+        ],
+
+      });
+    });
+   </script>
+   <script type="text/javascript">
 
                window.setTimeout(function() {
                   $("#alert-message").fadeTo(500, 0).slideUp(500, function(){

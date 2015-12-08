@@ -3,7 +3,7 @@
 $location = array();
 $location[]="Select Location";
   foreach($locations as $row ){
-    $location[$row->id] = $row->location; 
+    $location[$row->location] = $row->location; 
   }
 
 $order = array();
@@ -27,8 +27,8 @@ echo form_open('',$form_attributes);?>
 	  <div class="panel-body">
 	  <b>Issue To</b>
 	    <?php
-        echo form_error('issue_to');
-        echo form_dropdown('issue_to', $location, 'id="issue_to" class="form-control"'); 
+        echo form_error('issued_to');
+        echo form_dropdown('issued_to', $location, 'id="issued_to" class="form-control"'); 
         ?>
 	   </div>
 	</div>
@@ -89,7 +89,7 @@ echo form_open('',$form_attributes);?>
 		                     echo "<option value='".$vaccine['ID']."'>".$vaccine['Vaccine_name']."</option>";
 		                     }?>
                 </select></td>
-            <td><select name="batch_no" class="form-control batch_no" id="batch_no"></td>
+            <td><select name="batch_no" class="form-control batch_no" id="batch_no"></select></td>
             <td><?php $data=array('name' => 'expiry_date','id'=> 'expiry_date','class'=>'form-control expiry_date', 'required'=>'true','readonly'=>''); echo form_input($data);?></td>
             <style type="text/css">
 	            input[id="available_quantity"]{
@@ -213,6 +213,7 @@ echo form_open('',$form_attributes);?>
 			       /* dataType : json,*/
 			        success:function(data, textStatus, jqXHR) 
 			        {
+			        	//console.log(data);
 			        	window.location.replace('<?php echo base_url().'stock/list_inventory'?>');
 			            //data: return data from server
 			        },

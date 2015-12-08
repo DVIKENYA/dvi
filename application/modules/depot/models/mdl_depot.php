@@ -3,7 +3,7 @@
 
 class Mdl_Depot extends CI_Model {
 var $order = array('id' => 'desc');
-var $column = array('id', 'depot_location', 'region_id', 'county_id', 'subcounty_id', 'user_id');
+var $column = array('id', 'depot_location', 'user_id');
 var $fridge_columns = array('m_depot_fridges.id', 'Model', 'Manufacturer', 'temperature_monitor_no', 'main_power_source');
 var $depot_fridges = array('m_depot_fridges.fridge_id',  'm_fridges.Model', 'm_fridges.Manufacturer', 'temperature_monitor_no', 'main_power_source','age');
 
@@ -19,10 +19,32 @@ return $table;
 }
 
 private function _get_datatables_query($user_id){
+$this->db->select($this->column);    
 $this->db->from($this->get_table());
 $this->db->where('user_id', $user_id);
-$this->search_order();
+$i = 0;
+
+foreach ($this->column as $item) 
+{
+	if($_POST['search']['value'])
+		//($i===0) ? $this->db->like($item, $_POST['search']['value']) : $this->db->or_like($item, $_POST['search']['value']);
+		if($i===0) {
+			$this->db->like($item, $_POST['search']['value']) && $this->db->or_like($item, $_POST['search']['value']);
+			$this->db->where('user_id', $user_id);
+		}
+	$column[$i] = $item;
+	$i++;
 }
+
+if(isset($_POST['order']))
+{
+	$this->db->order_by($column[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
+} 
+else if(isset($this->order))
+{
+	$order = $this->order;
+	$this->db->order_by(key($order), $order[key($order)]);
+}}
 
 function getDepot($user_id){
 $this->_get_datatables_query($user_id);
@@ -32,8 +54,8 @@ $query = $this->db->get();
 return $query->result();
 }
 
-function get_fridges_by_id($id){
-$this->_get_fridges_query($id);
+function get_fridges_by_id($user_id, $depot_id){
+$this->_get_fridges_query($user_id,$depot_id);
 if($_POST['length'] != -1)
 $this->db->limit($_POST['length'], $_POST['start']);
 $query = $this->db->get();
@@ -46,12 +68,13 @@ $query = $this->db->get();
 return $query->num_rows();
 }
 
-private function _get_fridges_query($id){
+private function _get_fridges_query($user_id, $depot_id){
 $this->db->select($this->depot_fridges);    
 $this->db->from('m_depot');
 $this->db->join('m_depot_fridges', 'm_depot_fridges.depot_id = m_depot.id');
 $this->db->join('m_fridges', 'm_depot_fridges.fridge_id = m_fridges.id');
-$this->db->where('m_depot_fridges.user_id',$id);
+$this->db->where('m_depot_fridges.user_id',$user_id);
+$this->db->where('m_depot_fridges.depot_id',$depot_id);
 
 $i = 0;
 
@@ -92,31 +115,9 @@ $query = $this->db->get();
 return $query->result();
 }
 
-function search_order()
-{	
-$i = 0;
 
-foreach ($this->column as $item) 
-{
-	if($_POST['search']['value'])
-		($i===0) ? $this->db->like($item, $_POST['search']['value']) : $this->db->or_like($item, $_POST['search']['value']);
-	$column[$i] = $item;
-	$i++;
-}
-
-if(isset($_POST['order']))
-{
-	$this->db->order_by($column[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
-} 
-else if(isset($this->order))
-{
-	$order = $this->order;
-	$this->db->order_by(key($order), $order[key($order)]);
-}
-}
-
-function count_fridges_filtered($id){
-$this->_get_fridges_query($id);
+function count_fridges_filtered($user_id, $depot_id){
+$this->_get_fridges_query($user_id, $depot_id);
 $query = $this->db->get();
 return $query->num_rows();
 }
@@ -200,9 +201,10 @@ $num_rows = $query->num_rows();
 return $num_rows;
 }
 
-function count_fridges($column, $value) {
+function count_fridges($user_id, $depot_id) {
 $table = "m_depot_fridges";
-$this->db->where($column, $value);
+$this->db->where('user_id', $user_id);
+$this->db->where('depot_id', $depot_id);
 $query=$this->db->get($table);
 $num_rows = $query->num_rows();
 return $num_rows;

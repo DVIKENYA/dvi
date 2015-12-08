@@ -1,4 +1,5 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');?>
+<script src="<?php echo base_url() ?>assets/plugins/highcharts/highcharts.js" type="text/javascript"></script>
 <script src="<?php echo base_url() ?>assets/js/xepOnline.jqPlugin.js"></script> 
 
 <div class="row">
@@ -59,7 +60,20 @@
 
 </br>
 
- 
+<div class="row">
+    <div class="block-web">
+        <div class="col-lg-12">
+  
+            <h5 class="content-header text-info">Coverage</h5>
+            </br>
+            <div id="container"></div>
+        
+
+        </div>
+       </div>
+</div>
+
+
 
 <script type="text/javascript">
 $(document).ready(function(){
@@ -147,13 +161,13 @@ function load_linechart(vaccine){
 
 
 <script type="text/javascript">
-
 $(document).ready(function(){
   Morris.Donut({
   element: 'morris-donut-chart',
-  data: <?php echo json_encode($chart)?>,
-  colors:['#54cdb4','#0BA462','#95D7BB'],
-  labelColor: '#333300'
+  data: <?php echo json_encode($wastage)?>,
+  colors:['#54cdb4'],
+  labelColor: '#333300',
+ formatter: function (value, data) { return (value/100) + '%'; }
     });
 });
 </script>
@@ -214,6 +228,34 @@ var morris = Morris.Line({
  });    
 </script>
 
-
+<script type="text/javascript">
+$(function () {
+    $('#container').highcharts({
+        title: {
+            text: 'Coverage of Vaccines',
+            x: -20 //center
+        },
+        subtitle: {
+            text: 'Source: DHIS',
+            x: -20
+        },
+       
+        yAxis: {
+            title: {
+                text: 'Coverage (%)'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        
+        series: [{
+         data: [<?php echo json_encode($coverage)?>]
+      }]
+    });
+});
+    </script>
 
 

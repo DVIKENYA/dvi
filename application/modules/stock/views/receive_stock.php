@@ -2,7 +2,7 @@
 $location = array();
 $location[]="Select Location";
   foreach($locations as $row ){
-    $location[$row->id] = $row->location; 
+    $location[$row->location] = $row->location; 
   }
 
 $order = array();
@@ -113,7 +113,7 @@ echo form_open('',$form_attributes);?>
 </div></div></div>
    <script type="text/javascript">
 
-             $('#date_received').datepicker().datepicker('setDate', new Date());
+             $('#date_received').datepicker({dateFormat: "yy-mm-dd",  maxDate: 0}).datepicker('setDate', null);
              $('#expiry_date').datepicker({dateFormat: "yy-mm-dd",  minDate: 0}).datepicker('setDate', null);
               $('#stock_receive_tbl').delegate( '.add', 'click', function () {
             
@@ -167,6 +167,7 @@ echo form_open('',$form_attributes);?>
        var formURL="<?php echo base_url();?>stock/save_received_stock";
 
        var vaccines = retrieveFormValues_Array('vaccine');
+       var s11 = retrieveFormValues('s11');
        var batch_no = retrieveFormValues_Array('batch_no');
        var expiry_date = retrieveFormValues_Array('expiry_date');
        var quantity_received = retrieveFormValues_Array('quantity_received');
@@ -184,18 +185,18 @@ echo form_open('',$form_attributes);?>
           var get_date_received=date_received;
           var get_received_from=received_from;
           var get_transaction_type=transaction_type;
-
+          var get_s11 = s11;
           $.ajax(
           {
               url : formURL,
               type: "POST",
-              data : {"transaction_type":get_transaction_type,"date_received":get_date_received,"received_from":get_received_from,"vaccine":get_vaccine,"batch_no":get_batch,"expiry_date":get_expiry,"quantity_received":get_quantity_received,"vvm_status":get_vvm_status},
+              data : {"transaction_type":get_transaction_type,"date_received":get_date_received,"received_from":get_received_from, "s11":get_s11, "vaccine":get_vaccine,"batch_no":get_batch,"expiry_date":get_expiry,"quantity_received":get_quantity_received,"vvm_status":get_vvm_status},
              /* dataType : json,*/
             // url : "<?php echo site_url("stock/list_inventory"); ?>";
               success:function(data, textStatus, jqXHR) 
               {
                   //data: return data from server
-                  
+                  //console.log(data);
                   window.location.replace('<?php echo base_url().'stock/list_inventory'?>');
 
 

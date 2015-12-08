@@ -11,9 +11,11 @@ class Facility extends MY_Controller {
             $data['section'] = "Configuration";
             $data['subtitle'] = "List Facility";
             $data['page_title'] = "Facility";
-           $data['user_object'] = $this->get_user_object();
-           $data['main_title'] = $this->get_title();
-           echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);      }
+            $data['user_object'] = $this->get_user_object();
+            $data['main_title'] = $this->get_title();
+            echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);     
+
+            }
          
 
       public function create(){
@@ -36,8 +38,10 @@ class Facility extends MY_Controller {
             $data['section'] = "Configuration";
             $data['subtitle'] = "Add Facility";
             $data['page_title'] = "Facility";
-            echo Modules::run('template/admin', $data);
-
+            $data['user_object'] = $this->get_user_object();
+            $data['main_title'] = $this->get_title();
+            echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);  
+         
       }
 
       function submit(){
@@ -155,8 +159,9 @@ class Facility extends MY_Controller {
           $data['section'] = "Configuration";
           $data['subtitle'] = "Refrigerator";
           $data['page_title'] = "Refrigerator";
-          echo Modules::run('template/admin', $data);
-
+          $data['user_object'] = $this->get_user_object();
+          $data['main_title'] = $this->get_title();
+          echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data); 
       }
 
      
