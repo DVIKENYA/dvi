@@ -133,7 +133,6 @@ class Facility extends MY_Controller {
                   //add html for action
                   
                   $row[] = '  <a class="btn btn-sm btn-primary" href="facility/create/'.$facility->id.'" title="Edit"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
-                              <a class="btn btn-sm btn-danger"  href="facility/delete/'.$facility->id.'" title="Delete"><i class="glyphicon glyphicon-trash"></i> Delete</a>
                               <a class="btn btn-sm btn-info"  href="facility/list_fridge/'.$facility->id.'" title="Add"><i class="glyphicon glyphicon-plus"></i> Fridge</a>';
             
                   $data[] = $row;

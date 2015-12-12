@@ -25,7 +25,7 @@
           <?php
           echo form_label('Email Address','email');
           echo form_error('email');
-          echo form_input(['name' => 'email', 'id' => 'email', 'pattern'=>"[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$", 'value' => $email, 'class'=> 'form-control']);
+          echo form_input(['name' => 'email', 'id' => 'email', 'pattern'=>"[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$", 'value' => $email, 'placeholder'=>'e.g. someone@example.com', 'class'=> 'form-control']);
           ?>
         </div>
 
@@ -33,7 +33,7 @@
           <?php
           echo form_label('Phone Number','phone');
           echo form_error('phone');
-          echo form_input(['name' => 'phone', 'pattern'=>"[07]{2}[0-9]{8}",'id' => 'phone',  'value' => $phone, 'class'=> 'form-control','placeholder' => 'Start with 07....']);
+          echo form_input(['name' => 'phone', 'pattern'=>"[07]{2}[0-9]{8}",'id' => 'phone',  'value' => $phone, 'class'=> 'form-control','placeholder' => 'e.g. 0712345678']);
           ?>
         </div>
         

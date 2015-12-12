@@ -28,14 +28,14 @@ echo form_open('',$form_attributes);?>
 	  <b>Issue To</b>
 	    <?php
         echo form_error('issued_to');
-        echo form_dropdown('issued_to', $location, 'id="issued_to" class="form-control"'); 
+        echo form_dropdown('issued_to', $location, 'id="issued_to" required="true" class="form-control"'); 
         ?>
 	   </div>
 	</div>
 	<div class="col-lg-3">
 	  <div class="panel-body">
 	  <b>S11 #</b>
-	    <?php $data=array('name' => 's11','id'=> 's11','class'=>'form-control'); echo form_input($data);?>
+	    <?php $data=array('name' => 's11','required'=>'true', 'id'=> 's11','class'=>'form-control'); echo form_input($data);?>
 	    </div>
 	</div>
     
@@ -89,7 +89,7 @@ echo form_open('',$form_attributes);?>
 		                     echo "<option value='".$vaccine['ID']."'>".$vaccine['Vaccine_name']."</option>";
 		                     }?>
                 </select></td>
-            <td><select name="batch_no" class="form-control batch_no" id="batch_no"></select></td>
+            <td><select name="batch_no" class="form-control batch_no" id="batch_no" required="true"></select></td>
             <td><?php $data=array('name' => 'expiry_date','id'=> 'expiry_date','class'=>'form-control expiry_date', 'required'=>'true','readonly'=>''); echo form_input($data);?></td>
             <style type="text/css">
 	            input[id="available_quantity"]{

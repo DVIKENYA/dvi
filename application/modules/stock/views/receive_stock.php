@@ -22,7 +22,7 @@ echo form_open('',$form_attributes);?>
 <div class="row">
 <div class="col-lg-3">
   <div class="panel-body">
-  <b>Received From</b>
+  <b>Origin</b>
    <?php
         echo form_error('received_from');
         echo form_dropdown('received_from', $location, 'id="received_from" class="form-control"'); 
@@ -32,13 +32,13 @@ echo form_open('',$form_attributes);?>
 <div class="col-lg-3">
   <div class="panel-body">
   <b>S11 Code</b>
-    <?php $data=array('name' => 's11','id'=> 's11','class'=>'form-control'); echo form_input($data);?>
+    <?php $data=array('name' => 's11','id'=> 's11','required'=>'true', 'class'=>'form-control'); echo form_input($data);?>
     </div>
 </div>
 <div class="col-lg-3">
   <div class="panel-body">
   <b>Date Received</b>
-   <?php $data=array('name' => 'date_received','id'=>'date_received','class'=>'form-control'); echo form_input($data);?>
+   <?php $data=array('name' => 'date_received','required'=>'true', 'id'=>'date_received','class'=>'form-control'); echo form_input($data);?>
     </div>
 </div> 
 
@@ -47,7 +47,7 @@ echo form_open('',$form_attributes);?>
   <b>Order Number</b>
    <?php
           echo form_error('order');
-          echo form_dropdown('order', $order, 'id="order" class="form-control"'); 
+          echo form_dropdown('order', $order, 'id="order" required="true" class="form-control"'); 
           ?>
     </div>
 </div> 
@@ -85,12 +85,12 @@ echo form_open('',$form_attributes);?>
                 </select></td>
 
 				
-             		<td><?php $data=array('name' => 'batch_no','id'=>'batch_no','class'=>'batch_no form-control'); echo form_input($data);?></td>
-             		<td><?php $data=array('name' => 'expiry_date','id'=> 'expiry_date','class'=>'form-control expiry_date', 'type'=>'date'); echo form_input($data);?></td>
-             		<td><?php $data=array('name' => 'quantity_received','id'=> 'quantity_received','class'=>'quantity_received form-control'); echo form_input($data);?></td>
+             		<td><?php $data=array('name' => 'batch_no','required'=>'true', 'id'=>'batch_no','class'=>'batch_no form-control'); echo form_input($data);?></td>
+             		<td><?php $data=array('name' => 'expiry_date','required'=>'true','id'=>'expiry_date','class'=>'form-control expiry_date', 'type'=>'date'); echo form_input($data);?></td>
+             		<td><?php $data=array('name' => 'quantity_received','required'=>'true','type'=>'Number','min'=>'0', 'id'=> 'quantity_received','class'=>'quantity_received form-control'); echo form_input($data);?></td>
              		
                 <td>
-                <select name="vvm_status" class=" form-control vvm_status " id="vvm_status" name="vvm_status">
+                <select name="vvm_status" class=" form-control vvm_status " id="vvm_status" required="true" name="vvm_status">
                 <option value=""> --Select One-- </option>
                     <option value="1">Stage 1</option>
                     <option value="2">Stage 2</option>

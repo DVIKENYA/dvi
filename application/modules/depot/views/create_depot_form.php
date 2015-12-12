@@ -22,7 +22,8 @@
         // echo form_dropdown('depot_location', $location, 'id="depot_location" class="form-control"'); 
         ?>
       </div>
-     
+      
+         
       <div class="col-lg-6 col-lg-offset-4">
       <button class="btn btn-lg btn-danger btn-block" name="submit" type="submit">Create Depot</button>
       </div>

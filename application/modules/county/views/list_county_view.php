@@ -14,10 +14,9 @@
                                 <thead>
                                     <tr>
                                         <th>County Name</th>
-                                        <th>County Headquarter</th>
-										<th>Population</th>
-										<th>Population One</th>
-										<th>Women Population</th>
+										                    <th>Population</th>
+										                    <th>Population One</th>
+										                    <th>Women Population</th>
                                         <td align="center"><b>Edit</b></td>
                                         <td align="center"><b>Delete</b></td>
                                     </tr>
@@ -30,10 +29,9 @@
                                       ?>
                                     <tr>
                                         <td><?php echo $row->county_name ?></td>
-                                        <td><?php echo $row->county_headquarter ?></td>
-                    					<td><?php echo $row->population ?></td>
-										<td><?php echo $row->population_one ?></td>
-										<td><?php echo $row->population_women ?></td>
+                    					           <td><?php echo $row->population ?></td>
+										                    <td><?php echo $row->population_one ?></td>
+										                    <td><?php echo $row->population_women ?></td>
 										
 										<td align="center"><a href="<?php echo $edit_url ?>"><i class="fa fa-edit"></i></a></td>
                                         <td align="center"><a href="<?php echo $delete_url ?>"><i class="fa fa-trash-o"></i></td>

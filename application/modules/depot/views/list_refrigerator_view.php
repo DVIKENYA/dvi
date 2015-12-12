@@ -18,7 +18,7 @@
           <th>Manufacturer</th>
           <th>Temp. Monitor No.</th>
           <th>Main Power Source</th>
-          <th>Age</th>
+          <th>Year of Installation</th>
           <th style="width:250px;">Action</th>
         </tr>
       </thead>
@@ -31,7 +31,7 @@
           <th>Manufacturer</th>
           <th>Temp. Monitor No.</th>
           <th>Main Power Source</th>
-          <th>Age</th>
+          <th>Year of Installation</th>
           <th>Action</th>
         </tr>
       </tfoot>
