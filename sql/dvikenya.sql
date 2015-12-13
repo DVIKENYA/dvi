@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.4.7
+-- version 4.5.1
 -- http://www.phpmyadmin.net
 --
--- Host: localhost:3306
--- Generation Time: Dec 08, 2015 at 03:37 AM
--- Server version: 5.6.25
--- PHP Version: 5.5.27
+-- Host: 127.0.0.1
+-- Generation Time: Dec 13, 2015 at 03:15 AM
+-- Server version: 10.1.9-MariaDB
+-- PHP Version: 5.6.15
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -14,7 +14,7 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
 
 --
 -- Database: `dvikenya`
@@ -24,8 +24,7 @@ DELIMITER $$
 --
 -- Procedures
 --
-CREATE DEFINER=`root`@`localhost` PROCEDURE `calc_orders`(
-IN $station_id VARCHAR(255),
+CREATE DEFINER=`root`@`localhost` PROCEDURE `calc_orders` (IN `$` STATION_ID, ``, ``, ``)  ,
 IN $station_level VARCHAR(255)
 )
 begin
@@ -60,13 +59,11 @@ END IF;
 END IF;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `GetAllVaccines`()
-BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetAllVaccines` ()  BEGIN
 SELECT Vaccine_name,ID FROM m_vaccines;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `GetStoreBalance`(IN `$selected_vaccine` VARCHAR(255), IN `$user_id` VARCHAR(10))
-BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetStoreBalance` (IN `$selected_vaccine` VARCHAR(255), IN `$user_id` VARCHAR(10))  BEGIN
 SELECT mv.Vaccine_name,SUM(sb.stock_balance) AS balance
 FROM m_stock_movement ms 
 INNER JOIN m_stock_balance sb ON sb.batch_number=ms.batch_number 
@@ -77,8 +74,7 @@ ORDER BY ms.batch_number,ms.transaction_type;
 
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `GetVaccinesLedger`(IN `$selected_vaccine` VARCHAR(255))
-BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetVaccinesLedger` (IN `$selected_vaccine` VARCHAR(255))  BEGIN
 SELECT mv.Vaccine_name, ms.transaction_date, ms.quantity_in,ms.quantity_out,sb.stock_balance, ms.batch_number,ms.expiry_date,mvvm.name 
 FROM m_stock_movement ms 
 INNER JOIN m_stock_balance sb ON sb.batch_number=ms.batch_number 
@@ -90,9 +86,7 @@ ORDER BY ms.batch_number,ms.transaction_type;
 
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_orders`(
-IN $station VARCHAR(255)
-)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_orders` (IN `$` STATION, ``, ``, ``)  )
 begin
 if ($station= '1') then
 SELECT l.date_created  FROM m_order l;
@@ -120,9 +114,7 @@ END IF;
 END IF;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_order_values`(
-IN $selected_vaccine VARCHAR(255)
-)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_order_values` (IN `$` SELECTED_VACCINE, ``, ``, ``)  )
 begin
 SELECT sum(msb.`stock_balance`) AS stock_balance,
 	   min(msb.`expiry_date`) as first_expiry_date, mv.Doses_required, mv.Wastage_factor 
@@ -131,8 +123,7 @@ SELECT sum(msb.`stock_balance`) AS stock_balance,
        WHERE msb.vaccine_id=$selected_vaccine;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_placed_orders`(
-IN $station VARCHAR(255),
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_placed_orders` (IN `$` STATION, ``, ``, ``)  ,
 IN $station_id VARCHAR(255)
 )
 begin
@@ -158,8 +149,13 @@ END IF;
 END IF;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_prepare_order_values`(
-IN $station VARCHAR(255),
+CREATE DEFINER=`root`@`localhost` PROCEDURE `setphysicalcount` (IN `p_vaccine_id` INT(11), IN `p_batch_number` VARCHAR(20), IN `p_date_of_count` DATE, IN `p_available_quantity` INT, IN `p_physical_count` INT, IN `p_discrepancy` INT)  BEGIN
+ SET p_discrepancy = p_available_quantity - p_physical_count;
+	INSERT INTO m_physical_count(vaccine_id,batch_number, date_of_count,available_quantity,physical_count,discrepancy)
+               VALUES(p_vaccine_id,p_batch_number,p_date_of_count,p_available_quantity,p_physical_count,p_discrepancy);
+               END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_prepare_order_values` (IN `$` STATION, ``, ``, ``)  ,
 IN $selected_vaccine VARCHAR(255),
 IN $station_id VARCHAR(255)
 )
@@ -195,8 +191,7 @@ END IF;
 END IF;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_submitted_orders`(
-IN $station VARCHAR(255),
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_submitted_orders` (IN `$` STATION, ``, ``, ``)  ,
 IN $station_id VARCHAR(255)
 )
 begin
@@ -222,22 +217,7 @@ END IF;
 END IF;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `setphysicalcount`(
-IN p_vaccine_id  INT(11) ,
-IN p_batch_number VARCHAR(20) ,
-IN p_date_of_count DATE,
-IN p_available_quantity INT,
-IN p_physical_count INT,
-IN p_discrepancy INT
-)
-BEGIN
- SET p_discrepancy = p_available_quantity - p_physical_count;
-	INSERT INTO m_physical_count(vaccine_id,batch_number, date_of_count,available_quantity,physical_count,discrepancy)
-               VALUES(p_vaccine_id,p_batch_number,p_date_of_count,p_available_quantity,p_physical_count,p_discrepancy);
-               END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `test_orders`(
-IN $station_id VARCHAR(255),
+CREATE DEFINER=`root`@`localhost` PROCEDURE `test_orders` (IN `$` STATION_ID, ``, ``, ``)  ,
 IN $station_level VARCHAR(255)
 )
 begin
@@ -275,15 +255,13 @@ END$$
 --
 -- Functions
 --
-CREATE DEFINER=`root`@`localhost` FUNCTION `calc_max_stock`(period_stock FLOAT) RETURNS decimal(9,2)
-BEGIN
+CREATE DEFINER=`root`@`localhost` FUNCTION `calc_max_stock` (`period_stock` FLOAT) RETURNS DECIMAL(9,2) BEGIN
   DECLARE max_stock DECIMAL(9,2);
   SET max_stock= 1.25 * period_stock;
   RETURN max_stock;
 END$$
 
-CREATE DEFINER=`root`@`localhost` FUNCTION `calc_min_stock`(period_stock FLOAT) RETURNS decimal(9,2)
-BEGIN
+CREATE DEFINER=`root`@`localhost` FUNCTION `calc_min_stock` (`period_stock` FLOAT) RETURNS DECIMAL(9,2) BEGIN
   DECLARE min_stock DECIMAL(9,2);
   SET min_stock= 0.25 * period_stock;
   RETURN min_stock;
@@ -296,7 +274,7 @@ DELIMITER ;
 --
 -- Stand-in structure for view `calc_county_orders`
 --
-CREATE TABLE IF NOT EXISTS `calc_county_orders` (
+CREATE TABLE `calc_county_orders` (
 `ID` int(11)
 ,`Vaccine_name` varchar(45)
 ,`first_expiry_date` date
@@ -313,7 +291,7 @@ CREATE TABLE IF NOT EXISTS `calc_county_orders` (
 --
 -- Stand-in structure for view `calc_facility_order`
 --
-CREATE TABLE IF NOT EXISTS `calc_facility_order` (
+CREATE TABLE `calc_facility_order` (
 `ID` int(11)
 ,`Vaccine_name` varchar(45)
 ,`first_expiry_date` date
@@ -330,7 +308,7 @@ CREATE TABLE IF NOT EXISTS `calc_facility_order` (
 --
 -- Stand-in structure for view `calc_subcounty_orders`
 --
-CREATE TABLE IF NOT EXISTS `calc_subcounty_orders` (
+CREATE TABLE `calc_subcounty_orders` (
 `ID` int(11)
 ,`Vaccine_name` varchar(45)
 ,`first_expiry_date` date
@@ -347,7 +325,7 @@ CREATE TABLE IF NOT EXISTS `calc_subcounty_orders` (
 --
 -- Stand-in structure for view `children_immunized`
 --
-CREATE TABLE IF NOT EXISTS `children_immunized` (
+CREATE TABLE `children_immunized` (
 `Months` varchar(14)
 ,`Above2yrs` double
 ,`Above1yr` double
@@ -359,11 +337,11 @@ CREATE TABLE IF NOT EXISTS `children_immunized` (
 -- Table structure for table `ci_sessions`
 --
 
-CREATE TABLE IF NOT EXISTS `ci_sessions` (
+CREATE TABLE `ci_sessions` (
   `session_id` varchar(40) NOT NULL DEFAULT '0',
   `ip_address` varchar(45) NOT NULL DEFAULT '0',
   `user_agent` varchar(120) NOT NULL,
-  `last_activity` int(10) unsigned NOT NULL DEFAULT '0',
+  `last_activity` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `user_data` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -372,14 +350,14 @@ CREATE TABLE IF NOT EXISTS `ci_sessions` (
 --
 
 INSERT INTO `ci_sessions` (`session_id`, `ip_address`, `user_agent`, `last_activity`, `user_data`) VALUES
-('25bb05d4060add5ce0b76616247ad65a', '::1', 'Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101 Firefox/38.0 Iceweasel/38.4.0', 1449574161, 'a:2:{s:9:"user_data";s:0:"";s:9:"logged_in";a:6:{s:7:"user_id";s:1:"2";s:10:"user_fname";s:5:"Admin";s:10:"user_lname";s:8:"Dvikenya";s:10:"user_group";s:1:"1";s:10:"user_level";s:1:"1";s:9:"logged_in";b:1;}}');
+('d965161d29f261c4cdd418d7a2cc911c', '::1', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.80 Safari/537.36', 1449972367, 'a:2:{s:9:"user_data";s:0:"";s:9:"logged_in";a:6:{s:7:"user_id";s:1:"2";s:10:"user_fname";s:5:"Admin";s:10:"user_lname";s:8:"Dvikenya";s:10:"user_group";s:1:"1";s:10:"user_level";s:1:"1";s:9:"logged_in";b:1;}}');
 
 -- --------------------------------------------------------
 
 --
 -- Stand-in structure for view `county_userbase_view`
 --
-CREATE TABLE IF NOT EXISTS `county_userbase_view` (
+CREATE TABLE `county_userbase_view` (
 `id` int(14)
 ,`county_name` varchar(255)
 ,`user_id` int(11)
@@ -393,7 +371,7 @@ CREATE TABLE IF NOT EXISTS `county_userbase_view` (
 --
 -- Stand-in structure for view `coverage_all`
 --
-CREATE TABLE IF NOT EXISTS `coverage_all` (
+CREATE TABLE `coverage_all` (
 `periodname` varchar(6)
 ,`bcgdosesadm` varchar(3)
 ,`dpt2dosesadministered` varchar(3)
@@ -420,7 +398,7 @@ CREATE TABLE IF NOT EXISTS `coverage_all` (
 -- Table structure for table `dhis_usage`
 --
 
-CREATE TABLE IF NOT EXISTS `dhis_usage` (
+CREATE TABLE `dhis_usage` (
   `id` int(14) NOT NULL,
   `periodid` int(6) DEFAULT NULL,
   `periodname` varchar(14) DEFAULT NULL,
@@ -484,7 +462,7 @@ CREATE TABLE IF NOT EXISTS `dhis_usage` (
   `yellow fever in stoc` varchar(3) DEFAULT NULL,
   `yellow fever receive` varchar(10) DEFAULT NULL,
   `yellow fever remaini` varchar(10) DEFAULT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=637 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `dhis_usage`
@@ -1138,7 +1116,7 @@ INSERT INTO `dhis_usage` (`id`, `periodid`, `periodname`, `periodcode`, `periodd
 -- Table structure for table `dvi_dump`
 --
 
-CREATE TABLE IF NOT EXISTS `dvi_dump` (
+CREATE TABLE `dvi_dump` (
   `id` int(11) NOT NULL,
   `periodid` int(6) DEFAULT NULL,
   `periodname` varchar(6) DEFAULT NULL,
@@ -1202,7 +1180,7 @@ CREATE TABLE IF NOT EXISTS `dvi_dump` (
   `yellowfeverinstoc` varchar(3) DEFAULT NULL,
   `yellowfeverreceive` varchar(3) DEFAULT NULL,
   `yellowfeverremaini` varchar(3) DEFAULT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=2569 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `dvi_dump`
@@ -3802,7 +3780,7 @@ INSERT INTO `dvi_dump` (`id`, `periodid`, `periodname`, `periodcode`, `perioddes
 --
 -- Stand-in structure for view `facility_userbase_view`
 --
-CREATE TABLE IF NOT EXISTS `facility_userbase_view` (
+CREATE TABLE `facility_userbase_view` (
 `id` int(11)
 ,`facility_name` text
 ,`user_id` int(11)
@@ -3819,7 +3797,7 @@ CREATE TABLE IF NOT EXISTS `facility_userbase_view` (
 -- Table structure for table `m_county`
 --
 
-CREATE TABLE IF NOT EXISTS `m_county` (
+CREATE TABLE `m_county` (
   `id` int(14) NOT NULL,
   `county_name` varchar(255) NOT NULL,
   `region_id` varchar(255) NOT NULL,
@@ -3902,7 +3880,7 @@ INSERT INTO `m_county` (`id`, `county_name`, `region_id`, `county_headquarter`, 
 -- Table structure for table `m_depot`
 --
 
-CREATE TABLE IF NOT EXISTS `m_depot` (
+CREATE TABLE `m_depot` (
   `id` int(14) NOT NULL,
   `depot_location` varchar(255) NOT NULL,
   `region_id` varchar(255) NOT NULL,
@@ -3910,7 +3888,7 @@ CREATE TABLE IF NOT EXISTS `m_depot` (
   `subcounty_id` varchar(255) NOT NULL,
   `depot_level` int(11) NOT NULL,
   `user_id` int(11) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_depot`
@@ -3927,7 +3905,7 @@ INSERT INTO `m_depot` (`id`, `depot_location`, `region_id`, `county_id`, `subcou
 -- Table structure for table `m_depot_fridges`
 --
 
-CREATE TABLE IF NOT EXISTS `m_depot_fridges` (
+CREATE TABLE `m_depot_fridges` (
   `id` int(10) NOT NULL,
   `fridge_id` int(11) NOT NULL,
   `temperature_monitor_no` int(11) NOT NULL,
@@ -3937,17 +3915,24 @@ CREATE TABLE IF NOT EXISTS `m_depot_fridges` (
   `date_added` date NOT NULL,
   `station_level` int(10) NOT NULL,
   `station_id` varchar(100) NOT NULL,
-  `depot_id` int(11) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=latin1;
+  `depot_id` int(11) NOT NULL,
+  `refrigerator_status` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_depot_fridges`
 --
 
-INSERT INTO `m_depot_fridges` (`id`, `fridge_id`, `temperature_monitor_no`, `main_power_source`, `age`, `user_id`, `date_added`, `station_level`, `station_id`, `depot_id`) VALUES
-(52, 2, 10, 'Electricity', 1, 2, '2015-11-23', 1, 'KENYA', 3),
-(53, 0, 0, '', 0, 14, '2015-11-23', 3, 'Baringo County', 6),
-(54, 2, 11, 'Electricity', 1, 2, '2015-11-24', 1, 'KENYA', 3);
+INSERT INTO `m_depot_fridges` (`id`, `fridge_id`, `temperature_monitor_no`, `main_power_source`, `age`, `user_id`, `date_added`, `station_level`, `station_id`, `depot_id`, `refrigerator_status`) VALUES
+(52, 2, 10, 'Electricity', 1, 2, '2015-11-23', 1, 'KENYA', 3, ''),
+(53, 0, 0, '', 0, 14, '2015-11-23', 3, 'Baringo County', 6, ''),
+(54, 2, 11, 'Electricity', 1, 2, '2015-11-24', 1, 'KENYA', 3, ''),
+(55, 3, 456, 'Gasoline', 2015, 2, '2015-12-13', 1, 'KENYA', 3, 'Functional'),
+(56, 4, 44, '', 2015, 2, '2015-12-13', 1, 'KENYA', 3, 'Functional'),
+(57, 2, 100, 'Solar', 2016, 2, '2015-12-13', 1, 'KENYA', 3, 'Functional'),
+(58, 2, 555, 'Electricity', 2015, 2, '2015-12-13', 1, 'KENYA', 3, 'Functional'),
+(59, 2, 65, 'Electricity', 2010, 2, '2015-12-13', 1, 'KENYA', 3, 'Functional'),
+(60, 2, 55, 'Solar', 1996, 2, '2015-12-13', 1, 'KENYA', 3, 'Awaiting Repair');
 
 -- --------------------------------------------------------
 
@@ -3955,7 +3940,7 @@ INSERT INTO `m_depot_fridges` (`id`, `fridge_id`, `temperature_monitor_no`, `mai
 -- Table structure for table `m_facility`
 --
 
-CREATE TABLE IF NOT EXISTS `m_facility` (
+CREATE TABLE `m_facility` (
   `id` int(11) NOT NULL,
   `facility_name` text NOT NULL,
   `type` varchar(100) NOT NULL,
@@ -3981,7 +3966,7 @@ CREATE TABLE IF NOT EXISTS `m_facility` (
   `cold_box` int(11) DEFAULT NULL,
   `vaccine_carrier` int(11) DEFAULT NULL,
   `status` varchar(100) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=9758 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_facility`
@@ -13777,7 +13762,7 @@ INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mf
 -- Table structure for table `m_facility_fridges`
 --
 
-CREATE TABLE IF NOT EXISTS `m_facility_fridges` (
+CREATE TABLE `m_facility_fridges` (
   `id` int(11) NOT NULL,
   `facility_id` int(11) NOT NULL,
   `refrigerator_id` int(11) NOT NULL,
@@ -13785,7 +13770,7 @@ CREATE TABLE IF NOT EXISTS `m_facility_fridges` (
   `main_power_source` varchar(32) NOT NULL,
   `backup_power_source` varchar(32) NOT NULL,
   `refrigerator_age` int(11) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `m_facility_fridges`
@@ -13798,7 +13783,10 @@ INSERT INTO `m_facility_fridges` (`id`, `facility_id`, `refrigerator_id`, `tempe
 (7, 2, 12, 50, 'Electricity', '', 10),
 (8, 2, 5, 45, 'Electricity', '', 10),
 (9, 2, 0, 0, '', '', 0),
-(10, 2, 0, 0, '', '', 0);
+(10, 2, 0, 0, '', '', 0),
+(11, 2, 0, 0, '', '', 0),
+(12, 2, 0, 0, '', '', 7),
+(13, 2, 0, 0, '', '', 8);
 
 -- --------------------------------------------------------
 
@@ -13806,7 +13794,7 @@ INSERT INTO `m_facility_fridges` (`id`, `facility_id`, `refrigerator_id`, `tempe
 -- Table structure for table `m_fridges`
 --
 
-CREATE TABLE IF NOT EXISTS `m_fridges` (
+CREATE TABLE `m_fridges` (
   `id` int(11) NOT NULL,
   `Model` varchar(10) NOT NULL,
   `Manufacturer` varchar(10) NOT NULL,
@@ -13893,11 +13881,11 @@ INSERT INTO `m_fridges` (`id`, `Model`, `Manufacturer`, `Technology Type`, `Vacc
 -- Table structure for table `m_group`
 --
 
-CREATE TABLE IF NOT EXISTS `m_group` (
+CREATE TABLE `m_group` (
   `id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
   `description` varchar(50) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_group`
@@ -13917,7 +13905,7 @@ INSERT INTO `m_group` (`id`, `name`, `description`) VALUES
 -- Table structure for table `m_inventory`
 --
 
-CREATE TABLE IF NOT EXISTS `m_inventory` (
+CREATE TABLE `m_inventory` (
   `id` int(11) NOT NULL,
   `Vaccine_name` varchar(30) NOT NULL,
   `max_stock` int(11) NOT NULL,
@@ -13931,7 +13919,7 @@ CREATE TABLE IF NOT EXISTS `m_inventory` (
 -- Table structure for table `m_order`
 --
 
-CREATE TABLE IF NOT EXISTS `m_order` (
+CREATE TABLE `m_order` (
   `order_id` int(11) NOT NULL,
   `order_by` varchar(100) NOT NULL,
   `date_created` date NOT NULL,
@@ -13939,7 +13927,7 @@ CREATE TABLE IF NOT EXISTS `m_order` (
   `station_id` varchar(100) NOT NULL,
   `order_destination` varchar(10) NOT NULL,
   `status` int(11) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_order`
@@ -13958,7 +13946,7 @@ INSERT INTO `m_order` (`order_id`, `order_by`, `date_created`, `station_level`, 
 -- Table structure for table `m_physical_count`
 --
 
-CREATE TABLE IF NOT EXISTS `m_physical_count` (
+CREATE TABLE `m_physical_count` (
   `id` int(11) NOT NULL,
   `vaccine_id` int(11) NOT NULL,
   `batch_number` varchar(20) NOT NULL,
@@ -13972,8 +13960,7 @@ CREATE TABLE IF NOT EXISTS `m_physical_count` (
 -- Triggers `m_physical_count`
 --
 DELIMITER $$
-CREATE TRIGGER `new_physical_count` AFTER INSERT ON `m_physical_count`
- FOR EACH ROW begin
+CREATE TRIGGER `new_physical_count` AFTER INSERT ON `m_physical_count` FOR EACH ROW begin
 UPDATE m_stock_movement
 SET physical_count= new.physical_count
 WHERE vaccine_id = new.vaccine_id AND batch_number=new.batch_number;
@@ -13991,14 +13978,14 @@ DELIMITER ;
 -- Table structure for table `m_region`
 --
 
-CREATE TABLE IF NOT EXISTS `m_region` (
+CREATE TABLE `m_region` (
   `id` int(11) NOT NULL,
   `region_name` varchar(100) NOT NULL,
   `region_headquarter` varchar(100) NOT NULL,
   `region_manager` varchar(255) NOT NULL,
   `region_manager_phone` int(10) NOT NULL,
   `region_manager_email` varchar(255) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_region`
@@ -14020,7 +14007,7 @@ INSERT INTO `m_region` (`id`, `region_name`, `region_headquarter`, `region_manag
 -- Table structure for table `m_stock_balance`
 --
 
-CREATE TABLE IF NOT EXISTS `m_stock_balance` (
+CREATE TABLE `m_stock_balance` (
   `id` int(11) NOT NULL,
   `vaccine_id` int(11) NOT NULL,
   `batch_number` varchar(11) NOT NULL,
@@ -14031,14 +14018,18 @@ CREATE TABLE IF NOT EXISTS `m_stock_balance` (
   `user_id` varchar(30) NOT NULL,
   `station_level` int(10) NOT NULL,
   `station_id` varchar(30) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_stock_balance`
 --
 
 INSERT INTO `m_stock_balance` (`id`, `vaccine_id`, `batch_number`, `expiry_date`, `stock_balance`, `last_update`, `vvm_status`, `user_id`, `station_level`, `station_id`) VALUES
-(1, 11, '00001', '2016-06-08', 9000, '2015-12-07', '1', '2', 1, 'KENYA');
+(1, 11, '00001', '2016-06-08', 8000, '2015-12-07', '1', '2', 1, 'KENYA'),
+(2, 0, '', '0000-00-00', 0, '0000-00-00', '0', '2', 1, 'KENYA'),
+(3, 0, '', '0000-00-00', -8, '2015-12-09', '0', '2', 1, 'KENYA'),
+(4, 0, 'plkm', '2015-12-12', 10, '2015-12-07', '0', '2', 1, 'KENYA'),
+(5, 0, 'hgf', '2015-12-12', 78, '2015-12-08', '1', '2', 1, 'KENYA');
 
 -- --------------------------------------------------------
 
@@ -14046,7 +14037,7 @@ INSERT INTO `m_stock_balance` (`id`, `vaccine_id`, `batch_number`, `expiry_date`
 -- Table structure for table `m_stock_movement`
 --
 
-CREATE TABLE IF NOT EXISTS `m_stock_movement` (
+CREATE TABLE `m_stock_movement` (
   `stock_id` int(11) NOT NULL,
   `vaccine_id` int(11) DEFAULT NULL,
   `batch_number` varchar(11) DEFAULT NULL,
@@ -14065,7 +14056,7 @@ CREATE TABLE IF NOT EXISTS `m_stock_movement` (
   `user_id` varchar(30) DEFAULT NULL,
   `station_level` int(11) NOT NULL,
   `station_id` varchar(30) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_stock_movement`
@@ -14073,14 +14064,20 @@ CREATE TABLE IF NOT EXISTS `m_stock_movement` (
 
 INSERT INTO `m_stock_movement` (`stock_id`, `vaccine_id`, `batch_number`, `expiry_date`, `transaction_date`, `transaction_type`, `s11`, `source`, `destination`, `quantity_in`, `quantity_out`, `physical_count`, `disparity_reason`, `VVM_status`, `order_number`, `user_id`, `station_level`, `station_id`) VALUES
 (1, 11, '00001', '2016-06-08', '2015-12-07', 1, 'Y8F8SD', 'Nairobi', 'KENYA', 10000, NULL, 9000, NULL, 1, NULL, '2', 1, 'KENYA'),
-(2, 11, '00001', '2016-06-08', '2015-12-06', 2, 'J45SKL', 'KENYA', 'Nairobi', NULL, 1000, 9000, NULL, 0, NULL, '2', 1, 'KENYA');
+(2, 11, '00001', '2016-06-08', '2015-12-06', 2, 'J45SKL', 'KENYA', 'Nairobi', NULL, 1000, 9000, NULL, 0, NULL, '2', 1, 'KENYA'),
+(3, 0, '', '0000-00-00', '0000-00-00', 1, '', '0', 'KENYA', 0, NULL, NULL, NULL, 0, NULL, '2', 1, 'KENYA'),
+(4, 11, '0', '0000-00-00', '2015-12-08', 2, '', 'KENYA', '0', NULL, 0, NULL, NULL, 0, NULL, '2', 1, 'KENYA'),
+(5, 11, '00001', '2016-06-08', '2015-12-10', 2, 'llll', 'KENYA', '0', NULL, 1000, NULL, NULL, 0, NULL, '2', 1, 'KENYA'),
+(6, 11, '0', '0000-00-00', '2015-12-08', 2, 'pol', 'KENYA', '0', NULL, 41, NULL, NULL, 0, NULL, '2', 1, 'KENYA'),
+(7, 0, '', '0000-00-00', '2015-12-09', 1, 'oo', '0', 'KENYA', -8, NULL, NULL, NULL, 0, NULL, '2', 1, 'KENYA'),
+(8, 0, 'plkm', '2015-12-12', '2015-12-07', 1, 'pol', '0', 'KENYA', 10, NULL, NULL, NULL, 0, NULL, '2', 1, 'KENYA'),
+(9, 0, 'hgf', '2015-12-12', '2015-12-08', 1, 'jhytr', '0', 'KENYA', 78, NULL, NULL, NULL, 1, NULL, '2', 1, 'KENYA');
 
 --
 -- Triggers `m_stock_movement`
 --
 DELIMITER $$
-CREATE TRIGGER `new_stock_balance` AFTER INSERT ON `m_stock_movement`
- FOR EACH ROW begin
+CREATE TRIGGER `new_stock_balance` AFTER INSERT ON `m_stock_movement` FOR EACH ROW begin
  IF (new.transaction_type = 1) THEN 
 INSERT INTO m_stock_balance (vaccine_id, batch_number, expiry_date, stock_balance,last_update,vvm_status,user_id,station_level,station_id)
 Values (new.vaccine_id,new.batch_number,new.expiry_date,new.quantity_in,new.transaction_date,new.vvm_status,new.user_id,new.station_level,new.station_id);
@@ -14103,7 +14100,7 @@ DELIMITER ;
 -- Table structure for table `m_subcounty`
 --
 
-CREATE TABLE IF NOT EXISTS `m_subcounty` (
+CREATE TABLE `m_subcounty` (
   `id` int(11) NOT NULL,
   `subcounty_name` varchar(255) NOT NULL,
   `county_id` int(14) NOT NULL,
@@ -14446,10 +14443,10 @@ INSERT INTO `m_subcounty` (`id`, `subcounty_name`, `county_id`, `population`, `p
 -- Table structure for table `m_transaction_type`
 --
 
-CREATE TABLE IF NOT EXISTS `m_transaction_type` (
+CREATE TABLE `m_transaction_type` (
   `id` int(11) NOT NULL,
   `transaction_type` varchar(20) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_transaction_type`
@@ -14466,7 +14463,7 @@ INSERT INTO `m_transaction_type` (`id`, `transaction_type`) VALUES
 -- Table structure for table `m_uploads`
 --
 
-CREATE TABLE IF NOT EXISTS `m_uploads` (
+CREATE TABLE `m_uploads` (
   `id` int(11) NOT NULL,
   `file_name` varchar(200) NOT NULL,
   `raw_name` varchar(200) NOT NULL,
@@ -14476,7 +14473,7 @@ CREATE TABLE IF NOT EXISTS `m_uploads` (
   `published` varchar(50) NOT NULL,
   `purpose` varchar(250) NOT NULL,
   `owner` varchar(50) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_uploads`
@@ -14492,7 +14489,7 @@ INSERT INTO `m_uploads` (`id`, `file_name`, `raw_name`, `file_type`, `full_path`
 -- Table structure for table `m_users`
 --
 
-CREATE TABLE IF NOT EXISTS `m_users` (
+CREATE TABLE `m_users` (
   `id` int(11) NOT NULL,
   `f_name` varchar(50) NOT NULL,
   `l_name` varchar(50) NOT NULL,
@@ -14502,7 +14499,7 @@ CREATE TABLE IF NOT EXISTS `m_users` (
   `password` varchar(255) NOT NULL,
   `user_group` int(12) NOT NULL,
   `user_level` int(11) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_users`
@@ -14525,7 +14522,7 @@ INSERT INTO `m_users` (`id`, `f_name`, `l_name`, `username`, `phone`, `email`, `
 -- Table structure for table `m_vaccines`
 --
 
-CREATE TABLE IF NOT EXISTS `m_vaccines` (
+CREATE TABLE `m_vaccines` (
   `ID` int(11) NOT NULL,
   `Vaccine_name` varchar(45) DEFAULT NULL,
   `Doses_required` int(15) NOT NULL,
@@ -14540,7 +14537,7 @@ CREATE TABLE IF NOT EXISTS `m_vaccines` (
   `Diluents_pck_vol` decimal(14,1) NOT NULL,
   `Vaccine_price_vial` decimal(14,2) NOT NULL,
   `Vaccine_price_dose` decimal(14,2) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_vaccines`
@@ -14558,10 +14555,10 @@ INSERT INTO `m_vaccines` (`ID`, `Vaccine_name`, `Doses_required`, `Wastage_facto
 -- Table structure for table `m_vvm_status`
 --
 
-CREATE TABLE IF NOT EXISTS `m_vvm_status` (
+CREATE TABLE `m_vvm_status` (
   `id` int(11) NOT NULL,
   `name` varchar(10) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_vvm_status`
@@ -14578,7 +14575,7 @@ INSERT INTO `m_vvm_status` (`id`, `name`) VALUES
 --
 -- Stand-in structure for view `m_wastage`
 --
-CREATE TABLE IF NOT EXISTS `m_wastage` (
+CREATE TABLE `m_wastage` (
 `BCG` double
 ,`DPT1` double
 ,`DPT2` double
@@ -14602,7 +14599,7 @@ CREATE TABLE IF NOT EXISTS `m_wastage` (
 --
 -- Stand-in structure for view `new_wastage`
 --
-CREATE TABLE IF NOT EXISTS `new_wastage` (
+CREATE TABLE `new_wastage` (
 `UnitID` varchar(11)
 ,`BCG` double
 ,`DPT` double
@@ -14621,7 +14618,7 @@ CREATE TABLE IF NOT EXISTS `new_wastage` (
 --
 -- Stand-in structure for view `new_wastage_unitdid`
 --
-CREATE TABLE IF NOT EXISTS `new_wastage_unitdid` (
+CREATE TABLE `new_wastage_unitdid` (
 `UnitId` varchar(11)
 ,`bcgwastage` double
 ,`dptwastage` double
@@ -14637,7 +14634,7 @@ CREATE TABLE IF NOT EXISTS `new_wastage_unitdid` (
 -- Table structure for table `order_item`
 --
 
-CREATE TABLE IF NOT EXISTS `order_item` (
+CREATE TABLE `order_item` (
   `vaccine_id` int(14) NOT NULL,
   `stock_on_hand` int(14) NOT NULL,
   `min_stock` int(14) NOT NULL,
@@ -14672,7 +14669,7 @@ INSERT INTO `order_item` (`vaccine_id`, `stock_on_hand`, `min_stock`, `max_stock
 --
 -- Stand-in structure for view `region_userbase_view`
 --
-CREATE TABLE IF NOT EXISTS `region_userbase_view` (
+CREATE TABLE `region_userbase_view` (
 `id` int(11)
 ,`region_name` varchar(100)
 ,`user_id` int(11)
@@ -14685,7 +14682,7 @@ CREATE TABLE IF NOT EXISTS `region_userbase_view` (
 --
 -- Stand-in structure for view `subcounty_userbase`
 --
-CREATE TABLE IF NOT EXISTS `subcounty_userbase` (
+CREATE TABLE `subcounty_userbase` (
 `id` int(11)
 ,`subcounty_name` varchar(255)
 ,`user_id` int(11)
@@ -14700,7 +14697,7 @@ CREATE TABLE IF NOT EXISTS `subcounty_userbase` (
 --
 -- Stand-in structure for view `total_doses_adm`
 --
-CREATE TABLE IF NOT EXISTS `total_doses_adm` (
+CREATE TABLE `total_doses_adm` (
 `periodid` int(6)
 ,`periodname` varchar(14)
 ,`BCG` double
@@ -14723,7 +14720,7 @@ CREATE TABLE IF NOT EXISTS `total_doses_adm` (
 --
 -- Stand-in structure for view `total_wastage`
 --
-CREATE TABLE IF NOT EXISTS `total_wastage` (
+CREATE TABLE `total_wastage` (
 `periodid` int(6)
 ,`periodname` varchar(6)
 ,`bcgwastage` double
@@ -14744,7 +14741,7 @@ CREATE TABLE IF NOT EXISTS `total_wastage` (
 -- Table structure for table `user_base`
 --
 
-CREATE TABLE IF NOT EXISTS `user_base` (
+CREATE TABLE `user_base` (
   `id` int(11) NOT NULL,
   `user_id` int(11) DEFAULT NULL,
   `national` int(11) DEFAULT NULL,
@@ -14752,7 +14749,7 @@ CREATE TABLE IF NOT EXISTS `user_base` (
   `county` int(11) DEFAULT NULL,
   `subcounty` int(11) DEFAULT NULL,
   `facility` int(11) DEFAULT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `user_base`
@@ -14780,11 +14777,11 @@ INSERT INTO `user_base` (`id`, `user_id`, `national`, `region`, `county`, `subco
 -- Table structure for table `user_levels`
 --
 
-CREATE TABLE IF NOT EXISTS `user_levels` (
+CREATE TABLE `user_levels` (
   `id` int(11) NOT NULL,
   `name` varchar(20) NOT NULL,
   `description` varchar(50) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `user_levels`
@@ -14802,7 +14799,7 @@ INSERT INTO `user_levels` (`id`, `name`, `description`) VALUES
 --
 -- Stand-in structure for view `vaccine_movement`
 --
-CREATE TABLE IF NOT EXISTS `vaccine_movement` (
+CREATE TABLE `vaccine_movement` (
 `id` int(11)
 ,`name` varchar(45)
 ,`batch_number` varchar(11)
@@ -14821,7 +14818,7 @@ CREATE TABLE IF NOT EXISTS `vaccine_movement` (
 --
 -- Stand-in structure for view `vaccine_stockbalance`
 --
-CREATE TABLE IF NOT EXISTS `vaccine_stockbalance` (
+CREATE TABLE `vaccine_stockbalance` (
 `id` int(11)
 ,`Vaccine` varchar(45)
 ,`Stock_Balance` int(11)
@@ -14833,7 +14830,7 @@ CREATE TABLE IF NOT EXISTS `vaccine_stockbalance` (
 --
 -- Stand-in structure for view `view_county_orders`
 --
-CREATE TABLE IF NOT EXISTS `view_county_orders` (
+CREATE TABLE `view_county_orders` (
 `order_by` varchar(100)
 ,`order_id` int(11)
 ,`date_created` date
@@ -14849,7 +14846,7 @@ CREATE TABLE IF NOT EXISTS `view_county_orders` (
 --
 -- Stand-in structure for view `view_coverage_county`
 --
-CREATE TABLE IF NOT EXISTS `view_coverage_county` (
+CREATE TABLE `view_coverage_county` (
 `periodname` varchar(6)
 ,`bcgdosesadm` varchar(3)
 ,`dpt2dosesadministered` varchar(3)
@@ -14873,7 +14870,7 @@ CREATE TABLE IF NOT EXISTS `view_coverage_county` (
 --
 -- Stand-in structure for view `view_coverage_subcounty`
 --
-CREATE TABLE IF NOT EXISTS `view_coverage_subcounty` (
+CREATE TABLE `view_coverage_subcounty` (
 `periodname` varchar(6)
 ,`bcgdosesadm` varchar(3)
 ,`dpt2dosesadministered` varchar(3)
@@ -14898,7 +14895,7 @@ CREATE TABLE IF NOT EXISTS `view_coverage_subcounty` (
 --
 -- Stand-in structure for view `view_facility_orders`
 --
-CREATE TABLE IF NOT EXISTS `view_facility_orders` (
+CREATE TABLE `view_facility_orders` (
 `order_by` varchar(100)
 ,`order_id` int(11)
 ,`date_created` date
@@ -14914,7 +14911,7 @@ CREATE TABLE IF NOT EXISTS `view_facility_orders` (
 --
 -- Stand-in structure for view `view_region_orders`
 --
-CREATE TABLE IF NOT EXISTS `view_region_orders` (
+CREATE TABLE `view_region_orders` (
 `order_by` varchar(100)
 ,`order_id` int(11)
 ,`date_created` date
@@ -14928,7 +14925,7 @@ CREATE TABLE IF NOT EXISTS `view_region_orders` (
 --
 -- Stand-in structure for view `view_subcountycov_calculated`
 --
-CREATE TABLE IF NOT EXISTS `view_subcountycov_calculated` (
+CREATE TABLE `view_subcountycov_calculated` (
 `periodname` varchar(6)
 ,`county_id` int(32)
 ,`subcounty_id` int(32)
@@ -14952,7 +14949,7 @@ CREATE TABLE IF NOT EXISTS `view_subcountycov_calculated` (
 --
 -- Stand-in structure for view `view_subcounty_orders`
 --
-CREATE TABLE IF NOT EXISTS `view_subcounty_orders` (
+CREATE TABLE `view_subcounty_orders` (
 `order_by` varchar(100)
 ,`order_id` int(11)
 ,`date_created` date
@@ -14967,7 +14964,7 @@ CREATE TABLE IF NOT EXISTS `view_subcounty_orders` (
 --
 -- Stand-in structure for view `view_wastage_unitid`
 --
-CREATE TABLE IF NOT EXISTS `view_wastage_unitid` (
+CREATE TABLE `view_wastage_unitid` (
 `UnitId` varchar(11)
 ,`bcgwastage` double
 ,`dptwastage` double
@@ -14992,7 +14989,7 @@ CREATE TABLE IF NOT EXISTS `view_wastage_unitid` (
 --
 -- Stand-in structure for view `wastage_view_userlevel`
 --
-CREATE TABLE IF NOT EXISTS `wastage_view_userlevel` (
+CREATE TABLE `wastage_view_userlevel` (
 `UnitId` varchar(11)
 ,`bcgwastage` double
 ,`dptwastage` double
@@ -15017,7 +15014,7 @@ CREATE TABLE IF NOT EXISTS `wastage_view_userlevel` (
 --
 DROP TABLE IF EXISTS `calc_county_orders`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `calc_county_orders` AS select `mv`.`ID` AS `ID`,`mv`.`Vaccine_name` AS `Vaccine_name`,min(`msb`.`expiry_date`) AS `first_expiry_date`,`mv`.`Doses_required` AS `Doses_required`,`mv`.`Wastage_factor` AS `Wastage_factor`,sum(`msb`.`stock_balance`) AS `stock_on_hand`,(((`mv`.`Wastage_factor` * `mv`.`Doses_required`) * `ms`.`population_one`) / 12) AS `period_stock`,`ms`.`county_name` AS `county_name`,`ms`.`population_one` AS `population_one` from ((`m_vaccines` `mv` left join `m_stock_balance` `msb` on((`mv`.`ID` = `msb`.`vaccine_id`))) left join `m_county` `ms` on((`ms`.`county_name` = `msb`.`station_id`))) where (`msb`.`station_level` = 3) group by `mv`.`Vaccine_name` order by `mv`.`ID`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `calc_county_orders`  AS  select `mv`.`ID` AS `ID`,`mv`.`Vaccine_name` AS `Vaccine_name`,min(`msb`.`expiry_date`) AS `first_expiry_date`,`mv`.`Doses_required` AS `Doses_required`,`mv`.`Wastage_factor` AS `Wastage_factor`,sum(`msb`.`stock_balance`) AS `stock_on_hand`,(((`mv`.`Wastage_factor` * `mv`.`Doses_required`) * `ms`.`population_one`) / 12) AS `period_stock`,`ms`.`county_name` AS `county_name`,`ms`.`population_one` AS `population_one` from ((`m_vaccines` `mv` left join `m_stock_balance` `msb` on((`mv`.`ID` = `msb`.`vaccine_id`))) left join `m_county` `ms` on((`ms`.`county_name` = `msb`.`station_id`))) where (`msb`.`station_level` = 3) group by `mv`.`Vaccine_name` order by `mv`.`ID` ;
 
 -- --------------------------------------------------------
 
@@ -15026,7 +15023,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `calc_facility_order`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `calc_facility_order` AS select `mv`.`ID` AS `ID`,`mv`.`Vaccine_name` AS `Vaccine_name`,min(`msb`.`expiry_date`) AS `first_expiry_date`,`mv`.`Doses_required` AS `Doses_required`,`mv`.`Wastage_factor` AS `Wastage_factor`,sum(`msb`.`stock_balance`) AS `stock_on_hand`,(((`mv`.`Wastage_factor` * `mv`.`Doses_required`) * `ms`.`population_one`) / 12) AS `period_stock`,`ms`.`facility_name` AS `facility_name`,`ms`.`population_one` AS `population_one` from ((`m_vaccines` `mv` left join `m_stock_balance` `msb` on((`mv`.`ID` = `msb`.`vaccine_id`))) left join `m_facility` `ms` on((`ms`.`facility_name` = `msb`.`station_id`))) where (`msb`.`station_level` = 5) group by `mv`.`Vaccine_name` order by `mv`.`ID`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `calc_facility_order`  AS  select `mv`.`ID` AS `ID`,`mv`.`Vaccine_name` AS `Vaccine_name`,min(`msb`.`expiry_date`) AS `first_expiry_date`,`mv`.`Doses_required` AS `Doses_required`,`mv`.`Wastage_factor` AS `Wastage_factor`,sum(`msb`.`stock_balance`) AS `stock_on_hand`,(((`mv`.`Wastage_factor` * `mv`.`Doses_required`) * `ms`.`population_one`) / 12) AS `period_stock`,`ms`.`facility_name` AS `facility_name`,`ms`.`population_one` AS `population_one` from ((`m_vaccines` `mv` left join `m_stock_balance` `msb` on((`mv`.`ID` = `msb`.`vaccine_id`))) left join `m_facility` `ms` on((`ms`.`facility_name` = `msb`.`station_id`))) where (`msb`.`station_level` = 5) group by `mv`.`Vaccine_name` order by `mv`.`ID` ;
 
 -- --------------------------------------------------------
 
@@ -15035,7 +15032,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `calc_subcounty_orders`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `calc_subcounty_orders` AS select `mv`.`ID` AS `ID`,`mv`.`Vaccine_name` AS `Vaccine_name`,min(`msb`.`expiry_date`) AS `first_expiry_date`,`mv`.`Doses_required` AS `Doses_required`,`mv`.`Wastage_factor` AS `Wastage_factor`,sum(`msb`.`stock_balance`) AS `stock_on_hand`,(((`mv`.`Wastage_factor` * `mv`.`Doses_required`) * `ms`.`population_one`) / 12) AS `period_stock`,`ms`.`subcounty_name` AS `subcounty_name`,`ms`.`population_one` AS `population_one` from ((`m_vaccines` `mv` left join `m_stock_balance` `msb` on((`mv`.`ID` = `msb`.`vaccine_id`))) left join `m_subcounty` `ms` on((`ms`.`subcounty_name` = `msb`.`station_id`))) where (`msb`.`station_level` = 4) group by `mv`.`Vaccine_name` order by `mv`.`ID`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `calc_subcounty_orders`  AS  select `mv`.`ID` AS `ID`,`mv`.`Vaccine_name` AS `Vaccine_name`,min(`msb`.`expiry_date`) AS `first_expiry_date`,`mv`.`Doses_required` AS `Doses_required`,`mv`.`Wastage_factor` AS `Wastage_factor`,sum(`msb`.`stock_balance`) AS `stock_on_hand`,(((`mv`.`Wastage_factor` * `mv`.`Doses_required`) * `ms`.`population_one`) / 12) AS `period_stock`,`ms`.`subcounty_name` AS `subcounty_name`,`ms`.`population_one` AS `population_one` from ((`m_vaccines` `mv` left join `m_stock_balance` `msb` on((`mv`.`ID` = `msb`.`vaccine_id`))) left join `m_subcounty` `ms` on((`ms`.`subcounty_name` = `msb`.`station_id`))) where (`msb`.`station_level` = 4) group by `mv`.`Vaccine_name` order by `mv`.`ID` ;
 
 -- --------------------------------------------------------
 
@@ -15044,7 +15041,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `children_immunized`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `children_immunized` AS select distinct `dhis_usage`.`periodname` AS `Months`,sum(`dhis_usage`.`fullyimmunizedchildficabove2years`) AS `Above2yrs`,sum(`dhis_usage`.`fullyimmunizedchildrenficunder1ye`) AS `Above1yr` from `dhis_usage` group by `dhis_usage`.`periodname`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `children_immunized`  AS  select distinct `dhis_usage`.`periodname` AS `Months`,sum(`dhis_usage`.`fullyimmunizedchildficabove2years`) AS `Above2yrs`,sum(`dhis_usage`.`fullyimmunizedchildrenficunder1ye`) AS `Above1yr` from `dhis_usage` group by `dhis_usage`.`periodname` ;
 
 -- --------------------------------------------------------
 
@@ -15053,7 +15050,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `county_userbase_view`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `county_userbase_view` AS select `m_county`.`id` AS `id`,`m_county`.`county_name` AS `county_name`,`user_base`.`user_id` AS `user_id`,`user_base`.`national` AS `national`,`user_base`.`region` AS `region`,`user_base`.`county` AS `county` from (`m_county` join `user_base` on((`user_base`.`county` = `m_county`.`id`)));
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `county_userbase_view`  AS  select `m_county`.`id` AS `id`,`m_county`.`county_name` AS `county_name`,`user_base`.`user_id` AS `user_id`,`user_base`.`national` AS `national`,`user_base`.`region` AS `region`,`user_base`.`county` AS `county` from (`m_county` join `user_base` on((`user_base`.`county` = `m_county`.`id`))) ;
 
 -- --------------------------------------------------------
 
@@ -15062,7 +15059,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `coverage_all`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `coverage_all` AS select `dvi_dump`.`periodname` AS `periodname`,`dvi_dump`.`bcgdosesadm` AS `bcgdosesadm`,`dvi_dump`.`dpt2dosesadministered` AS `dpt2dosesadministered`,`dvi_dump`.`dpt3dosesadm` AS `dpt3dosesadm`,`dvi_dump`.`measlesdosesadm` AS `measlesdosesadm`,`dvi_dump`.`opvbirthdosesadm` AS `opvbirthdosesadm`,`dvi_dump`.`opv1dosesadm` AS `opv1dosesadm`,`dvi_dump`.`opv2dosesadm` AS `opv2dosesadm`,`dvi_dump`.`opv3dosesadm` AS `opv3dosesadm`,`dvi_dump`.`pneumococal1adm` AS `pneumococal1adm`,`dvi_dump`.`pneumococal2adm` AS `pneumococal2adm`,`dvi_dump`.`pneumococal3administered` AS `pneumococal3administered`,`dvi_dump`.`rotavirus1dosesadministered` AS `rotavirus1dosesadministered`,`dvi_dump`.`rotavirus2dosesadministered` AS `rotavirus2dosesadministered`,`m_facility`.`id` AS `facility_id`,`m_facility`.`county_id` AS `county_id`,`m_facility`.`subcounty_id` AS `subcounty_id`,`m_subcounty`.`population_one` AS `population_one` from (((`dvi_dump` join `m_facility` on((`dvi_dump`.`organisationunitid` = convert(`m_facility`.`dhis_id` using utf8)))) join `m_county` on((`m_county`.`id` = `m_facility`.`county_id`))) join `m_subcounty` on((`m_subcounty`.`id` = `m_facility`.`subcounty_id`)));
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `coverage_all`  AS  select `dvi_dump`.`periodname` AS `periodname`,`dvi_dump`.`bcgdosesadm` AS `bcgdosesadm`,`dvi_dump`.`dpt2dosesadministered` AS `dpt2dosesadministered`,`dvi_dump`.`dpt3dosesadm` AS `dpt3dosesadm`,`dvi_dump`.`measlesdosesadm` AS `measlesdosesadm`,`dvi_dump`.`opvbirthdosesadm` AS `opvbirthdosesadm`,`dvi_dump`.`opv1dosesadm` AS `opv1dosesadm`,`dvi_dump`.`opv2dosesadm` AS `opv2dosesadm`,`dvi_dump`.`opv3dosesadm` AS `opv3dosesadm`,`dvi_dump`.`pneumococal1adm` AS `pneumococal1adm`,`dvi_dump`.`pneumococal2adm` AS `pneumococal2adm`,`dvi_dump`.`pneumococal3administered` AS `pneumococal3administered`,`dvi_dump`.`rotavirus1dosesadministered` AS `rotavirus1dosesadministered`,`dvi_dump`.`rotavirus2dosesadministered` AS `rotavirus2dosesadministered`,`m_facility`.`id` AS `facility_id`,`m_facility`.`county_id` AS `county_id`,`m_facility`.`subcounty_id` AS `subcounty_id`,`m_subcounty`.`population_one` AS `population_one` from (((`dvi_dump` join `m_facility` on((`dvi_dump`.`organisationunitid` = convert(`m_facility`.`dhis_id` using utf8)))) join `m_county` on((`m_county`.`id` = `m_facility`.`county_id`))) join `m_subcounty` on((`m_subcounty`.`id` = `m_facility`.`subcounty_id`))) ;
 
 -- --------------------------------------------------------
 
@@ -15071,7 +15068,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `facility_userbase_view`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `facility_userbase_view` AS select `m_facility`.`id` AS `id`,`m_facility`.`facility_name` AS `facility_name`,`user_base`.`user_id` AS `user_id`,`user_base`.`national` AS `national`,`user_base`.`region` AS `region`,`user_base`.`county` AS `county`,`user_base`.`subcounty` AS `subcounty`,`user_base`.`facility` AS `facility` from (`m_facility` join `user_base` on((`m_facility`.`id` = `user_base`.`facility`)));
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `facility_userbase_view`  AS  select `m_facility`.`id` AS `id`,`m_facility`.`facility_name` AS `facility_name`,`user_base`.`user_id` AS `user_id`,`user_base`.`national` AS `national`,`user_base`.`region` AS `region`,`user_base`.`county` AS `county`,`user_base`.`subcounty` AS `subcounty`,`user_base`.`facility` AS `facility` from (`m_facility` join `user_base` on((`m_facility`.`id` = `user_base`.`facility`))) ;
 
 -- --------------------------------------------------------
 
@@ -15080,7 +15077,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `m_wastage`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `m_wastage` AS select `v`.`BCG` AS `BCG`,`v`.`DPT1` AS `DPT1`,`v`.`DPT2` AS `DPT2`,`v`.`Measles` AS `Measles`,`v`.`OPV` AS `OPV`,`v`.`OPV1` AS `OPV1`,`v`.`OPV2` AS `OPV2`,`v`.`OPV3` AS `OPV3`,`v`.`PCV1` AS `PCV1`,`v`.`PCV2` AS `PCV2`,`v`.`PCV3` AS `PCV3`,`v`.`ROTA` AS `ROTA`,`v`.`ROTA2` AS `ROTA2`,`s`.`population` AS `TotalPopulation`,`s`.`population_one` AS `PopulationOne`,`s`.`population_women` AS `PopulationWomen` from (`total_doses_adm` `v` join `m_county` `s`) where (`s`.`id` = 12);
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `m_wastage`  AS  select `v`.`BCG` AS `BCG`,`v`.`DPT1` AS `DPT1`,`v`.`DPT2` AS `DPT2`,`v`.`Measles` AS `Measles`,`v`.`OPV` AS `OPV`,`v`.`OPV1` AS `OPV1`,`v`.`OPV2` AS `OPV2`,`v`.`OPV3` AS `OPV3`,`v`.`PCV1` AS `PCV1`,`v`.`PCV2` AS `PCV2`,`v`.`PCV3` AS `PCV3`,`v`.`ROTA` AS `ROTA`,`v`.`ROTA2` AS `ROTA2`,`s`.`population` AS `TotalPopulation`,`s`.`population_one` AS `PopulationOne`,`s`.`population_women` AS `PopulationWomen` from (`total_doses_adm` `v` join `m_county` `s`) where (`s`.`id` = 12) ;
 
 -- --------------------------------------------------------
 
@@ -15089,7 +15086,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `new_wastage`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `new_wastage` AS select `v`.`UnitId` AS `UnitID`,`v`.`bcgwastage` AS `BCG`,`v`.`dptwastage` AS `DPT`,`v`.`measleswastage` AS `MEASLES`,`v`.`opvwastage` AS `OPV`,`v`.`pcvwastage` AS `PCV`,`v`.`yellowfevwastage` AS `YELLOWFEVER`,`s`.`id` AS `facility`,`s`.`region_id` AS `region`,`s`.`county_id` AS `county`,`s`.`subcounty_id` AS `subcounty` from (`new_wastage_unitdid` `v` join `m_facility` `s`) where (`v`.`UnitId` = convert(`s`.`dhis_id` using utf8));
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `new_wastage`  AS  select `v`.`UnitId` AS `UnitID`,`v`.`bcgwastage` AS `BCG`,`v`.`dptwastage` AS `DPT`,`v`.`measleswastage` AS `MEASLES`,`v`.`opvwastage` AS `OPV`,`v`.`pcvwastage` AS `PCV`,`v`.`yellowfevwastage` AS `YELLOWFEVER`,`s`.`id` AS `facility`,`s`.`region_id` AS `region`,`s`.`county_id` AS `county`,`s`.`subcounty_id` AS `subcounty` from (`new_wastage_unitdid` `v` join `m_facility` `s`) where (convert(`v`.`UnitId` using utf8) = convert(`s`.`dhis_id` using utf8)) ;
 
 -- --------------------------------------------------------
 
@@ -15098,7 +15095,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `new_wastage_unitdid`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `new_wastage_unitdid` AS select `view_wastage_unitid`.`UnitId` AS `UnitId`,((`view_wastage_unitid`.`bcgwastage` - `view_wastage_unitid`.`bcgdosesadm`) / `view_wastage_unitid`.`bcgwastage`) AS `bcgwastage`,((`view_wastage_unitid`.`dptwastage` - `view_wastage_unitid`.`dpt1dosesadm`) / `view_wastage_unitid`.`dptwastage`) AS `dptwastage`,((`view_wastage_unitid`.`measleswastage` - `view_wastage_unitid`.`bcgdosesadm`) / `view_wastage_unitid`.`measleswastage`) AS `measleswastage`,((`view_wastage_unitid`.`opvwastage` - `view_wastage_unitid`.`opv1dosesadm`) / `view_wastage_unitid`.`opvwastage`) AS `opvwastage`,((`view_wastage_unitid`.`pcvwastage` - `view_wastage_unitid`.`pneumococal1adm`) / `view_wastage_unitid`.`pcvwastage`) AS `pcvwastage`,((`view_wastage_unitid`.`yellowfevwastage` - `view_wastage_unitid`.`yellowfeveradm`) / `view_wastage_unitid`.`yellowfevwastage`) AS `yellowfevwastage` from `view_wastage_unitid`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `new_wastage_unitdid`  AS  select `view_wastage_unitid`.`UnitId` AS `UnitId`,((`view_wastage_unitid`.`bcgwastage` - `view_wastage_unitid`.`bcgdosesadm`) / `view_wastage_unitid`.`bcgwastage`) AS `bcgwastage`,((`view_wastage_unitid`.`dptwastage` - `view_wastage_unitid`.`dpt1dosesadm`) / `view_wastage_unitid`.`dptwastage`) AS `dptwastage`,((`view_wastage_unitid`.`measleswastage` - `view_wastage_unitid`.`bcgdosesadm`) / `view_wastage_unitid`.`measleswastage`) AS `measleswastage`,((`view_wastage_unitid`.`opvwastage` - `view_wastage_unitid`.`opv1dosesadm`) / `view_wastage_unitid`.`opvwastage`) AS `opvwastage`,((`view_wastage_unitid`.`pcvwastage` - `view_wastage_unitid`.`pneumococal1adm`) / `view_wastage_unitid`.`pcvwastage`) AS `pcvwastage`,((`view_wastage_unitid`.`yellowfevwastage` - `view_wastage_unitid`.`yellowfeveradm`) / `view_wastage_unitid`.`yellowfevwastage`) AS `yellowfevwastage` from `view_wastage_unitid` ;
 
 -- --------------------------------------------------------
 
@@ -15107,7 +15104,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `region_userbase_view`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `region_userbase_view` AS select `m_region`.`id` AS `id`,`m_region`.`region_name` AS `region_name`,`user_base`.`user_id` AS `user_id`,`user_base`.`national` AS `national`,`user_base`.`region` AS `region` from (`m_region` join `user_base` on((`user_base`.`region` = `m_region`.`id`)));
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `region_userbase_view`  AS  select `m_region`.`id` AS `id`,`m_region`.`region_name` AS `region_name`,`user_base`.`user_id` AS `user_id`,`user_base`.`national` AS `national`,`user_base`.`region` AS `region` from (`m_region` join `user_base` on((`user_base`.`region` = `m_region`.`id`))) ;
 
 -- --------------------------------------------------------
 
@@ -15116,7 +15113,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `subcounty_userbase`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `subcounty_userbase` AS select `m_subcounty`.`id` AS `id`,`m_subcounty`.`subcounty_name` AS `subcounty_name`,`user_base`.`user_id` AS `user_id`,`user_base`.`national` AS `national`,`user_base`.`region` AS `region`,`user_base`.`county` AS `county`,`user_base`.`subcounty` AS `subcounty` from (`m_subcounty` join `user_base` on((`m_subcounty`.`id` = `user_base`.`subcounty`)));
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `subcounty_userbase`  AS  select `m_subcounty`.`id` AS `id`,`m_subcounty`.`subcounty_name` AS `subcounty_name`,`user_base`.`user_id` AS `user_id`,`user_base`.`national` AS `national`,`user_base`.`region` AS `region`,`user_base`.`county` AS `county`,`user_base`.`subcounty` AS `subcounty` from (`m_subcounty` join `user_base` on((`m_subcounty`.`id` = `user_base`.`subcounty`))) ;
 
 -- --------------------------------------------------------
 
@@ -15125,7 +15122,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `total_doses_adm`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `total_doses_adm` AS select distinct `dhis_usage`.`periodid` AS `periodid`,`dhis_usage`.`periodname` AS `periodname`,sum(`dhis_usage`.`bcgdoseadm`) AS `BCG`,sum(`dhis_usage`.`dpt1dosesadm`) AS `DPT1`,sum(`dhis_usage`.`dpt3dosesadm`) AS `DPT2`,sum(`dhis_usage`.`measlesdosesadm`) AS `Measles`,sum(`dhis_usage`.`opvbirthdosesadm`) AS `OPV`,sum(`dhis_usage`.`opv1dosesadm`) AS `OPV1`,sum(`dhis_usage`.`opv2dosesadm`) AS `OPV2`,sum(`dhis_usage`.`opv3dosesadm`) AS `OPV3`,sum(`dhis_usage`.`pneumococal1adm`) AS `PCV1`,sum(`dhis_usage`.`pneumococal2adm`) AS `PCV2`,sum(`dhis_usage`.`pneumococal3administered`) AS `PCV3`,sum(`dhis_usage`.`rotavirus1dosesadministered`) AS `ROTA`,sum(`dhis_usage`.`rotavirus2dosesadministered`) AS `ROTA2` from `dhis_usage` group by `dhis_usage`.`periodid`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `total_doses_adm`  AS  select distinct `dhis_usage`.`periodid` AS `periodid`,`dhis_usage`.`periodname` AS `periodname`,sum(`dhis_usage`.`bcgdoseadm`) AS `BCG`,sum(`dhis_usage`.`dpt1dosesadm`) AS `DPT1`,sum(`dhis_usage`.`dpt3dosesadm`) AS `DPT2`,sum(`dhis_usage`.`measlesdosesadm`) AS `Measles`,sum(`dhis_usage`.`opvbirthdosesadm`) AS `OPV`,sum(`dhis_usage`.`opv1dosesadm`) AS `OPV1`,sum(`dhis_usage`.`opv2dosesadm`) AS `OPV2`,sum(`dhis_usage`.`opv3dosesadm`) AS `OPV3`,sum(`dhis_usage`.`pneumococal1adm`) AS `PCV1`,sum(`dhis_usage`.`pneumococal2adm`) AS `PCV2`,sum(`dhis_usage`.`pneumococal3administered`) AS `PCV3`,sum(`dhis_usage`.`rotavirus1dosesadministered`) AS `ROTA`,sum(`dhis_usage`.`rotavirus2dosesadministered`) AS `ROTA2` from `dhis_usage` group by `dhis_usage`.`periodid` ;
 
 -- --------------------------------------------------------
 
@@ -15134,7 +15131,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `total_wastage`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `total_wastage` AS select distinct `dvi_dump`.`periodid` AS `periodid`,`dvi_dump`.`periodname` AS `periodname`,sum(((`dvi_dump`.`bcgdosesinstock` + `dvi_dump`.`bcgdosesreceived`) - `dvi_dump`.`bcgdosesremaining`)) AS `bcgwastage`,sum(((`dvi_dump`.`dpt+hib+hepbinstock` + `dvi_dump`.`dpt+hib+hepbreceived`) - `dvi_dump`.`dpt+hib+hepbremaining`)) AS `dptwastage`,sum(((`dvi_dump`.`measlesinstock` + `dvi_dump`.`measlesreceived`) - `dvi_dump`.`measlesremaining`)) AS `measleswastage`,sum((`dvi_dump`.`opvdosesinstock` - `dvi_dump`.`opvdosesremaining`)) AS `opvwastage`,sum(((`dvi_dump`.`pneumococalinstock` + `dvi_dump`.`pneumococalreceived`) - `dvi_dump`.`pneumococalremainin`)) AS `pcvwastage`,sum((`dvi_dump`.`ttdoseinstock` - `dvi_dump`.`ttdoseremaining`)) AS `ttwastage`,sum((`dvi_dump`.`vitamina100stock` - `dvi_dump`.`vitamina100remain`)) AS `vita1wastage`,sum((`dvi_dump`.`vitamina200stock` - `dvi_dump`.`vitamina200remain`)) AS `vita2wastage`,sum((`dvi_dump`.`vitamina50stock` - `dvi_dump`.`vitamina50remaini`)) AS `vita5wastage`,sum(((`dvi_dump`.`yellowfeverinstoc` + `dvi_dump`.`yellowfeverreceive`) - `dvi_dump`.`yellowfeverremaini`)) AS `yellowfevwastage` from `dvi_dump` group by `dvi_dump`.`periodname`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `total_wastage`  AS  select distinct `dvi_dump`.`periodid` AS `periodid`,`dvi_dump`.`periodname` AS `periodname`,sum(((`dvi_dump`.`bcgdosesinstock` + `dvi_dump`.`bcgdosesreceived`) - `dvi_dump`.`bcgdosesremaining`)) AS `bcgwastage`,sum(((`dvi_dump`.`dpt+hib+hepbinstock` + `dvi_dump`.`dpt+hib+hepbreceived`) - `dvi_dump`.`dpt+hib+hepbremaining`)) AS `dptwastage`,sum(((`dvi_dump`.`measlesinstock` + `dvi_dump`.`measlesreceived`) - `dvi_dump`.`measlesremaining`)) AS `measleswastage`,sum((`dvi_dump`.`opvdosesinstock` - `dvi_dump`.`opvdosesremaining`)) AS `opvwastage`,sum(((`dvi_dump`.`pneumococalinstock` + `dvi_dump`.`pneumococalreceived`) - `dvi_dump`.`pneumococalremainin`)) AS `pcvwastage`,sum((`dvi_dump`.`ttdoseinstock` - `dvi_dump`.`ttdoseremaining`)) AS `ttwastage`,sum((`dvi_dump`.`vitamina100stock` - `dvi_dump`.`vitamina100remain`)) AS `vita1wastage`,sum((`dvi_dump`.`vitamina200stock` - `dvi_dump`.`vitamina200remain`)) AS `vita2wastage`,sum((`dvi_dump`.`vitamina50stock` - `dvi_dump`.`vitamina50remaini`)) AS `vita5wastage`,sum(((`dvi_dump`.`yellowfeverinstoc` + `dvi_dump`.`yellowfeverreceive`) - `dvi_dump`.`yellowfeverremaini`)) AS `yellowfevwastage` from `dvi_dump` group by `dvi_dump`.`periodname` ;
 
 -- --------------------------------------------------------
 
@@ -15143,7 +15140,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `vaccine_movement`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vaccine_movement` AS select distinct `m_stock_movement`.`vaccine_id` AS `id`,`m_vaccines`.`Vaccine_name` AS `name`,`m_stock_movement`.`batch_number` AS `batch_number`,`m_stock_movement`.`transaction_date` AS `transaction_date`,`m_transaction_type`.`transaction_type` AS `transaction_type`,`m_stock_movement`.`destination` AS `destination`,`m_stock_movement`.`source` AS `source`,`m_stock_movement`.`expiry_date` AS `expiry_date`,`m_stock_movement`.`quantity_in` AS `quantity_in`,`m_stock_movement`.`quantity_out` AS `quantity_out`,`m_stock_movement`.`user_id` AS `user_id` from (((`m_vaccines` join `m_stock_movement` on((`m_stock_movement`.`vaccine_id` = `m_vaccines`.`ID`))) join `m_transaction_type` on((`m_stock_movement`.`transaction_type` = `m_transaction_type`.`id`))) join `m_stock_balance` on(((`m_stock_balance`.`vaccine_id` = `m_stock_movement`.`vaccine_id`) and (`m_stock_balance`.`batch_number` = `m_stock_movement`.`batch_number`))));
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vaccine_movement`  AS  select distinct `m_stock_movement`.`vaccine_id` AS `id`,`m_vaccines`.`Vaccine_name` AS `name`,`m_stock_movement`.`batch_number` AS `batch_number`,`m_stock_movement`.`transaction_date` AS `transaction_date`,`m_transaction_type`.`transaction_type` AS `transaction_type`,`m_stock_movement`.`destination` AS `destination`,`m_stock_movement`.`source` AS `source`,`m_stock_movement`.`expiry_date` AS `expiry_date`,`m_stock_movement`.`quantity_in` AS `quantity_in`,`m_stock_movement`.`quantity_out` AS `quantity_out`,`m_stock_movement`.`user_id` AS `user_id` from (((`m_vaccines` join `m_stock_movement` on((`m_stock_movement`.`vaccine_id` = `m_vaccines`.`ID`))) join `m_transaction_type` on((`m_stock_movement`.`transaction_type` = `m_transaction_type`.`id`))) join `m_stock_balance` on(((`m_stock_balance`.`vaccine_id` = `m_stock_movement`.`vaccine_id`) and (`m_stock_balance`.`batch_number` = `m_stock_movement`.`batch_number`)))) ;
 
 -- --------------------------------------------------------
 
@@ -15152,7 +15149,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `vaccine_stockbalance`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vaccine_stockbalance` AS select `v`.`ID` AS `id`,`v`.`Vaccine_name` AS `Vaccine`,`s`.`stock_balance` AS `Stock_Balance`,`s`.`user_id` AS `user_id` from (`m_vaccines` `v` join `m_stock_balance` `s`) where (`v`.`ID` = `s`.`vaccine_id`);
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vaccine_stockbalance`  AS  select `v`.`ID` AS `id`,`v`.`Vaccine_name` AS `Vaccine`,`s`.`stock_balance` AS `Stock_Balance`,`s`.`user_id` AS `user_id` from (`m_vaccines` `v` join `m_stock_balance` `s`) where (`v`.`ID` = `s`.`vaccine_id`) ;
 
 -- --------------------------------------------------------
 
@@ -15161,7 +15158,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `view_county_orders`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_county_orders` AS select `m`.`order_by` AS `order_by`,`m`.`order_id` AS `order_id`,`m`.`date_created` AS `date_created`,`m`.`station_id` AS `station_id`,`cbv`.`county` AS `county`,`cbv`.`county_name` AS `county_name`,`cbv`.`region` AS `region`,`mr`.`region_name` AS `region_name` from ((`m_order` `m` left join `county_userbase_view` `cbv` on((`cbv`.`user_id` = `m`.`order_by`))) left join `m_region` `mr` on((`mr`.`id` = `cbv`.`region`))) where (`m`.`station_level` = 3);
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_county_orders`  AS  select `m`.`order_by` AS `order_by`,`m`.`order_id` AS `order_id`,`m`.`date_created` AS `date_created`,`m`.`station_id` AS `station_id`,`cbv`.`county` AS `county`,`cbv`.`county_name` AS `county_name`,`cbv`.`region` AS `region`,`mr`.`region_name` AS `region_name` from ((`m_order` `m` left join `county_userbase_view` `cbv` on((`cbv`.`user_id` = `m`.`order_by`))) left join `m_region` `mr` on((`mr`.`id` = `cbv`.`region`))) where (`m`.`station_level` = 3) ;
 
 -- --------------------------------------------------------
 
@@ -15170,7 +15167,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `view_coverage_county`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_coverage_county` AS select `dvi_dump`.`periodname` AS `periodname`,`dvi_dump`.`bcgdosesadm` AS `bcgdosesadm`,`dvi_dump`.`dpt2dosesadministered` AS `dpt2dosesadministered`,`dvi_dump`.`dpt3dosesadm` AS `dpt3dosesadm`,`dvi_dump`.`measlesdosesadm` AS `measlesdosesadm`,`dvi_dump`.`opvbirthdosesadm` AS `opvbirthdosesadm`,`dvi_dump`.`opv1dosesadm` AS `opv1dosesadm`,`dvi_dump`.`opv2dosesadm` AS `opv2dosesadm`,`dvi_dump`.`opv3dosesadm` AS `opv3dosesadm`,`dvi_dump`.`pneumococal1adm` AS `pneumococal1adm`,`dvi_dump`.`pneumococal2adm` AS `pneumococal2adm`,`dvi_dump`.`pneumococal3administered` AS `pneumococal3administered`,`dvi_dump`.`rotavirus1dosesadministered` AS `rotavirus1dosesadministered`,`dvi_dump`.`rotavirus2dosesadministered` AS `rotavirus2dosesadministered`,`m_facility`.`county_id` AS `county_id`,`m_county`.`population_one` AS `population_one` from ((`dvi_dump` join `m_facility` on((`dvi_dump`.`organisationunitid` = convert(`m_facility`.`dhis_id` using utf8)))) join `m_county` on((`m_county`.`id` = `m_facility`.`county_id`)));
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_coverage_county`  AS  select `dvi_dump`.`periodname` AS `periodname`,`dvi_dump`.`bcgdosesadm` AS `bcgdosesadm`,`dvi_dump`.`dpt2dosesadministered` AS `dpt2dosesadministered`,`dvi_dump`.`dpt3dosesadm` AS `dpt3dosesadm`,`dvi_dump`.`measlesdosesadm` AS `measlesdosesadm`,`dvi_dump`.`opvbirthdosesadm` AS `opvbirthdosesadm`,`dvi_dump`.`opv1dosesadm` AS `opv1dosesadm`,`dvi_dump`.`opv2dosesadm` AS `opv2dosesadm`,`dvi_dump`.`opv3dosesadm` AS `opv3dosesadm`,`dvi_dump`.`pneumococal1adm` AS `pneumococal1adm`,`dvi_dump`.`pneumococal2adm` AS `pneumococal2adm`,`dvi_dump`.`pneumococal3administered` AS `pneumococal3administered`,`dvi_dump`.`rotavirus1dosesadministered` AS `rotavirus1dosesadministered`,`dvi_dump`.`rotavirus2dosesadministered` AS `rotavirus2dosesadministered`,`m_facility`.`county_id` AS `county_id`,`m_county`.`population_one` AS `population_one` from ((`dvi_dump` join `m_facility` on((`dvi_dump`.`organisationunitid` = convert(`m_facility`.`dhis_id` using utf8)))) join `m_county` on((`m_county`.`id` = `m_facility`.`county_id`))) ;
 
 -- --------------------------------------------------------
 
@@ -15179,7 +15176,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `view_coverage_subcounty`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_coverage_subcounty` AS select `dvi_dump`.`periodname` AS `periodname`,`dvi_dump`.`bcgdosesadm` AS `bcgdosesadm`,`dvi_dump`.`dpt2dosesadministered` AS `dpt2dosesadministered`,`dvi_dump`.`dpt3dosesadm` AS `dpt3dosesadm`,`dvi_dump`.`measlesdosesadm` AS `measlesdosesadm`,`dvi_dump`.`opvbirthdosesadm` AS `opvbirthdosesadm`,`dvi_dump`.`opv1dosesadm` AS `opv1dosesadm`,`dvi_dump`.`opv2dosesadm` AS `opv2dosesadm`,`dvi_dump`.`opv3dosesadm` AS `opv3dosesadm`,`dvi_dump`.`pneumococal1adm` AS `pneumococal1adm`,`dvi_dump`.`pneumococal2adm` AS `pneumococal2adm`,`dvi_dump`.`pneumococal3administered` AS `pneumococal3administered`,`dvi_dump`.`rotavirus1dosesadministered` AS `rotavirus1dosesadministered`,`dvi_dump`.`rotavirus2dosesadministered` AS `rotavirus2dosesadministered`,`m_facility`.`county_id` AS `county_id`,`m_facility`.`subcounty_id` AS `subcounty_id`,`m_subcounty`.`population_one` AS `population_one` from ((`dvi_dump` join `m_facility` on((`dvi_dump`.`organisationunitid` = convert(`m_facility`.`dhis_id` using utf8)))) join `m_subcounty` on((`m_subcounty`.`id` = `m_facility`.`subcounty_id`)));
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_coverage_subcounty`  AS  select `dvi_dump`.`periodname` AS `periodname`,`dvi_dump`.`bcgdosesadm` AS `bcgdosesadm`,`dvi_dump`.`dpt2dosesadministered` AS `dpt2dosesadministered`,`dvi_dump`.`dpt3dosesadm` AS `dpt3dosesadm`,`dvi_dump`.`measlesdosesadm` AS `measlesdosesadm`,`dvi_dump`.`opvbirthdosesadm` AS `opvbirthdosesadm`,`dvi_dump`.`opv1dosesadm` AS `opv1dosesadm`,`dvi_dump`.`opv2dosesadm` AS `opv2dosesadm`,`dvi_dump`.`opv3dosesadm` AS `opv3dosesadm`,`dvi_dump`.`pneumococal1adm` AS `pneumococal1adm`,`dvi_dump`.`pneumococal2adm` AS `pneumococal2adm`,`dvi_dump`.`pneumococal3administered` AS `pneumococal3administered`,`dvi_dump`.`rotavirus1dosesadministered` AS `rotavirus1dosesadministered`,`dvi_dump`.`rotavirus2dosesadministered` AS `rotavirus2dosesadministered`,`m_facility`.`county_id` AS `county_id`,`m_facility`.`subcounty_id` AS `subcounty_id`,`m_subcounty`.`population_one` AS `population_one` from ((`dvi_dump` join `m_facility` on((`dvi_dump`.`organisationunitid` = convert(`m_facility`.`dhis_id` using utf8)))) join `m_subcounty` on((`m_subcounty`.`id` = `m_facility`.`subcounty_id`))) ;
 
 -- --------------------------------------------------------
 
@@ -15188,7 +15185,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `view_facility_orders`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_facility_orders` AS select `m`.`order_by` AS `order_by`,`m`.`order_id` AS `order_id`,`m`.`date_created` AS `date_created`,`m`.`station_id` AS `station_id`,`fv`.`facility_name` AS `facility_name`,`fv`.`facility` AS `facility`,`fv`.`subcounty` AS `subcounty`,`ms`.`subcounty_name` AS `subcounty_name` from ((`m_order` `m` left join `facility_userbase_view` `fv` on((`fv`.`user_id` = `m`.`order_by`))) left join `m_subcounty` `ms` on((`ms`.`id` = `fv`.`subcounty`))) where (`m`.`station_level` = 5);
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_facility_orders`  AS  select `m`.`order_by` AS `order_by`,`m`.`order_id` AS `order_id`,`m`.`date_created` AS `date_created`,`m`.`station_id` AS `station_id`,`fv`.`facility_name` AS `facility_name`,`fv`.`facility` AS `facility`,`fv`.`subcounty` AS `subcounty`,`ms`.`subcounty_name` AS `subcounty_name` from ((`m_order` `m` left join `facility_userbase_view` `fv` on((`fv`.`user_id` = `m`.`order_by`))) left join `m_subcounty` `ms` on((`ms`.`id` = `fv`.`subcounty`))) where (`m`.`station_level` = 5) ;
 
 -- --------------------------------------------------------
 
@@ -15197,7 +15194,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `view_region_orders`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_region_orders` AS select `m`.`order_by` AS `order_by`,`m`.`order_id` AS `order_id`,`m`.`date_created` AS `date_created`,`m`.`station_id` AS `station_id`,`ruv`.`region` AS `region`,`mr`.`region_name` AS `region_name` from ((`m_order` `m` left join `region_userbase_view` `ruv` on((`ruv`.`user_id` = `m`.`order_by`))) left join `m_region` `mr` on((`mr`.`id` = `ruv`.`region`))) where (`m`.`station_level` = 2);
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_region_orders`  AS  select `m`.`order_by` AS `order_by`,`m`.`order_id` AS `order_id`,`m`.`date_created` AS `date_created`,`m`.`station_id` AS `station_id`,`ruv`.`region` AS `region`,`mr`.`region_name` AS `region_name` from ((`m_order` `m` left join `region_userbase_view` `ruv` on((`ruv`.`user_id` = `m`.`order_by`))) left join `m_region` `mr` on((`mr`.`id` = `ruv`.`region`))) where (`m`.`station_level` = 2) ;
 
 -- --------------------------------------------------------
 
@@ -15206,7 +15203,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `view_subcountycov_calculated`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_subcountycov_calculated` AS select `view_coverage_subcounty`.`periodname` AS `periodname`,`view_coverage_subcounty`.`county_id` AS `county_id`,`view_coverage_subcounty`.`subcounty_id` AS `subcounty_id`,((`view_coverage_subcounty`.`bcgdosesadm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalbcg`,((`view_coverage_subcounty`.`dpt2dosesadministered` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totaldpt2`,((`view_coverage_subcounty`.`dpt3dosesadm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totaldpt3`,((`view_coverage_subcounty`.`measlesdosesadm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalmeasles`,((`view_coverage_subcounty`.`opvbirthdosesadm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalopv`,((`view_coverage_subcounty`.`opv1dosesadm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalopv1`,((`view_coverage_subcounty`.`opv2dosesadm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalopv2`,((`view_coverage_subcounty`.`opv3dosesadm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalopv3`,((`view_coverage_subcounty`.`pneumococal1adm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalpcv1`,((`view_coverage_subcounty`.`pneumococal2adm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalpcv2`,((`view_coverage_subcounty`.`pneumococal3administered` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalpcv3`,((`view_coverage_subcounty`.`rotavirus1dosesadministered` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalrota1`,((`view_coverage_subcounty`.`rotavirus2dosesadministered` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalrota2` from `view_coverage_subcounty`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_subcountycov_calculated`  AS  select `view_coverage_subcounty`.`periodname` AS `periodname`,`view_coverage_subcounty`.`county_id` AS `county_id`,`view_coverage_subcounty`.`subcounty_id` AS `subcounty_id`,((`view_coverage_subcounty`.`bcgdosesadm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalbcg`,((`view_coverage_subcounty`.`dpt2dosesadministered` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totaldpt2`,((`view_coverage_subcounty`.`dpt3dosesadm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totaldpt3`,((`view_coverage_subcounty`.`measlesdosesadm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalmeasles`,((`view_coverage_subcounty`.`opvbirthdosesadm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalopv`,((`view_coverage_subcounty`.`opv1dosesadm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalopv1`,((`view_coverage_subcounty`.`opv2dosesadm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalopv2`,((`view_coverage_subcounty`.`opv3dosesadm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalopv3`,((`view_coverage_subcounty`.`pneumococal1adm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalpcv1`,((`view_coverage_subcounty`.`pneumococal2adm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalpcv2`,((`view_coverage_subcounty`.`pneumococal3administered` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalpcv3`,((`view_coverage_subcounty`.`rotavirus1dosesadministered` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalrota1`,((`view_coverage_subcounty`.`rotavirus2dosesadministered` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalrota2` from `view_coverage_subcounty` ;
 
 -- --------------------------------------------------------
 
@@ -15215,7 +15212,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `view_subcounty_orders`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_subcounty_orders` AS select `m`.`order_by` AS `order_by`,`m`.`order_id` AS `order_id`,`m`.`date_created` AS `date_created`,`m`.`station_id` AS `station_id`,`sb`.`subcounty_name` AS `subcounty_name`,`sb`.`county` AS `county`,`mc`.`county_name` AS `county_name` from ((`m_order` `m` left join `subcounty_userbase` `sb` on((`sb`.`user_id` = `m`.`order_by`))) left join `m_county` `mc` on((`mc`.`id` = `sb`.`county`))) where (`m`.`station_level` = 4);
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_subcounty_orders`  AS  select `m`.`order_by` AS `order_by`,`m`.`order_id` AS `order_id`,`m`.`date_created` AS `date_created`,`m`.`station_id` AS `station_id`,`sb`.`subcounty_name` AS `subcounty_name`,`sb`.`county` AS `county`,`mc`.`county_name` AS `county_name` from ((`m_order` `m` left join `subcounty_userbase` `sb` on((`sb`.`user_id` = `m`.`order_by`))) left join `m_county` `mc` on((`mc`.`id` = `sb`.`county`))) where (`m`.`station_level` = 4) ;
 
 -- --------------------------------------------------------
 
@@ -15224,7 +15221,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `view_wastage_unitid`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_wastage_unitid` AS select `dvi_dump`.`organisationunitid` AS `UnitId`,((`dvi_dump`.`bcgdosesinstock` + `dvi_dump`.`bcgdosesreceived`) - `dvi_dump`.`bcgdosesremaining`) AS `bcgwastage`,((`dvi_dump`.`dpt+hib+hepbinstock` + `dvi_dump`.`dpt+hib+hepbreceived`) - `dvi_dump`.`dpt+hib+hepbremaining`) AS `dptwastage`,((`dvi_dump`.`measlesinstock` + `dvi_dump`.`measlesreceived`) - `dvi_dump`.`measlesremaining`) AS `measleswastage`,(`dvi_dump`.`opvdosesinstock` - `dvi_dump`.`opvdosesremaining`) AS `opvwastage`,((`dvi_dump`.`pneumococalinstock` + `dvi_dump`.`pneumococalreceived`) - `dvi_dump`.`pneumococalremainin`) AS `pcvwastage`,(`dvi_dump`.`ttdoseinstock` - `dvi_dump`.`ttdoseremaining`) AS `ttwastage`,(`dvi_dump`.`vitamina100stock` - `dvi_dump`.`vitamina100remain`) AS `vita1wastage`,(`dvi_dump`.`vitamina200stock` - `dvi_dump`.`vitamina200remain`) AS `vita2wastage`,(`dvi_dump`.`vitamina50stock` - `dvi_dump`.`vitamina50remaini`) AS `vita5wastage`,((`dvi_dump`.`yellowfeverinstoc` + `dvi_dump`.`yellowfeverreceive`) - `dvi_dump`.`yellowfeverremaini`) AS `yellowfevwastage`,`dvi_dump`.`bcgdosesadm` AS `bcgdosesadm`,`dvi_dump`.`dpt1dosesadm` AS `dpt1dosesadm`,`dvi_dump`.`measlesdosesadm` AS `measlesdosesadm`,`dvi_dump`.`opv1dosesadm` AS `opv1dosesadm`,`dvi_dump`.`pneumococal1adm` AS `pneumococal1adm`,`dvi_dump`.`yellowfeveradm` AS `yellowfeveradm` from `dvi_dump`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_wastage_unitid`  AS  select `dvi_dump`.`organisationunitid` AS `UnitId`,((`dvi_dump`.`bcgdosesinstock` + `dvi_dump`.`bcgdosesreceived`) - `dvi_dump`.`bcgdosesremaining`) AS `bcgwastage`,((`dvi_dump`.`dpt+hib+hepbinstock` + `dvi_dump`.`dpt+hib+hepbreceived`) - `dvi_dump`.`dpt+hib+hepbremaining`) AS `dptwastage`,((`dvi_dump`.`measlesinstock` + `dvi_dump`.`measlesreceived`) - `dvi_dump`.`measlesremaining`) AS `measleswastage`,(`dvi_dump`.`opvdosesinstock` - `dvi_dump`.`opvdosesremaining`) AS `opvwastage`,((`dvi_dump`.`pneumococalinstock` + `dvi_dump`.`pneumococalreceived`) - `dvi_dump`.`pneumococalremainin`) AS `pcvwastage`,(`dvi_dump`.`ttdoseinstock` - `dvi_dump`.`ttdoseremaining`) AS `ttwastage`,(`dvi_dump`.`vitamina100stock` - `dvi_dump`.`vitamina100remain`) AS `vita1wastage`,(`dvi_dump`.`vitamina200stock` - `dvi_dump`.`vitamina200remain`) AS `vita2wastage`,(`dvi_dump`.`vitamina50stock` - `dvi_dump`.`vitamina50remaini`) AS `vita5wastage`,((`dvi_dump`.`yellowfeverinstoc` + `dvi_dump`.`yellowfeverreceive`) - `dvi_dump`.`yellowfeverremaini`) AS `yellowfevwastage`,`dvi_dump`.`bcgdosesadm` AS `bcgdosesadm`,`dvi_dump`.`dpt1dosesadm` AS `dpt1dosesadm`,`dvi_dump`.`measlesdosesadm` AS `measlesdosesadm`,`dvi_dump`.`opv1dosesadm` AS `opv1dosesadm`,`dvi_dump`.`pneumococal1adm` AS `pneumococal1adm`,`dvi_dump`.`yellowfeveradm` AS `yellowfeveradm` from `dvi_dump` ;
 
 -- --------------------------------------------------------
 
@@ -15233,7 +15230,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `wastage_view_userlevel`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `wastage_view_userlevel` AS select `view_wastage_unitid`.`UnitId` AS `UnitId`,`view_wastage_unitid`.`bcgwastage` AS `bcgwastage`,`view_wastage_unitid`.`dptwastage` AS `dptwastage`,`view_wastage_unitid`.`measleswastage` AS `measleswastage`,`view_wastage_unitid`.`opvwastage` AS `opvwastage`,`view_wastage_unitid`.`pcvwastage` AS `pcvwastage`,`view_wastage_unitid`.`ttwastage` AS `ttwastage`,`view_wastage_unitid`.`vita1wastage` AS `vita1wastage`,`view_wastage_unitid`.`vita2wastage` AS `vita2wastage`,`view_wastage_unitid`.`vita5wastage` AS `vita5wastage`,`view_wastage_unitid`.`yellowfevwastage` AS `yellowfevwastage`,`m_facility`.`id` AS `facility`,`m_facility`.`region_id` AS `region`,`m_facility`.`county_id` AS `county`,`m_facility`.`subcounty_id` AS `subcounty` from (`view_wastage_unitid` join `m_facility` on((`view_wastage_unitid`.`UnitId` = convert(`m_facility`.`dhis_id` using utf8))));
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `wastage_view_userlevel`  AS  select `view_wastage_unitid`.`UnitId` AS `UnitId`,`view_wastage_unitid`.`bcgwastage` AS `bcgwastage`,`view_wastage_unitid`.`dptwastage` AS `dptwastage`,`view_wastage_unitid`.`measleswastage` AS `measleswastage`,`view_wastage_unitid`.`opvwastage` AS `opvwastage`,`view_wastage_unitid`.`pcvwastage` AS `pcvwastage`,`view_wastage_unitid`.`ttwastage` AS `ttwastage`,`view_wastage_unitid`.`vita1wastage` AS `vita1wastage`,`view_wastage_unitid`.`vita2wastage` AS `vita2wastage`,`view_wastage_unitid`.`vita5wastage` AS `vita5wastage`,`view_wastage_unitid`.`yellowfevwastage` AS `yellowfevwastage`,`m_facility`.`id` AS `facility`,`m_facility`.`region_id` AS `region`,`m_facility`.`county_id` AS `county`,`m_facility`.`subcounty_id` AS `subcounty` from (`view_wastage_unitid` join `m_facility` on((`view_wastage_unitid`.`UnitId` = convert(`m_facility`.`dhis_id` using utf8)))) ;
 
 --
 -- Indexes for dumped tables
@@ -15393,37 +15390,37 @@ ALTER TABLE `user_levels`
 -- AUTO_INCREMENT for table `dhis_usage`
 --
 ALTER TABLE `dhis_usage`
-  MODIFY `id` int(14) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=637;
+  MODIFY `id` int(14) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=637;
 --
 -- AUTO_INCREMENT for table `dvi_dump`
 --
 ALTER TABLE `dvi_dump`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2569;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2569;
 --
 -- AUTO_INCREMENT for table `m_depot`
 --
 ALTER TABLE `m_depot`
-  MODIFY `id` int(14) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
+  MODIFY `id` int(14) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 --
 -- AUTO_INCREMENT for table `m_depot_fridges`
 --
 ALTER TABLE `m_depot_fridges`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=55;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 --
 -- AUTO_INCREMENT for table `m_facility`
 --
 ALTER TABLE `m_facility`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=9758;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9758;
 --
 -- AUTO_INCREMENT for table `m_facility_fridges`
 --
 ALTER TABLE `m_facility_fridges`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 --
 -- AUTO_INCREMENT for table `m_group`
 --
 ALTER TABLE `m_group`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT for table `m_inventory`
 --
@@ -15433,57 +15430,57 @@ ALTER TABLE `m_inventory`
 -- AUTO_INCREMENT for table `m_order`
 --
 ALTER TABLE `m_order`
-  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
+  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT for table `m_region`
 --
 ALTER TABLE `m_region`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 --
 -- AUTO_INCREMENT for table `m_stock_balance`
 --
 ALTER TABLE `m_stock_balance`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT for table `m_stock_movement`
 --
 ALTER TABLE `m_stock_movement`
-  MODIFY `stock_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
+  MODIFY `stock_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 --
 -- AUTO_INCREMENT for table `m_transaction_type`
 --
 ALTER TABLE `m_transaction_type`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `m_uploads`
 --
 ALTER TABLE `m_uploads`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `m_users`
 --
 ALTER TABLE `m_users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 --
 -- AUTO_INCREMENT for table `m_vaccines`
 --
 ALTER TABLE `m_vaccines`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=15;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 --
 -- AUTO_INCREMENT for table `m_vvm_status`
 --
 ALTER TABLE `m_vvm_status`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT for table `user_base`
 --
 ALTER TABLE `user_base`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 --
 -- AUTO_INCREMENT for table `user_levels`
 --
 ALTER TABLE `user_levels`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 --
 -- Constraints for dumped tables
 --
