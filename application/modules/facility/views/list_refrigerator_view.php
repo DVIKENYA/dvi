@@ -254,12 +254,13 @@
                 </div>
             </div>
             <div class="form-group">
-              <label class="control-label col-md-4">Age</label>
+              <label class="control-label col-md-4">Year of Installation</label>
               <div class="col-md-8">
-                <input name="refrigerator_age" placeholder="Age" class="form-control" type="text">
+                <input name="refrigerator_age" placeholder="Year of Installation" class="form-control" type="number" min='1950'>
               </div>
             </div>
           </div>
+          
         </form>
           </div>
           <div class="modal-footer">

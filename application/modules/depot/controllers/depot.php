@@ -179,6 +179,7 @@ class Depot extends MY_Controller {
               $row[] = $fridge->temperature_monitor_no;
               $row[] = $fridge->main_power_source;
               $row[] = $fridge->age;
+              $row[] = $fridge->refrigerator_status;
               //add html for action
               
               $row[] = '  <a class="btn btn-sm btn-primary" title="Edit" onclick="edit_fridge('."'".$fridge->fridge_id."'".')"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
@@ -223,6 +224,8 @@ class Depot extends MY_Controller {
             'main_power_source'   => $this->input->post('main_power_source'),
             'age'    => $this->input->post('refrigerator_age'),
             'depot_id'=> $id,
+            'refrigerator_status'    => $this->input->post('refrigerator_status'),
+
           );
         $insert = $this->_insert_fridge($data);
         echo json_encode(array("status" => TRUE));
@@ -233,6 +236,7 @@ class Depot extends MY_Controller {
         $data = array(
             'temperature_monitor_no'   => $this->input->post('temperature_monitor_no'),
             'main_power_source'   => $this->input->post('main_power_source'),
+            'refrigerator_status'   => $this->input->post('refrigerator_status'),
             );
         $this->_update_fridge($id, $data);
         echo json_encode(array("status" => TRUE));

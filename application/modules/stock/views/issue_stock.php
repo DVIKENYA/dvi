@@ -28,7 +28,7 @@ echo form_open('',$form_attributes);?>
 	  <b>Issue To</b>
 	    <?php
         echo form_error('issued_to');
-        echo form_dropdown('issued_to', $location, 'id="issued_to" required="true" class="form-control"'); 
+        echo form_dropdown('issued_to', $location, 'id="issued_to" class="form-control"'); 
         ?>
 	   </div>
 	</div>
