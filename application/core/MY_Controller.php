@@ -11,7 +11,6 @@ class MY_Controller extends MX_Controller
 
 	}
 
-
  	function getUserRegion(){
         $this->load->model('users/mdl_users');
         $user_id = ($this->session->userdata['logged_in']['user_id']);
@@ -76,9 +75,6 @@ class MY_Controller extends MX_Controller
        return $data;      
     }
 
-
-
-
 	function get_user_object()
 	{
 		if (isset($this->session->userdata['logged_in'])) {
@@ -142,8 +138,6 @@ class MY_Controller extends MX_Controller
 			header("location: users");
 		}
 	}
-
-
 
 	function redirect($user_group)
 	{
