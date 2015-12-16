@@ -1,3 +1,4 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed');?>
 <?php
 $form_attributes = array('id' => 'create_orderfm','method' =>'post');
 echo form_open('order/save_order',$form_attributes);?>
@@ -6,19 +7,11 @@ echo form_open('order/save_order',$form_attributes);?>
    <div id="order_infor">
 
      	<table class="table table-bordered" id="store_infor_tbl">
-            <?php $county = Modules::run('template/getUserCounty');
-            $subcounty = Modules::run('template/getUserSubcounty');?>
-     		<tr><td style="width:50%">Store Name  : <?php echo $user_object['user_statiton']; ?> </td><td>Last Update: <?php echo date('Y-m-d',strtotime(date('Y-m-d')));?> </td></tr>
+     		<tr><td style="width:50%">Store Name  : <?php echo $user_object['user_statiton']; ?> </td>
+        <td>Last Update: <?php echo date('Y-m-d',strtotime(date('Y-m-d')));?> </td></tr>
           <tr>
           <td>Order By : <?php echo $user_object['user_statiton']; ?> </td>
           <td>Date: <?php echo date('Y-m-d',strtotime(date('Y-m-d')));?></td>
-         <!-- <td> Select Months to order
-              <select name="order_months" id="order_months" class="form-control order_months">
-                     <option value="">--Select Months to order--</option>
-                     <?php for($i = 1; $i<=12; $i++){
-                       echo "<option value='".$i."'>".$i."</option>";
-                      } ?>
-          </select></td>-->
      	</table>
     <div id="order">
    	<table class="table table-bordered" >
@@ -53,11 +46,11 @@ echo form_hidden('station',$station);
    	</table>
     </div>
    </div> 
-<!--   <button type="submit" name="place_order" id="place_order" class="btn btn-sm btn-danger">Place Order</button>-->
+
    <?php 
    $data=array('name' => 'place_order','id'=> 'p_order','value' => 'Place Order','class'=>'btn btn-sm btn-danger');
     echo form_submit($data);
-echo form_close();
+    echo form_close();
    ?>
 
 <!--Place values on view form-->
@@ -66,22 +59,20 @@ echo form_close();
     <?php
     foreach ($order_vaccines as $order_v){
     ?>
-         $("#stock_on_hand_<?php echo $order_v['ID']; ?>").val("<?php echo $order_v['stock_on_hand']; ?>");
-          $("#first_expiry_date_<?php echo $order_v['ID']; ?>").val("<?php echo $order_v['first_expiry_date']; ?>");
-          $("#min_stock_<?php echo $order_v['ID']; ?>").val("<?php echo $order_v['minstock']; ?>");
-          $("#max_stock_<?php echo $order_v['ID']; ?>").val("<?php echo $order_v['maxstock']; ?>");
+    $("#stock_on_hand_<?php echo $order_v['ID']; ?>").val("<?php echo $order_v['stock_on_hand']; ?>");
+    $("#first_expiry_date_<?php echo $order_v['ID']; ?>").val("<?php echo $order_v['first_expiry_date']; ?>");
+    $("#min_stock_<?php echo $order_v['ID']; ?>").val("<?php echo $order_v['minstock']; ?>");
+    $("#max_stock_<?php echo $order_v['ID']; ?>").val("<?php echo $order_v['maxstock']; ?>");
     <?php }?>
 
 
         // When a user selects a vaccine get the selected vaccines fetch the values from the database
         
         $(document).on( 'click','.vaccine', function () {
-	           var order_row=$(this);
-		 /*  var selected_vaccine=$(this).val();*/
-		   var selected_vaccine=order_row.val();
-                   var selected_months= $('#order_infor').find('.order_months').val();
-                   
-		    //alert(selected_vaccine);
+	         var order_row=$(this);
+		 		   var selected_vaccine=order_row.val();
+           var selected_months= $('#order_infor').find('.order_months').val();
+
 		   load_vaccine_infor(selected_vaccine,order_row,selected_months);
 		});
 
@@ -98,30 +89,24 @@ echo form_close();
 			    request.done(function(data){
 			    	data=JSON.parse(data);
 			    	console.log(data);
-			    	//stock_row.closest("tr").find(".batch_no option").remove();
-			    	//stock_row.closest("tr").find(".expiry_date ").val("");
-			    	//stock_row.closest("tr").find(".available_quantity").val("");
-			    	//stock_row.closest("tr").find(".vvm_s").val("");
-			    	//stock_row.closest("tr").find(".batch_no ").append("<option value='0'>Select batch </option> ");
 			    	$.each(data,function(key,value){
                                     
-                                    console.log(key);
-                                    console.log(value);
-                                    //console.log(value.batch_number);
-                                    console.log(selected_months);
-                                    
-                                        var period_stock=(value.Wastage_factor * value.Doses_required* value.population_one)/12;
-                                        var max_stock=Math.ceil(1.25* period_stock);
-                                        var min_stock=Math.ceil(0.25* period_stock);
-                                        var quantity_order= Math.ceil(max_stock- value.stock_balance);
-			    		order_row.closest("tr").find(".stock_on_hand_").val(value.stock_balance);
-                                        order_row.closest("tr").find(".first_expiry_date_").val(value.first_expiry_date);
-                                        order_row.closest("tr").find(".max_stock_").val(max_stock);
-                                        order_row.closest("tr").find(".min_stock_").val(min_stock);
-                                        order_row.closest("tr").find(".quantity_dose_").val(quantity_order);
+                console.log(key);
+                console.log(value);
+                console.log(selected_months);
+
+                var period_stock=(value.Wastage_factor * value.Doses_required* value.population_one)/12;
+                var max_stock=Math.ceil(1.25* period_stock);
+                var min_stock=Math.ceil(0.25* period_stock);
+                var quantity_order= Math.ceil(max_stock- value.stock_balance);
+                order_row.closest("tr").find(".stock_on_hand_").val(value.stock_balance);
+                order_row.closest("tr").find(".first_expiry_date_").val(value.first_expiry_date);
+                order_row.closest("tr").find(".max_stock_").val(max_stock);
+                order_row.closest("tr").find(".min_stock_").val(min_stock);
+                order_row.closest("tr").find(".quantity_dose_").val(quantity_order);
 
 			    		
-			    		/*value[0].batch_number;*/
+			    		
 			    		
 			    	});
 			    });

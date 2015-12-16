@@ -1,15 +1,10 @@
 <?php 
-$location = array();
-$location[]="Select Location";
-  foreach($locations as $row ){
-    $location[$row->location] = $row->location; 
-  }
-
 $order = array();
 $order[]="Select Order Number";
   foreach($orders as $row ){
     $order[$row->order_id] = $row->order_id; 
   }
+
 ?>
  <div class="row">
     <div class="col-lg-12">
@@ -23,10 +18,7 @@ echo form_open('',$form_attributes);?>
 <div class="col-lg-3">
   <div class="panel-body">
   <b>Received From</b>
-   <?php
-        echo form_error('received_from');
-        echo form_dropdown('received_from', $location, 'id="received_from" class="form-control"'); 
-        ?>
+    <?php $data=array('name' => 'received_from','id'=>'received_from','class'=>'form-control','value'=>$location,'readonly'=>''); echo form_input($data);?>
     </div>
 </div>
 <div class="col-lg-3">
@@ -42,15 +34,6 @@ echo form_open('',$form_attributes);?>
     </div>
 </div> 
 
-<div class="col-lg-3">
-  <div class="panel-body">
-  <b>Order Number</b>
-   <?php
-          echo form_error('order');
-          echo form_dropdown('order', $order, 'id="order" class="form-control"'); 
-          ?>
-    </div>
-</div> 
 
 </div>
 <input type="hidden" name ="transaction_type" class="transaction_type" value="1">
@@ -134,7 +117,7 @@ echo form_open('',$form_attributes);?>
 
                       var expiry_id = "expiry_date" + next_receive_row;
                       var expiry = cloned_object.find(".expiry_date");
-                      expiry.removeClass("hasDatepicker").attr('id',expiry_id).datepicker({dateFormat: "yy-mm-dd",  minDate: 0}).datepicker('setDate', null);
+                      expiry.removeClass("hasDatepicker").attr('id',expiry_id).datepicker({dateFormat: "yy-mm-dd",  minDate: 0,  setDate: null});
                       
 
                       var quantity_received_id = "quantity_received" + next_receive_row;

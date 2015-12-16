@@ -8,12 +8,14 @@ parent::__construct();
 }
 
 function get($order_by){
+  Modules::run('secure_tings/is_logged_in');
 $this->load->model('mdl_vaccines');
 $query = $this->mdl_vaccines->get($order_by);
 return $query;
 }
 // Get information on the selected vaccines from orders
 public function get_order_values(){
+  Modules::run('secure_tings/is_logged_in');
     $data2['user_object2'] = $this->get_user_object();
     $station= $data2['user_object2']['user_level'];
     $data3['user_object3'] = $this->get_user_object();
@@ -25,29 +27,29 @@ public function get_order_values(){
 }
 // Function to create order. Fetches the list of vaccines and calculations of max stock, minstock
 public function create_order(){
-
+  Modules::run('secure_tings/is_logged_in');
   $this->load->model('vaccines/mdl_vaccines');
   $this->load->model('order/mdl_order');
   $data['vaccines']= $this->mdl_vaccines->getVaccine();
-  $data3['user_object3'] = $this->get_user_object();
-  $station_id= $data3['user_object3']['user_statiton'];
   $data2['user_object2'] = $this->get_user_object();
+  $data3['user_object3'] = $this->get_user_object();
   $station_level= $data2['user_object2']['user_level'];
+  $station_id= $data3['user_object3']['user_statiton'];
   $data['order_vaccines']=$this->mdl_order->calc_orders($station_id,$station_level);
   $data['section'] = "Vaccines";
   $data['subtitle'] = "Place Order";
   $data['page_title'] = "Place Order";
   $data['module'] = "order";
-  $data['options']="none";
   $data['view_file'] = "create_order_form";
   $data['user_object'] = $this->get_user_object();
- $data['main_title'] = $this->get_title();
+  $data['main_title'] = $this->get_title();
  echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
+
 }
 
 // Function lists the orders placed or submitted
 public function list_orders(){
- 
+ Modules::run('secure_tings/is_logged_in');
   $this->load->model('order/mdl_order');
   $data2['user_object2'] = $this->get_user_object();
   $data3['user_object3'] = $this->get_user_object();
@@ -57,24 +59,30 @@ public function list_orders(){
   $data['submitted_orders']= $this->mdl_order->get_submitted_orders($station,$station_id);
   $data['section'] = "Vaccines";
   $data['subtitle'] = "Orders";
-  $data['page_title'] = " Orders";
+  $data['page_title'] = "Orders";
   $data['module'] = "order";
-  $data['view_file'] = "list_order_view";
+  if($station=='1'){
+    $data['view_file'] = "adm_list_order_view";
+  }else{
+    $data['view_file'] = "list_order_view";
+  }
   $data['user_object'] = $this->get_user_object();
- $data['main_title'] = $this->get_title();
- echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
-  
+  $data['main_title'] = $this->get_title();
+  echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
+
 	
 }
 // The function accepts two arguments, order_by and date when order was created,
 //  to list the order items on viewing an order
-public function view_orders($order_by,$date_created,$option){
+public function view_orders($order_by,$date_created,$option,$order_id){
+  Modules::run('secure_tings/is_logged_in');
   $this->load->model('order/mdl_order');
   $data['section'] = "Stock";
   $data['subtitle'] = "View Orders";
   $data['page_title'] = " Orders";
   $data['orderitems']= $this->mdl_order->get_orderitems($order_by,$date_created);
   $data['option']=$option;
+  $data['order_id']=$order_id;
   $data['module'] = "order";
   $data['view_file'] = "order_view";
   $data['user_object'] = $this->get_user_object();
@@ -82,7 +90,8 @@ public function view_orders($order_by,$date_created,$option){
   echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
   
 }
-public function prepare_orders($content_array = array()){  
+public function prepare_orders($content_array = array()){ 
+Modules::run('secure_tings/is_logged_in'); 
 
  $this->load->model('vaccines/mdl_vaccines');
  $data['vaccines']= $this->mdl_vaccines->getVaccine();
@@ -103,9 +112,10 @@ if (!empty($content_array)) {
 }
 // Function to save the orders. Order items are posted to this function,
 // where they are stored in an array to be stored in the database
-function save_order(){       
+function save_order(){  
+Modules::run('secure_tings/is_logged_in');     
   //Order Information
-    $data2['user_object2'] = $this->get_user_object();
+       $data2['user_object2'] = $this->get_user_object();
        $data3['user_object3'] = $this->get_user_object();
        //print_r($data2); die();
        $user_level= $data2['user_object2']['user_level'];

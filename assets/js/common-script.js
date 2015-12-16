@@ -194,9 +194,9 @@ jQuery(window).load(function() {
    jQuery('.popovers').popover();
    
    // Form Toggles
-   $('.toggle').toggles({on: false});
+   // $('.toggle').toggles({on: false});
    
-   $('.toggle-chat1').toggles({on: false});
+   // $('.toggle-chat1').toggles({on: false});
 
 	function calculateHeight(){ 
 		var contentHeight = parseInt($('.contentpanel').height(), 10);

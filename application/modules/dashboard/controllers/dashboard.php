@@ -61,11 +61,13 @@ function get_chart() {
     $user_level=$this->session->userdata['logged_in']['user_level'];
      if($user_level=='3'){
     $query = $this->mdl_dashboard->get_county_coverage($user_id);
-     } else if($user_level=='4'){
+     }else if($user_level=='4'){
     $query = $this->mdl_dashboard->get_subcounty_coverage($user_id);
      }else if($user_level=='5'){
     $query = $this->mdl_dashboard->get_subcounty_coverage($user_id);
      }else if($user_level=='1'){
+   $query = $this->mdl_dashboard->get_national_coverage($user_id);
+     }else if($user_level=='2'){
    $query = $this->mdl_dashboard->get_national_coverage($user_id);
      }
     foreach ($query as $row) {
@@ -103,6 +105,8 @@ function get_wastage() {
     }else if($user_level=='5'){
     $query = $this->mdl_dashboard->get_facility_wastage($user_id);
     }else if($user_level=='1'){
+    $query = $this->mdl_dashboard->get_national_wastage($user_id);
+    }else if($user_level=='2'){
     $query = $this->mdl_dashboard->get_national_wastage($user_id);
     }
    

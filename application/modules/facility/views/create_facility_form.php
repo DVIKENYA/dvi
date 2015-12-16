@@ -1,5 +1,9 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');?>
-<?php echo form_open('facility/submit',array('class'=>'form-horizontal', 'id' =>'facility'));?>
+<?php echo form_open('facility/submit',array('class'=>'form-horizontal', 'id' =>'facility'));
+
+
+ echo validation_errors('<div class="alert alert-danger alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><b>',' </b></div>');
+      ?>
  <div class="row">
       <div class="col-lg-4 col-lg-offset-4">
         <!--Start of First Block--> 

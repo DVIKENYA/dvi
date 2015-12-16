@@ -6,7 +6,7 @@
   </div>
   </br>
   
-  <div class="well well-sm"><b>My Orders</b></div>
+  <div class="well well-sm"><b>Orders</b></div>
   </br>
 <div class="row">
   
@@ -17,8 +17,8 @@
               <div class="panel-body">
                 <ul class="nav nav-tabs" id="myTab">
                 
-                  <li class="active"><a data-toggle="tab" href="#tab1"><b>Submitted Orders</b></a></li>
-                  <li><a data-toggle="tab" href="#tab2"><b>Placed Orders</b></a></li>
+                  <li class="active"><a data-toggle="tab" href="#tab1"><b>Orders from me</b></a></li>
+                  <li><a data-toggle="tab" href="#tab2"><b>Orders to me</b></a></li>
                 </ul>
                 <div class="tab-content" id="myTabContent">
                   <div id="tab1" class="tab-pane fade in active">
@@ -34,18 +34,16 @@
         <tbody>
           <?php $option=1 ; ?>
         <?php foreach ($submitted_orders as $order) { 
-         $ledger_url = base_url().'order/view_orders/'.$order['order_by'].'/'.$order['date_created'].'/'.$option;
+         $ledger_url = base_url().'order/view_orders/'.$order['order_by'].'/'.$order['date_created'].'/'.$option.'/'.$order['order_id'];
          
          ?>
         
               <tr>
-<!--              <td><?php // echo $order['order_id']?></td>-->
-              <td><?php echo $order['station_id']?></td>
+              <td><?php  echo $order['order_id']?></td>
               <td><?php echo $order['date_created']?></td>
-              <td style="color:red">Pending</td>
+              <td style="color:red"><?php echo $order['status_name']?></td>
               <td><a href="<?php  echo $ledger_url ?>" class="btn btn-danger btn-xs">View <i class="fa fa-eye"></i></a></td>
-<!--              <td><a href="<?php  echo $ledger_url ?>">View</a><span class="divider"> | </span><a href="#">Download</a></td>-->
-        <?php }?>
+          <?php }?>
               </tr>
 
         </tbody>
@@ -66,15 +64,15 @@
         <tbody>
         <?php $option=2 ; ?>
         <?php foreach ($orders as $order) { 
-         $ledger_url = base_url().'order/view_orders/'.$order['order_by'].'/'.$order['date_created'].'/'.$option;
+         $ledger_url = base_url().'order/view_orders/'.$order['order_by'].'/'.$order['date_created'].'/'.$option.'/'.$order['order_id'];
         
          ?>
         
               <tr>
-<!--              <td><?php // echo $order['order_id']?></td>-->
+              <td><?php  echo $order['order_id']?></td>
               <td><?php echo $order['station_id']?></td>
               <td><?php echo $order['date_created']?></td>
-              <td style="color:red">Pending</td>
+              
               <td><a href="<?php  echo $ledger_url ?>" class="btn btn-danger btn-xs">View <i class="fa fa-eye"></i></a></td>
 <!--              <td><a href="<?php  echo $ledger_url ?>">View</a><span class="divider"> | </span><a href="#">Download</a></td>-->
         <?php }?>

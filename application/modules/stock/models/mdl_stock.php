@@ -159,4 +159,25 @@ class Mdl_Stock extends CI_Model
 		$num_rows = $query->num_rows();
 		return $num_rows;
 	}
+
+	function get_order_to_issue($order_id,$station_name){
+		$callprocedure="CALL get_order_to_issue($order_id,'$station_name')";
+		$query=$this->db->query($callprocedure);
+		$query->next_result();
+		return $query->result_array();
+	}
+	function get_order_infor($order_id){
+		$callprocedure="CALL get_order_infor($order_id)";
+		$query=$this->db->query($callprocedure);
+		$query->next_result();
+		return $query->result_array();
+
+	}
+	function get_order_to_receive($order_id){
+		$callprocedure="CALL get_order_to_receive($order_id)";
+		$query=$this->db->query($callprocedure);
+		$query->next_result();
+		return $query->result_array();
+	}
+
 }

@@ -6,24 +6,35 @@
   <title><?php echo $main_title;?></title>
   <!--<META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">-->
   
-  <link href="<?php echo base_url() ?>assets/css/font-awesome.css" rel="stylesheet" type="text/css" />
-  <link href="<?php echo base_url() ?>assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-  <link href="<?php echo base_url() ?>assets/css/animate.css" rel="stylesheet" type="text/css" />
-  <link href="<?php echo base_url() ?>assets/css/admin.css" rel="stylesheet" type="text/css" />
-  <link href="<?php echo base_url() ?>assets/plugins/data-tables/DT_bootstrap.css" rel="stylesheet">
+ <link href="<?php echo base_url() ?>assets/css/jquery-ui.css" rel="stylesheet" >
+<link href="<?php echo base_url() ?>assets/plugins/advanced-datatable/css/demo_table.css" rel="stylesheet">
 
-  <link href="<?php echo base_url() ?>assets/plugins/advanced-datatable/css/demo_page.css" rel="stylesheet">
-  <link href="<?php echo base_url() ?>assets/css/jquery-ui.css" rel="stylesheet" >
-  <link href="<?php echo base_url() ?>assets/plugins/advanced-datatable/css/demo_table.css" rel="stylesheet">
-<!--
-  <script type="text/javascript" src="http://code.jquery.com/jquery.js"></script>
-  <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
-  <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script> -->
-  <script src="<?php echo base_url();?>assets/js/bootbox.min.js"></script>
-  
-  <script src="<?php echo base_url() ?>assets/js/jquery-2.1.0.js"></script>
-  <script src="<?php echo base_url();?>assets/js/jquery-ui.min.js"></script>
-  <!--<script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>-->
+<!--     
+
+<link href="<?php //echo base_url() ?>assets/plugins/advanced-datatable/css/demo_page.css" rel="stylesheet">
+<link href="<?php //echo base_url() ?>assets/plugins/data-tables/DT_bootstrap.css" rel="stylesheet">   
+
+
+-->
+<link href="<?php echo base_url() ?>assets/css/font-awesome.css" rel="stylesheet" type="text/css" />
+<link href="<?php echo base_url() ?>assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="<?php echo base_url() ?>assets/css/animate.css" rel="stylesheet" type="text/css" />
+<link href="<?php echo base_url() ?>assets/css/admin.css" rel="stylesheet" type="text/css" />
+
+<!--     
+
+<script type="text/javascript" src="http://code.jquery.com/jquery.js"></script>
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script> 
+<script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
+
+-->
+
+<script src="<?php echo base_url();?>assets/js/bootbox.min.js"></script>
+<script src="<?php echo base_url() ?>assets/js/jquery-2.1.0.js"></script>
+<script src="<?php echo base_url();?>assets/js/jquery-ui.min.js"></script>  
+
+
 
  
 </head>
@@ -89,18 +100,16 @@
                 <li> <a href="<?php echo site_url('dashboard/home');?>" class="left_nav_sub_active"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Dashboard</b> </a> </li>
               </ul>
             </li>
-            <li> <a href="javascript:void(0);"> <i class="fa fa-cubes"></i>MANAGE STOCK<span class="plus"><i class="fa fa-plus"></i></span></a>
-              <ul>
+             <li> <a href="javascript:void(0);"> <i class="fa fa-cubes"></i>MANAGE STOCK<span class="plus"><i class="fa fa-plus"></i></span></a>
+               <ul>
                 <li> <a href="<?php echo site_url('stock/physical_count');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Physical Count</b> </a> </li>
-                <li> <a href="<?php echo site_url('stock/list_inventory');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Vaccines Ledger View</b> </a> </li>
-                <li> <a href="<?php echo site_url('stock/receive_stock');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Receive Stocks</b> </a> </li>
-                <li> <a href="<?php echo site_url('stock/issue_stock');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Issue Stocks</b> </a> </li>
-                <!-- <li> <a href="<?php echo site_url('stock/transfer_stock');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Transfer Stocks</b> </a> </li> -->
-                <li> <a href="<?php echo site_url("order/list_orders")?>" class="left_nav_sub_active"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Place/View Orders</b> </a> </li>
-                <!--  <li> <a href="#" class="left_nav_sub_active"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Arrival Tracking</b> </a> </li> -->
-                <!-- <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Settings</b> </a> </li> -->
+                <li> <a href="<?php echo site_url('stock/list_inventory');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>View Ledger</b> </a> </li>
+                <li> <a href="<?php echo site_url('stock/issue_stock');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Issue Stock</b> </a> </li>
+                <li> <a href="<?php echo site_url('stock/receive_stock');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Receive Stock</b> </a> </li>
+                <li> <a href="<?php echo site_url('order/list_orders');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Request Stock</b> </a> </li>
+              
               </ul>
-            </li>;
+            </li>
             <li> <a href="javascript:void(0);"> <i class="fa fa-th"></i>COLD CHAIN<span class="plus"><i class="fa fa-plus"></i></span> </a>
               <ul>
                 <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Log Reports</b> </a> </li> 

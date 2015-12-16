@@ -10,10 +10,14 @@ class Users extends MY_Controller
     function index(){
         $data['module']="users";
         $data['view_file']="login_form";
-        $data['main_title'] = $this->get_title();
-        echo Modules::run('template/home', $data); 
+        $data['main_title'] = $this->get_title();   
+        if(!isset($this->session->userdata['logged_in'])){
+          echo Modules::run('template/home', $data); 
+        }else{
+          redirect('dashboard/home'); 
+        }
     }
-
+    
     function list_users(){
 
       Modules::run('secure_tings/is_logged_in');

@@ -47,15 +47,6 @@ echo form_open('',$form_attributes);?>
  		</div>
 	  </div>
 
-	  <div class="col-lg-3">
-		  <div class="panel-body">
-		  <b>Order Number</b>
-		    <?php
-	        echo form_error('order');
-	        echo form_dropdown('order', $order, 'id="order" class="form-control"'); 
-	        ?>
-	 			</div>
-	  </div>
 	
 <input type="hidden" name ="transaction_type" class="transaction_type" value="2">
 </div>

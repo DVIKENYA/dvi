@@ -39,15 +39,15 @@ echo form_open('',$form_attributes);?>
       <tr class="button"></tr>
 
         <tr>
-		    <th>Transaction Date</th>
-		    <th>Transaction Type</th>
-		    <th>Origin</th>
-		    <th>Destination</th>
-		    <th>Vaccines/Diluents</th>
-		    <th>Quantity In</th>
-		    <th>Quantity Out</th>
-		    <th >Batch Number</th>
-			<th >Expiry Date</th>
+		    <th class="small">Transaction Date</th>
+		    <th class="small">Transaction Type</th>
+		    <th class="small">Origin</th>
+		    <th class="small">Destination</th>
+		    <th class="small">Vaccines/Diluents</th>
+		    <th class="small">Quantity In</th>
+		    <th class="small">Quantity Out</th>
+		    <th class="small">Batch Number</th>
+			<th class="small">Expiry Date</th>
 		</tr>
       </thead>
       <tbody>
@@ -55,15 +55,15 @@ echo form_open('',$form_attributes);?>
 
       <tfoot>
         <tr>
-	        <th>Transaction Date</th>
-		    <th>Transaction Type</th>
-		    <th>Origin</th>
-		    <th>Destination</th>
-		    <th>Vaccines/Diluents</th>
-		    <th>Quantity In</th>
-		    <th>Quantity Out</th>
-		    <th >Batch Number</th>
-			<th >Expiry Date</th>
+		    <th class="small">Transaction Date</th>
+		    <th class="small">Transaction Type</th>
+		    <th class="small">Origin</th>
+		    <th class="small">Destination</th>
+		    <th class="small">Vaccines/Diluents</th>
+		    <th class="small">Quantity In</th>
+		    <th class="small">Quantity Out</th>
+		    <th class="small">Batch Number</th>
+			<th class="small">Expiry Date</th>
         </tr>
       </tfoot>
     </table>						
