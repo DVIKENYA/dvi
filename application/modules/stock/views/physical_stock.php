@@ -36,7 +36,7 @@ echo form_open('',$form_attributes);?>
 		                input[id="available_quantity"]{
 		                 background-color: #E0F2F7 !important }</style>
              		<td><?php $data=array('name' => 'available_quantity','id'=> 'available_quantity','class'=>'form-control available_quantity' ); echo form_input($data);?></td>
-             		<td><?php $data=array('name' => 'physical_count','id'=>'physical_count' ,'class'=>'form-control physical_count'); echo form_input($data);?></td>
+             		<td><?php $data=array('name' => 'physical_count','required'=>'true','type'=>'Number', 'min'=>'0','id'=>'physical_count' ,'class'=>'form-control physical_count'); echo form_input($data);?></td>
              		
              		<td ><a href="#" class="add"><span class="label label-success"><i class="fa  fa-plus-square"></i> <b>ADD</b></span></a><span class="divider">  </span><a href="#" class="remove"><span class="label label-danger"><i class="fa  fa-minus-square"></i> <b>REMOVE</b></span></a></td>
                

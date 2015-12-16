@@ -75,7 +75,7 @@
         <?php
         echo form_label('Mobile Phone Number of EPI Logistician','county_logistician_phone');
         echo form_error('county_logistician_phone');
-        echo form_input(['name' => 'county_logistician_phone','id' => 'county_logistician_phone',  'pattern'=>"[07]{2}[0-9]{8}" , 'value' => $county_logistician_phone ,'class' => 'form-control', 'placeholder' => 'Start with 07....']);
+        echo form_input(['name' => 'county_logistician_phone','id' => 'county_logistician_phone',  'pattern'=>"[07]{2}[0-9]{8}" , 'value' => $county_logistician_phone ,'class' => 'form-control', 'placeholder' => 'e.g. 0712345678']);
         ?>
       </div>
 	  
@@ -83,7 +83,7 @@
         <?php
         echo form_label('Email Address of EPI Logistician','county_logistician_email');
         echo form_error('county_logistician_email');
-        echo form_input(['name' => 'county_logistician_email', 'id' => 'county_logistician_email', 'pattern'=>"[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$",  'value' => $county_logistician_email ,'class' => 'form-control', 'placeholder' => 'Enter Email Address of EPI Logistician']);
+        echo form_input(['name' => 'county_logistician_email', 'id' => 'county_logistician_email', 'pattern'=>"[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$",  'value' => $county_logistician_email ,'class' => 'form-control', 'placeholder' => 'e.g. someone@example.com']);
         ?>
       </div>
 	  
@@ -101,7 +101,7 @@
         <?php
         echo form_label('Mobile Phone Number of County Public Health Nurse','county_nurse_phone');
         echo form_error('county_nurse_phone');
-        echo form_input(['name' => 'county_nurse_phone', 'id' => 'county_nurse_phone' ,'pattern'=>"[07]{2}[0-9]{8}"  ,'value' => $county_nurse_phone ,'class' => 'form-control', 'placeholder' => 'Start with 07....']);
+        echo form_input(['name' => 'county_nurse_phone', 'id' => 'county_nurse_phone' ,'pattern'=>"[07]{2}[0-9]{8}"  ,'value' => $county_nurse_phone ,'class' => 'form-control', 'placeholder' => 'e.g. 0712345678']);
         ?>
       </div>
 	  
@@ -109,7 +109,7 @@
         <?php
         echo form_label('Email Address of County Public Health Nurse','county_nurse_email');
         echo form_error('county_nurse_email');
-        echo form_input(['name' => 'county_nurse_email', 'id' => 'county_nurse_email', 'pattern'=>"[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$", 'value' => $county_nurse_email ,'class' => 'form-control', 'placeholder' => 'Enter Email Address of County Public Health Nurse']);
+        echo form_input(['name' => 'county_nurse_email', 'id' => 'county_nurse_email', 'pattern'=>"[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$", 'value' => $county_nurse_email ,'class' => 'form-control', 'placeholder' => 'e.g. someone@example.com']);
         ?>
       </div>
 	  
@@ -125,7 +125,7 @@
         <?php
         echo form_label('Mobile Phone Number of Medical Engineering Technician','medical_technician_phone');
         echo form_error('medical_technician_phone');
-        echo form_input(['name' => 'medical_technician_phone', 'id' => 'medical_technician_phone','pattern'=>"[07]{2}[0-9]{8}" ,  'value' => $medical_technician_phone ,'class' => 'form-control', 'placeholder' => 'Start with 07....']);
+        echo form_input(['name' => 'medical_technician_phone', 'id' => 'medical_technician_phone','pattern'=>"[07]{2}[0-9]{8}" ,  'value' => $medical_technician_phone ,'class' => 'form-control', 'placeholder' => 'e.g. 0712345678']);
         ?>
       </div>
 	  
@@ -133,7 +133,7 @@
         <?php
         echo form_label('Email Address of Medical Engineering Technician','medical_technician_email');
         echo form_error('medical_technician_email');
-        echo form_input(['name' => 'medical_technician_email','pattern'=>"[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$", 'id' => 'medical_technician_email',  'value' => $medical_technician_email ,'class' => 'form-control', 'placeholder' => 'Enter Email Address of Medical Engineering Technician']);
+        echo form_input(['name' => 'medical_technician_email','pattern'=>"[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$", 'id' => 'medical_technician_email',  'value' => $medical_technician_email ,'class' => 'form-control', 'placeholder' => 'e.g. someone@example.com']);
         ?>
       </div>
 	  
@@ -149,7 +149,7 @@
         <?php
         echo form_label('Mobile Phone Number of County Medical Officer','county_medicalofficer_phone');
         echo form_error('county_medicalofficer_phone');
-        echo form_input(['name' => 'county_medicalofficer_phone', 'id' => 'county_medicalofficer_phone', 'pattern'=>"[07]{2}[0-9]{8}"  ,'value' => $county_medicalofficer_phone ,'class' => 'form-control', 'placeholder' => 'Start with 07....']);
+        echo form_input(['name' => 'county_medicalofficer_phone', 'id' => 'county_medicalofficer_phone', 'pattern'=>"[07]{2}[0-9]{8}"  ,'value' => $county_medicalofficer_phone ,'class' => 'form-control', 'placeholder' => 'e.g. 0712345678']);
         ?>
       </div>
 	  
@@ -157,7 +157,7 @@
         <?php
         echo form_label('Email Address of County Medical Officer','county_medicalofficer');
         echo form_error('county_medicalofficer_email');
-        echo form_input(['name' => 'county_medicalofficer_email', 'pattern'=>"[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$", 'id' => 'county_medicalofficer_email',  'value' => $county_medicalofficer_email ,'class' => 'form-control', 'placeholder' => 'Enter Email Address of County Medical Officer']);
+        echo form_input(['name' => 'county_medicalofficer_email', 'pattern'=>"[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$", 'id' => 'county_medicalofficer_email',  'value' => $county_medicalofficer_email ,'class' => 'form-control', 'placeholder' => 'e.g. someone@example.com']);
         ?>
       </div>
       <button class="btn btn-lg btn-danger btn-block" name="submit" type="submit">Submit</button>

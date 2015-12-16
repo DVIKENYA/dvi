@@ -5,7 +5,7 @@ class Mdl_Depot extends CI_Model {
 var $order = array('id' => 'desc');
 var $column = array('id', 'depot_location', 'user_id');
 var $fridge_columns = array('m_depot_fridges.id', 'Model', 'Manufacturer', 'temperature_monitor_no', 'main_power_source');
-var $depot_fridges = array('m_depot_fridges.fridge_id',  'm_fridges.Model', 'm_fridges.Manufacturer', 'temperature_monitor_no', 'main_power_source','age');
+var $depot_fridges = array('m_depot_fridges.fridge_id',  'm_fridges.Model', 'm_fridges.Manufacturer', 'temperature_monitor_no', 'main_power_source','age','refrigerator_status');
 
 function __construct() {
 parent::__construct();
