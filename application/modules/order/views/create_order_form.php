@@ -6,17 +6,17 @@ echo form_open('order/save_order',$form_attributes);?>
                   <!--Place order form -->
    <div id="order_infor">
 
-     	<table class="table table-bordered" id="store_infor_tbl">
-     		<tr><td style="width:50%">Store Name  : <?php echo $user_object['user_statiton']; ?> </td>
+      <table class="table table-bordered" id="store_infor_tbl">
+        <tr><td style="width:50%">Store Name  : <?php echo $user_object['user_statiton']; ?> </td>
         <td>Last Update: <?php echo date('Y-m-d',strtotime(date('Y-m-d')));?> </td></tr>
           <tr>
           <td>Order By : <?php echo $user_object['user_statiton']; ?> </td>
           <td>Date: <?php echo date('Y-m-d',strtotime(date('Y-m-d')));?></td>
-     	</table>
+      </table>
     <div id="order">
-   	<table class="table table-bordered" >
-   		
-   		<thead>
+    <table class="table table-bordered" >
+      
+      <thead>
          <tr align="center">
           <td>Vaccine</td><td>Stock On Hand</td><td>Minimum Stock</td><td>Maximum Stock</td><td>First Expiry Date</td><td>Quantity to order(Doses)</td>
         </tr>
@@ -30,20 +30,20 @@ echo form_hidden('station',$station);
 ?>
 
          <tbody>
-             	<?php foreach ($vaccines as $vaccine) { ?>
-             	<tr vaccine_id="<?php echo $vaccine['ID'] ?>">
-             		<td><?php echo $vaccine['Vaccine_name']?></td>
-             		<td><?php $data=array('name' => 'stock_on_hand[]','id'=> 'stock_on_hand_'.$vaccine['ID'] , 'class'=>'form-control stock_on_hand_','readonly'=>'readonly'); echo form_input($data);?></td>
-             		<td><?php $data=array('name' => 'min_stock[]','id'=> 'min_stock_'.$vaccine['ID'] ,'class'=>'form-control min_stock_', 'readonly'=>'readonly'); echo form_input($data);?></td>
-             		<td><?php $data=array('name' => 'max_stock[]','id'=> 'max_stock_'.$vaccine['ID'],'class'=>'form-control max_stock_','readonly'=>'readonly' ); echo form_input($data);?></td>
-             		<td><?php $data=array('name' => 'first_expiry_date[]','id'=> 'first_expiry_date_'.$vaccine['ID'] , 'class'=>'form-control first_expiry_date_','readonly'=>'readonly'); echo form_input($data);?></td>
-             		<td><?php $data=array('name' => 'quantity_dose[]','id'=> 'quantity_dose_'.$vaccine['ID'] ); echo form_input($data);?></td>
+              <?php foreach ($vaccines as $vaccine) { ?>
+              <tr vaccine_id="<?php echo $vaccine['ID'] ?>">
+                <td><?php echo $vaccine['Vaccine_name']?></td>
+                <td><?php $data=array('name' => 'stock_on_hand[]','id'=> 'stock_on_hand_'.$vaccine['ID'] , 'class'=>'form-control stock_on_hand_','readonly'=>'readonly'); echo form_input($data);?></td>
+                <td><?php $data=array('name' => 'min_stock[]','id'=> 'min_stock_'.$vaccine['ID'] ,'class'=>'form-control min_stock_', 'readonly'=>'readonly'); echo form_input($data);?></td>
+                <td><?php $data=array('name' => 'max_stock[]','id'=> 'max_stock_'.$vaccine['ID'],'class'=>'form-control max_stock_','readonly'=>'readonly' ); echo form_input($data);?></td>
+                <td><?php $data=array('name' => 'first_expiry_date[]','id'=> 'first_expiry_date_'.$vaccine['ID'] , 'class'=>'form-control first_expiry_date_','readonly'=>'readonly'); echo form_input($data);?></td>
+                <td><?php $data=array('name' => 'quantity_dose[]','id'=> 'quantity_dose_'.$vaccine['ID'] ); echo form_input($data);?></td>
                 <?php echo form_hidden('vaccine[]',$vaccine['ID']);?>
                 
-             	</tr>
-             	<?php }?>
+              </tr>
+              <?php }?>
          </tbody>
-   	</table>
+    </table>
     </div>
    </div> 
 
@@ -69,27 +69,27 @@ echo form_hidden('station',$station);
         // When a user selects a vaccine get the selected vaccines fetch the values from the database
         
         $(document).on( 'click','.vaccine', function () {
-	         var order_row=$(this);
-		 		   var selected_vaccine=order_row.val();
+           var order_row=$(this);
+           var selected_vaccine=order_row.val();
            var selected_months= $('#order_infor').find('.order_months').val();
 
-		   load_vaccine_infor(selected_vaccine,order_row,selected_months);
-		});
+       load_vaccine_infor(selected_vaccine,order_row,selected_months);
+    });
 
-		function load_vaccine_infor(selected_vaccine,order_row,selected_months){
-		
-			       var _url="<?php echo base_url();?>order/get_order_values";
-						
-			       var request=$.ajax({
-			     url: _url,
-			     type: 'post',
-			     data: {"selected_vaccine":selected_vaccine},
+    function load_vaccine_infor(selected_vaccine,order_row,selected_months){
+    
+             var _url="<?php echo base_url();?>order/get_order_values";
+            
+             var request=$.ajax({
+           url: _url,
+           type: 'post',
+           data: {"selected_vaccine":selected_vaccine},
 
-			    });
-			    request.done(function(data){
-			    	data=JSON.parse(data);
-			    	console.log(data);
-			    	$.each(data,function(key,value){
+          });
+          request.done(function(data){
+            data=JSON.parse(data);
+            console.log(data);
+            $.each(data,function(key,value){
                                     
                 console.log(key);
                 console.log(value);
@@ -105,15 +105,15 @@ echo form_hidden('station',$station);
                 order_row.closest("tr").find(".min_stock_").val(min_stock);
                 order_row.closest("tr").find(".quantity_dose_").val(quantity_order);
 
-			    		
-			    		
-			    		
-			    	});
-			    });
-			    request.fail(function(jqXHR, textStatus) {
-				  
-				});
-		}
+              
+              
+              
+            });
+          });
+          request.fail(function(jqXHR, textStatus) {
+          
+        });
+    }
 
 
 </script>
