@@ -6,6 +6,7 @@ class Facility extends MY_Controller {
       }
 
       public function index(){
+        Modules::run('secure_tings/ni_admin');
             $data['module']="facility";
             $data['view_file']="list_facility_view";
             $data['section'] = "Configuration";
@@ -17,7 +18,7 @@ class Facility extends MY_Controller {
          
 
       public function create(){
-
+          Modules::run('secure_tings/ni_admin');
             $update_id= $this->uri->segment(3);
             
             if (!isset($update_id )){
@@ -41,7 +42,7 @@ class Facility extends MY_Controller {
       }
 
       function submit(){
-
+        
             $this->load->library('form_validation');
             $this->form_validation->set_rules('facility_name','Facility Name','trim|required');
             $this->form_validation->set_rules('region_id','Region','trim|required');

@@ -9,6 +9,8 @@
 
         function index () {
           Modules::run('secure_tings/is_logged_in');
+          Modules::run('secure_tings/ni_national');
+          
            $this->load->model('mdl_uploads');
 
            $data['section'] = "DVI Kenya";
@@ -27,7 +29,7 @@
         function do_upload() {
           Modules::run('secure_tings/is_logged_in');
             $config['upload_path']='./docs/';
-            $config['allowed_types']='pdf|doc|jpg|png|gif|docx';
+            $config['allowed_types']='pdf|doc|jpg|png|docx';
             $config['max_size']='2048';
             $config['remove_spaces']= TRUE;
 
@@ -36,7 +38,7 @@
                     if ( ! $this->upload->do_upload()) {
                       
                         $this->session->set_flashdata('msg', $this->upload->display_errors());
-                        redirect('uploads/index', 'refresh');
+                        redirect('uploads/index');
                     }
                     else
                     {
@@ -114,6 +116,7 @@
            $this->load->helper('download');
             $data = file_get_contents('./docs/'.$file_name); // Read the file's contents
             $name = $file_name;
+
             force_download($name, $data);
         }
 

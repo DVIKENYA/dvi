@@ -139,6 +139,9 @@ class MY_Controller extends MX_Controller
 		}
 	}
 
+
+
+
 	function redirect($user_group)
 	{
 		if ($user_group=='1') {
@@ -153,8 +156,10 @@ class MY_Controller extends MX_Controller
 			$module = 'moh';
 		}else if ($user_group=='6') {
 			$module = 'phn';
-		}else {
+		}else if ($user_group=='7') {
 			$module = 'met';
+		}else {
+			exit('Permission denied');
 		}
 
 		return $module;

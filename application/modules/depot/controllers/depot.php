@@ -6,6 +6,7 @@ class Depot extends MY_Controller {
       }
 
       public function index(){
+        Modules::run('secure_tings/ni_admin');
           $data['module']="depot";
           $data['view_file']="list_depot_view";
           $data['section'] = "Configuration";
@@ -17,6 +18,7 @@ class Depot extends MY_Controller {
          
 
       public function create(){
+        Modules::run('secure_tings/ni_admin');
 
             $update_id= $this->uri->segment(3);
             

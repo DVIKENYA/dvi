@@ -9,6 +9,7 @@ parent::__construct();
 
 public function index()
 	{
+    Modules::run('secure_tings/ni_admin');
             $this->load->model('mdl_group');
             $this->load->library('pagination');
             $this->load->library('table');
@@ -47,7 +48,7 @@ public function index()
 
 
 function create(){
-	
+	Modules::run('secure_tings/ni_admin');
             $update_id= $this->uri->segment(3);
             $data = array();
             $this->load->model('mdl_group');
