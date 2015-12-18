@@ -124,7 +124,7 @@ if ( $user_object['user_level']=='1') {?>
     </ul>
  <?php } else  {?>
      <ul>
-     <li> <a href="<?php echo site_url('users/list_files');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i><b>Download Documents</b> </a> </li>
+     <li> <a href="<?php echo site_url('uploads/list_files');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i><b>Download Documents</b> </a> </li>
      </ul>
  <?php }
  ?> 

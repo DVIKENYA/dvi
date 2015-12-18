@@ -14,7 +14,10 @@
                                         <th>Uploaded By</th>
                                         <th>Date Uploaded</th>
                                         <td align="center"><b>Download</b></td>
+                                         <?php            
+                                        if ( $user_object['user_level']=='1') {?>
                                         <td align="center"><b>Delete</b></td>
+                                        <?php } ?>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -30,10 +33,11 @@
                                         <td><?php echo $row->owner ?></td>
                                         <td><?php echo $row->upload_date ?></td>
                                         <td align="center"><a href="<?php echo $edit_url ?>"><i class="fa fa-cloud-download"></i></a></td>
+                                         <?php            
+                                        if ( $user_object['user_level']=='1') {?>
                                         <td align="center"><a href="<?php echo $delete_url ?>"><i class="fa fa-trash-o"></i></td>
-                                       
                                     </tr>
-                                    <?php } ?>
+                                    <?php } ?><?php } ?>
                                 </tbody>
                             </table>
                     <hr>
