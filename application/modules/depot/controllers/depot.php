@@ -164,11 +164,10 @@ class Depot extends MY_Controller {
 
      
       function get_fridges_by_id(){
-        $info['user_object'] = $this->get_user_object();
-        $station_id=$info['user_object']['user_statiton'];
+        $depot_id = $this->uri->segment(3);
         $this->load->model('mdl_depot');
         $user_id = $this->session->userdata['logged_in']['user_id'];    
-        $list = $this->mdl_depot->get_fridges_by_id($user_id);
+        $list = $this->mdl_depot->get_fridges_by_id($user_id, $depot_id);
         $data = array();
         $no = $_POST['start'];
         foreach ($list as $fridge) {
@@ -180,6 +179,7 @@ class Depot extends MY_Controller {
               $row[] = $fridge->temperature_monitor_no;
               $row[] = $fridge->main_power_source;
               $row[] = $fridge->age;
+              $row[] = $fridge->refrigerator_status;
               //add html for action
               
               $row[] = '  <a class="btn btn-sm btn-primary" title="Edit" onclick="edit_fridge('."'".$fridge->fridge_id."'".')"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
@@ -191,8 +191,8 @@ class Depot extends MY_Controller {
 
         $output = array(
           "draw" => $_POST['draw'],
-          "recordsTotal" => $this->count_fridges("user_id", $user_id),
-          "recordsFiltered" => $this->count_fridges_filtered($user_id),
+          "recordsTotal" => $this->count_fridges("user_id", $user_id, $depot_id),
+          "recordsFiltered" => $this->count_fridges_filtered($user_id, $depot_id),
           "data" => $data,
         );
             
@@ -224,6 +224,8 @@ class Depot extends MY_Controller {
             'main_power_source'   => $this->input->post('main_power_source'),
             'age'    => $this->input->post('refrigerator_age'),
             'depot_id'=> $id,
+            'refrigerator_status'    => $this->input->post('refrigerator_status'),
+
           );
         $insert = $this->_insert_fridge($data);
         echo json_encode(array("status" => TRUE));
@@ -234,6 +236,7 @@ class Depot extends MY_Controller {
         $data = array(
             'temperature_monitor_no'   => $this->input->post('temperature_monitor_no'),
             'main_power_source'   => $this->input->post('main_power_source'),
+            'refrigerator_status'   => $this->input->post('refrigerator_status'),
             );
         $this->_update_fridge($id, $data);
         echo json_encode(array("status" => TRUE));
@@ -293,15 +296,22 @@ class Depot extends MY_Controller {
             return $query;
       }
 
-      function count_fridges($column, $value) {
-          $this->load->model('mdl_depot');
-          $query = $this->mdl_depot->count_fridges($column, $value);
-          return $query;
+      function count_fridges($depot_id) {
+            $user_id = $this->session->userdata['logged_in']['user_id'];
+            $this->load->model('mdl_depot');
+            $query = $this->mdl_depot->count_fridges($user_id, $depot_id);
+            return $query;
       }
 
-      function count_fridges_filtered($id) {
+      // function count_fridges($column, $value) {
+      //     $this->load->model('mdl_depot');
+      //     $query = $this->mdl_depot->count_fridges($column, $value);
+      //     return $query;
+      // }
+
+      function count_fridges_filtered($user_id, $depot_id) {
          $this->load->model('mdl_depot');
-         $query = $this->mdl_depot->count_fridges_filtered($id);
+         $query = $this->mdl_depot->count_fridges_filtered($user_id, $depot_id);
          return $query;
       }
      

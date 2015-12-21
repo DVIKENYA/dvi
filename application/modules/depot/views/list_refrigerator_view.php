@@ -18,7 +18,8 @@
           <th>Manufacturer</th>
           <th>Temp. Monitor No.</th>
           <th>Main Power Source</th>
-          <th>Age</th>
+          <th>Year of Installation</th>
+          <th>Status</th>
           <th style="width:250px;">Action</th>
         </tr>
       </thead>
@@ -31,8 +32,9 @@
           <th>Manufacturer</th>
           <th>Temp. Monitor No.</th>
           <th>Main Power Source</th>
-          <th>Age</th>
-          <th>Action</th>
+          <th>Year of Installation</th>
+          <th>Status</th>
+          <th style="width:250px;">Action</th>
         </tr>
       </tfoot>
     </table>
@@ -104,6 +106,7 @@
             //$('[name="model"]').val(data.Model);
             $('[name="temperature_monitor_no"]').val(data.temperature_monitor_no);
             $('[name="main_power_source"]').val(data.main_power_source);
+            $('[name="refrigerator_status"]').val(data.refrigerator_status);
                                    
             $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
             $('.modal-title').text('Edit Refrigerator'); // Set title to Bootstrap modal title
@@ -254,12 +257,25 @@
                 </div>
             </div>
             <div class="form-group">
-              <label class="control-label col-md-4">Age</label>
+              <label class="control-label col-md-4">Year of Installation</label>
               <div class="col-md-8">
-                <input name="refrigerator_age" placeholder="Age" class="form-control" type="text">
+                <input name="refrigerator_age" placeholder="Year of Installation" type="number" required="true" min="1950" class="form-control" >
               </div>
             </div>
           </div>
+          <div class="form-group">
+              <label class="control-label col-md-4">Refrigerator Status</label>
+              <div class="col-md-8">
+                <select id="refrigerator_status" name="refrigerator_status" required="true">
+                    <option value="">--Select Refrigerator's Status--</option>
+                    <option value="Functional">Functional</option>
+                    <option value="Awaiting Repair">Awaiting Repair</option>
+                    <option value="Decommissioned">Decommissioned</option>
+                    
+                  </select>
+                </div>
+            </div>
+          
         </form>
           </div>
           <div class="modal-footer">

@@ -1,15 +1,10 @@
 <?php 
-$location = array();
-$location[]="Select Location";
-  foreach($locations as $row ){
-    $location[$row->id] = $row->location; 
-  }
-
 $order = array();
 $order[]="Select Order Number";
   foreach($orders as $row ){
     $order[$row->order_id] = $row->order_id; 
   }
+
 ?>
  <div class="row">
     <div class="col-lg-12">
@@ -22,35 +17,23 @@ echo form_open('',$form_attributes);?>
 <div class="row">
 <div class="col-lg-3">
   <div class="panel-body">
-  <b>Received From</b>
-   <?php
-        echo form_error('received_from');
-        echo form_dropdown('received_from', $location, 'id="received_from" class="form-control"'); 
-        ?>
+  <b>Origin</b>
+    <?php $data=array('name' => 'received_from','id'=>'received_from','class'=>'form-control','value'=>$location,'readonly'=>''); echo form_input($data);?>
     </div>
 </div>
 <div class="col-lg-3">
   <div class="panel-body">
   <b>S11 Code</b>
-    <?php $data=array('name' => 's11','id'=> 's11','class'=>'form-control'); echo form_input($data);?>
+    <?php $data=array('name' => 's11','id'=> 's11','class'=>'form-control','required'=>'','type'=>'text'); echo form_input($data);?>
     </div>
 </div>
 <div class="col-lg-3">
   <div class="panel-body">
   <b>Date Received</b>
-   <?php $data=array('name' => 'date_received','id'=>'date_received','class'=>'form-control'); echo form_input($data);?>
+   <?php $data=array('name' => 'date_received','id'=>'date_received','class'=>'form-control','required'=>'','type'=>'date'); echo form_input($data);?>
     </div>
 </div> 
 
-<div class="col-lg-3">
-  <div class="panel-body">
-  <b>Order Number</b>
-   <?php
-          echo form_error('order');
-          echo form_dropdown('order', $order, 'id="order" class="form-control"'); 
-          ?>
-    </div>
-</div> 
 
 </div>
 <input type="hidden" name ="transaction_type" class="transaction_type" value="1">
@@ -62,20 +45,20 @@ echo form_open('',$form_attributes);?>
 <div class="well well-sm"><b>Vaccine Details</b></div>
 
 <div id="stock_receive_tbl">
-	 
-	<table class="table table-bordered table-hover table-striped">
-		<thead>
+   
+  <table class="table table-bordered table-hover table-striped">
+    <thead>
 
-			        <th align="center">Vaccine/Diluents</th>
-							<th >Batch No.</th>
-							<th >Expiry&nbsp;Date</th>
-							<th >Quantity(doses)</th>
-							<th >VVM Status</th>
-							<th >Action</th>
-		</thead>
-		<tbody>
+              <th align="center">Vaccine/Diluents</th>
+              <th >Batch No.</th>
+              <th >Expiry&nbsp;Date</th>
+              <th >Quantity(doses)</th>
+              <th >VVM Status</th>
+              <th >Action</th>
+    </thead>
+    <tbody>
 
-			<tr align="center" receive_row="1"> 
+      <tr align="center" receive_row="1"> 
               
               <td> <select name="vaccine" class="vaccine form-control" id="vaccine">
                  <option value="">--Select One--</option>
@@ -84,24 +67,24 @@ echo form_open('',$form_attributes);?>
                      }?>
                 </select></td>
 
-				
-             		<td><?php $data=array('name' => 'batch_no','id'=>'batch_no','class'=>'batch_no form-control'); echo form_input($data);?></td>
-             		<td><?php $data=array('name' => 'expiry_date','id'=> 'expiry_date','class'=>'form-control expiry_date', 'type'=>'date'); echo form_input($data);?></td>
-             		<td><?php $data=array('name' => 'quantity_received','id'=> 'quantity_received','class'=>'quantity_received form-control'); echo form_input($data);?></td>
-             		
+        
+                <td><?php $data=array('name' => 'batch_no','id'=>'batch_no','class'=>'batch_no form-control','required'=>'','type'=>'text'); echo form_input($data);?></td>
+                <td><?php $data=array('name' => 'expiry_date','id'=> 'expiry_date','class'=>'form-control expiry_date', 'type'=>'date','required'=>'','type'=>'date'); echo form_input($data);?></td>
+                <td><?php $data=array('name' => 'quantity_received','id'=> 'quantity_received','class'=>'quantity_received form-control','required'=>'','type'=>'number'); echo form_input($data);?></td>
+                
                 <td>
                 <select name="vvm_status" class=" form-control vvm_status " id="vvm_status" name="vvm_status">
                 <option value=""> --Select One-- </option>
                     <option value="1">Stage 1</option>
                     <option value="2">Stage 2</option>
                     <option value="3">Stage 3</option>
-                     <option value="3">Stage 4</option>
+                    <option value="4">Stage 4</option>
                 </select></td>
-             		<td ><a href="#" class="add"><span class="label label-success"><i class="fa  fa-plus-square"></i> <b>ADD</b></span></a><span class="divider">  </span><a href="#" class="remove"><span class="label label-danger"><i class="fa  fa-minus-square"></i> <b>REMOVE</b></span></a></td>
-			</tr>
+                <td ><a href="#" class="add"><span class="label label-success"><i class="fa  fa-plus-square"></i> <b>ADD</b></span></a><span class="divider">  </span><a href="#" class="remove"><span class="label label-danger"><i class="fa  fa-minus-square"></i> <b>REMOVE</b></span></a></td>
+      </tr>
 
-		</tbody>
-	</table>
+    </tbody>
+  </table>
 
 
 </div>
@@ -113,7 +96,7 @@ echo form_open('',$form_attributes);?>
 </div></div></div>
    <script type="text/javascript">
 
-             $('#date_received').datepicker().datepicker('setDate', new Date());
+             $('#date_received').datepicker({dateFormat: "yy-mm-dd",  maxDate: 0}).datepicker('setDate', null);
              $('#expiry_date').datepicker({dateFormat: "yy-mm-dd",  minDate: 0}).datepicker('setDate', null);
               $('#stock_receive_tbl').delegate( '.add', 'click', function () {
             
@@ -134,7 +117,7 @@ echo form_open('',$form_attributes);?>
 
                       var expiry_id = "expiry_date" + next_receive_row;
                       var expiry = cloned_object.find(".expiry_date");
-                      expiry.removeClass("hasDatepicker").attr('id',expiry_id).datepicker({dateFormat: "yy-mm-dd",  minDate: 0}).datepicker('setDate', null);
+                      expiry.removeClass("hasDatepicker").attr('id',expiry_id).datepicker({dateFormat: "yy-mm-dd",  minDate: 0,  setDate: null});
                       
 
                       var quantity_received_id = "quantity_received" + next_receive_row;
@@ -167,6 +150,7 @@ echo form_open('',$form_attributes);?>
        var formURL="<?php echo base_url();?>stock/save_received_stock";
 
        var vaccines = retrieveFormValues_Array('vaccine');
+       var s11 = retrieveFormValues('s11');
        var batch_no = retrieveFormValues_Array('batch_no');
        var expiry_date = retrieveFormValues_Array('expiry_date');
        var quantity_received = retrieveFormValues_Array('quantity_received');
@@ -184,18 +168,18 @@ echo form_open('',$form_attributes);?>
           var get_date_received=date_received;
           var get_received_from=received_from;
           var get_transaction_type=transaction_type;
-
+          var get_s11 = s11;
           $.ajax(
           {
               url : formURL,
               type: "POST",
-              data : {"transaction_type":get_transaction_type,"date_received":get_date_received,"received_from":get_received_from,"vaccine":get_vaccine,"batch_no":get_batch,"expiry_date":get_expiry,"quantity_received":get_quantity_received,"vvm_status":get_vvm_status},
+              data : {"transaction_type":get_transaction_type,"date_received":get_date_received,"received_from":get_received_from, "s11":get_s11, "vaccine":get_vaccine,"batch_no":get_batch,"expiry_date":get_expiry,"quantity_received":get_quantity_received,"vvm_status":get_vvm_status},
              /* dataType : json,*/
             // url : "<?php echo site_url("stock/list_inventory"); ?>";
               success:function(data, textStatus, jqXHR) 
               {
                   //data: return data from server
-                  
+                  //console.log(data);
                   window.location.replace('<?php echo base_url().'stock/list_inventory'?>');
 
 

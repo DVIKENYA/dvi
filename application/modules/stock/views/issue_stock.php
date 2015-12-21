@@ -3,7 +3,7 @@
 $location = array();
 $location[]="Select Location";
   foreach($locations as $row ){
-    $location[$row->id] = $row->location; 
+    $location[$row->location] = $row->location; 
   }
 
 $order = array();
@@ -27,15 +27,15 @@ echo form_open('',$form_attributes);?>
 	  <div class="panel-body">
 	  <b>Issue To</b>
 	    <?php
-        echo form_error('issue_to');
-        echo form_dropdown('issue_to', $location, 'id="issue_to" class="form-control"'); 
+        echo form_error('issued_to');
+        echo form_dropdown('issued_to', $location, 'id="issued_to" class="form-control"'); 
         ?>
 	   </div>
 	</div>
 	<div class="col-lg-3">
 	  <div class="panel-body">
 	  <b>S11 #</b>
-	    <?php $data=array('name' => 's11','id'=> 's11','class'=>'form-control'); echo form_input($data);?>
+	    <?php $data=array('name' => 's11','required'=>'true', 'id'=> 's11','class'=>'form-control'); echo form_input($data);?>
 	    </div>
 	</div>
     
@@ -47,15 +47,6 @@ echo form_open('',$form_attributes);?>
  		</div>
 	  </div>
 
-	  <div class="col-lg-3">
-		  <div class="panel-body">
-		  <b>Order Number</b>
-		    <?php
-	        echo form_error('order');
-	        echo form_dropdown('order', $order, 'id="order" class="form-control"'); 
-	        ?>
-	 			</div>
-	  </div>
 	
 <input type="hidden" name ="transaction_type" class="transaction_type" value="2">
 </div>
@@ -89,7 +80,7 @@ echo form_open('',$form_attributes);?>
 		                     echo "<option value='".$vaccine['ID']."'>".$vaccine['Vaccine_name']."</option>";
 		                     }?>
                 </select></td>
-            <td><select name="batch_no" class="form-control batch_no" id="batch_no"></td>
+            <td><select name="batch_no" class="form-control batch_no" id="batch_no" required="true"></select></td>
             <td><?php $data=array('name' => 'expiry_date','id'=> 'expiry_date','class'=>'form-control expiry_date', 'required'=>'true','readonly'=>''); echo form_input($data);?></td>
             <style type="text/css">
 	            input[id="available_quantity"]{
@@ -213,6 +204,7 @@ echo form_open('',$form_attributes);?>
 			       /* dataType : json,*/
 			        success:function(data, textStatus, jqXHR) 
 			        {
+			        	//console.log(data);
 			        	window.location.replace('<?php echo base_url().'stock/list_inventory'?>');
 			            //data: return data from server
 			        },

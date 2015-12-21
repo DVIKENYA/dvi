@@ -30,7 +30,7 @@
         <?php
         echo form_label('Mobile Phone of Region Manager','region_manager_phone');
         echo form_error('region_manager_phone');
-        echo form_input(['name' => 'region_manager_phone','pattern'=>"[07]{2}[0-9]{8}", 'id' => 'region',  'value' => $region_manager_phone ,'class' => 'form-control', 'placeholder' => 'Start with 07....']);
+        echo form_input(['name' => 'region_manager_phone','pattern'=>"[07]{2}[0-9]{8}", 'id' => 'region',  'value' => $region_manager_phone ,'class' => 'form-control', 'placeholder' => 'e.g. 0712345678' ]);
         ?>
       </div>
      
@@ -38,7 +38,7 @@
         <?php
         echo form_label('Email of Region Manager','region_manager_email');
         echo form_error('region_manager_email');
-        echo form_input(['name' => 'region_manager_email', 'id' => 'region', 'pattern'=>"[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$", 'value' => $region_manager_email ,'class' => 'form-control', 'placeholder' => 'Enter Email Address of Region Manager']);
+        echo form_input(['name' => 'region_manager_email', 'id' => 'region', 'pattern'=>"[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$", 'value' => $region_manager_email ,'class' => 'form-control', 'placeholder' => 'e.g. someone@example.com']);
         ?>
       </div>
      

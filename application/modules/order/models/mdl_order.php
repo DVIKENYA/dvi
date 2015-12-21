@@ -12,12 +12,14 @@ function get_table() {
     return $table;
 }
 // Get a list of orders placed to your station
+
 function get_placed_orders($station,$station_id){
         $call_procedure="CALL get_placed_orders($station,'$station_id')";
         $query=$this->db->query($call_procedure);
         $query->next_result();
         return $query->result_array();
 }
+
 // Get listof orders you have submitted 
 function get_submitted_orders($station,$station_id){
     $call_procedure="CALL get_submitted_orders($station,'$station_id')";
@@ -40,7 +42,7 @@ function get_orderitems($order_by,$date_created){
         $this->db->from('m_order o');
         $this->db->join('order_item oi', 'oi.order_id=o.order_id', 'left');
         $this->db->join('m_vaccines mv ', 'mv.ID=oi.vaccine_id', 'left');
-	$this->db->where(array('o.order_by' => $order_by,'o.date_created'=>$date_created));
+	    $this->db->where(array('o.order_by' => $order_by,'o.date_created'=>$date_created));
         $query = $this->db->get();
         return $query->result_array();
 }                    

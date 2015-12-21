@@ -62,9 +62,9 @@ echo form_open('',$form_attributes);?>
     </div>
    </div> </div> 
    <?php if ($option==1){ ?>               
-   <input type="button" value="Receive Order" class="btn btn-sm btn-danger" onclick="window.location.href='<?php echo base_url().'stock/stock/receive_stock'?>'" />
+   <input type="button" value="Receive Order" class="btn btn-sm btn-danger" onclick="window.location.href='<?php echo base_url().'stock/receive_stocks'.'/'.$order_id?>'" />
    <?php }else if ($option==2){ ?>
-   <input type="button" value="Issue Order" class="btn btn-sm btn-danger" onclick="window.location.href='<?php echo base_url().'stock/stock/issue_stock'?>'" />
+   <input type="button" value="Issue Order" class="btn btn-sm btn-danger" onclick="window.location.href='<?php echo base_url().'stock/issue_stocks'.'/'.$order_id ?>'" />
    <?php 
    }
 echo form_close();

@@ -11,9 +11,11 @@ class Facility extends MY_Controller {
             $data['section'] = "Configuration";
             $data['subtitle'] = "List Facility";
             $data['page_title'] = "Facility";
-           $data['user_object'] = $this->get_user_object();
-           $data['main_title'] = $this->get_title();
-           echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);      }
+            $data['user_object'] = $this->get_user_object();
+            $data['main_title'] = $this->get_title();
+            echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);     
+
+            }
          
 
       public function create(){
@@ -36,19 +38,21 @@ class Facility extends MY_Controller {
             $data['section'] = "Configuration";
             $data['subtitle'] = "Add Facility";
             $data['page_title'] = "Facility";
-            echo Modules::run('template/admin', $data);
-
+            $data['user_object'] = $this->get_user_object();
+            $data['main_title'] = $this->get_title();
+            echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);  
+         
       }
 
       function submit(){
 
             $this->load->library('form_validation');
             $this->form_validation->set_rules('facility_name','Facility Name','trim|required');
-            $this->form_validation->set_rules('region_id','Region','trim|required');
-            $this->form_validation->set_rules('county_id','County','trim|required');
-            $this->form_validation->set_rules('subcounty_id','Sub-county','trim|required');
-            $this->form_validation->set_rules('refrigerator','refrigerator','trim|required');
-            $this->form_validation->set_rules('status','Status','trim|required');
+            // $this->form_validation->set_rules('region_id','Region','trim|required');
+            // $this->form_validation->set_rules('county_id','County','trim|required');
+            // $this->form_validation->set_rules('subcounty_id','Sub-county','trim|required');
+            // $this->form_validation->set_rules('refrigerator','refrigerator','trim|required');
+            // //$this->form_validation->set_rules('status','Status','trim|required');
             $update_id = $this->input->post('update_id', TRUE);
             if ($this->form_validation->run() == FALSE)
             {   
@@ -61,11 +65,11 @@ class Facility extends MY_Controller {
                    
                    if(is_numeric($update_id)){
                        $this->_update($update_id, $data);
-                       //$this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">Facility details updated successfully!</div>');
+                       $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">Facility details updated successfully!</div>');
 
                    } else {
                        $this->_insert($data);
-                       //$this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">New Facility added successfully!</div>');
+                       $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">New Facility added successfully!</div>');
                    }
 
                    redirect('facility');
@@ -78,7 +82,7 @@ class Facility extends MY_Controller {
             foreach ($query->result() as $row){
                   $data['facility_name'] = $row->facility_name;
                   $data['staff'] = $row->staff;
-                  $data['dhis_id'] = $row->dhis_id;
+                  //$data['dhis_id'] = $row->dhis_id;
                   $data['officer_incharge'] = $row->officer_incharge;
                   $data['email'] = $row->email;
                   $data['phone'] = $row->phone;
@@ -97,7 +101,7 @@ class Facility extends MY_Controller {
       function get_data_from_post(){
             $data['facility_name']  =$this->input->post('facility_name', TRUE);
             $data['staff']      = $this->input->post('staff', TRUE);
-            $data['dhis_id']    = $this->input->post('dhis_id', TRUE);
+            //$data['dhis_id']    = $this->input->post('dhis_id', TRUE);
             $data['officer_incharge']=$this->input->post('officer_incharge', TRUE);
             $data['email']      = $this->input->post('email', TRUE);
             $data['phone']      = $this->input->post('phone', TRUE);
@@ -129,7 +133,6 @@ class Facility extends MY_Controller {
                   //add html for action
                   
                   $row[] = '  <a class="btn btn-sm btn-primary" href="facility/create/'.$facility->id.'" title="Edit"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
-                              <a class="btn btn-sm btn-danger"  href="facility/delete/'.$facility->id.'" title="Delete"><i class="glyphicon glyphicon-trash"></i> Delete</a>
                               <a class="btn btn-sm btn-info"  href="facility/list_fridge/'.$facility->id.'" title="Add"><i class="glyphicon glyphicon-plus"></i> Fridge</a>';
             
                   $data[] = $row;
@@ -155,8 +158,9 @@ class Facility extends MY_Controller {
           $data['section'] = "Configuration";
           $data['subtitle'] = "Refrigerator";
           $data['page_title'] = "Refrigerator";
-          echo Modules::run('template/admin', $data);
-
+          $data['user_object'] = $this->get_user_object();
+          $data['main_title'] = $this->get_title();
+          echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data); 
       }
 
      
@@ -257,15 +261,15 @@ class Facility extends MY_Controller {
 
       function delete($id){
             $this->_delete($id);
-            //$this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">Facility details deleted successfully!</div>');
-            redirect('data');
+            $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">Facility details deleted successfully!</div>');
+            redirect('facility');
       }
 
       function delete_fridge(){
             $id= $this->uri->segment(3);
             $this->_delete_fridge($id);
             echo json_encode(array("status" => TRUE));
-            //$this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">Facility details deleted successfully!</div>');
+            $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">Facility details deleted successfully!</div>');
             //redirect('data');
       }
         
