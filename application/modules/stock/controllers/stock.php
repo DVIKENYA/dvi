@@ -212,14 +212,10 @@ class Stock extends MY_Controller
       foreach ($query as $bal) {
           $no++;
           $row = array();
-          $row[] = $bal->transaction_date;
-          $row[] = $bal->transaction_type;
-          $row[] = $bal->source;
-          $row[] = $bal->destination;
-          $row[] = $bal->name;          
-          $row[] = $bal->quantity_in;
-          $row[] = $bal->quantity_out;
-          $row[] = $bal->batch_number;
+          $row[] = $bal->date_received;
+          $row[] = $bal->amount_ordered;
+          $row[] = $bal->amount_received;
+          $row[] = $bal->batch_no;
           $row[] = $bal->expiry_date;
           $data[] = $row;
       }
@@ -247,14 +243,11 @@ class Stock extends MY_Controller
       foreach ($query as $bal) {
           $no++;
           $row = array();
-          $row[] = $bal->transaction_date;
-          $row[] = $bal->transaction_type;
-          $row[] = $bal->source;
-          $row[] = $bal->destination;
-          $row[] = $bal->name;          
-          $row[] = $bal->quantity_in;
-          $row[] = $bal->quantity_out;
-          $row[] = $bal->batch_number;
+          $row[] = $bal->date_issued;
+          $row[] = $bal->issued_by_station_id;
+          $row[] = $bal->amount_ordered;
+          $row[] = $bal->amount_issued;
+          $row[] = $bal->batch_no;
           $row[] = $bal->expiry_date;
           $data[] = $row;
       }

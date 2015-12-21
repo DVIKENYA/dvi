@@ -4,17 +4,22 @@ class Mdl_Stock extends CI_Model
 {
 	var $order = array('id' => 'desc');
 	var $column = array(
-			'id',
-			'name',
-			'batch_number',
-			'transaction_date',
-			'expiry_date',
-			'destination',
-			'source',
-			'transaction_type',
-			'quantity_in',
-			'quantity_out',
-			'user_id'
+			'order_id',
+			'date_received',
+			'amount_ordered',
+			'amount_received',
+			'batch_no',
+			'expiry_date'
+		);
+
+	var $column2 = array(
+			'order_id',
+			'date_issued',
+			'issued_by_station_id',
+			'amount_ordered',
+			'amount_issued',
+			'batch_no',
+			'expiry_date'
 		);
 	
 	function __construct()
@@ -101,47 +106,65 @@ class Mdl_Stock extends CI_Model
 		return $query->result();
 	}
 
-	function get_vaccine_ledger_in($id, $user_id){
-		$this->_get_ledger_in_query($id, $user_id);
+	function get_vaccine_ledger_in($id, $station_id){
+		$this->_get_ledger_in_query($id, $station_id);
 		if($_POST['length'] != -1)
 		$this->db->limit($_POST['length'], $_POST['start']);
 		$query = $this->db->get();
 		return $query->result();
 	}
-	function get_vaccine_ledger_out($id, $user_id){
-		$this->_get_ledger_out_query($id, $user_id);
+	function get_vaccine_ledger_out($id, $station_id){
+		$this->_get_ledger_out_query($id, $station_id);
 		if($_POST['length'] != -1)
 		$this->db->limit($_POST['length'], $_POST['start']);
 		$query = $this->db->get();
 		return $query->result();
 	}
 
-	private function _get_ledger_in_query($id, $user_id){
+	private function _get_ledger_in_query($id, $station_id){
 		$this->db->select($this->column);
 		$this->db->from('view_orders_received');
 		$this->db->where('vaccine_id',$id);
 		$this->db->where('station_id',$station_id);
-		$this->search_order();
+		$i = 0;
+
+		foreach ($this->column as $item) 
+		{
+			if($_POST['search']['value'])
+				($i===0) ? $this->db->like($item, $_POST['search']['value']) : $this->db->or_like($item, $_POST['search']['value']);
+			$column[$i] = $item;
+			$i++;
+		}
+
+		if(isset($_POST['order']))
+		{
+			$this->db->order_by($column[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
+		} 
+		else if(isset($this->order))
+		{
+			$order = $this->order;
+			$this->db->order_by(key($order), $order[key($order)]);
+		}
 	}
 
 	private function _get_ledger_out_query($id, $station_id){
-		$this->db->select($this->column);
+		$this->db->select($this->column2);
 		$this->db->from('view_orders_issued');
 		$this->db->where('vaccine_id',$id);
 		$this->db->where('station_id',$station_id);
 		$i = 0;
 
-		foreach ($this->column as $item) 
+		foreach ($this->column2 as $item) 
 		{
 			if($_POST['search']['value'])
 				($i===0) ? $this->db->like($item, $_POST['search']['value']) : $this->db->or_like($item, $_POST['search']['value']);
-			$column[$i] = $item;
+			$column2[$i] = $item;
 			$i++;
 		}
 
 		if(isset($_POST['order']))
 		{
-			$this->db->order_by($column[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
+			$this->db->order_by($column2[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
 		} 
 		else if(isset($this->order))
 		{
@@ -150,32 +173,9 @@ class Mdl_Stock extends CI_Model
 		}
 	}
 
-
-
-	function search_order(){	
-		$i = 0;
-
-		foreach ($this->column as $item) 
-		{
-			if($_POST['search']['value'])
-				($i===0) ? $this->db->like($item, $_POST['search']['value']) : $this->db->or_like($item, $_POST['search']['value']);
-			$column[$i] = $item;
-			$i++;
-		}
-
-		if(isset($_POST['order']))
-		{
-			$this->db->order_by($column[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
-		} 
-		else if(isset($this->order))
-		{
-			$order = $this->order;
-			$this->db->order_by(key($order), $order[key($order)]);
-		}
-	}
 	
 	function count_filtered($id, $user_id){
-		$this->_get_datatables_query($id, $user_id);
+		$this->_get_ledger_in_query($id, $user_id);
 		$query = $this->db->get();
 		return $query->num_rows();
 	}
