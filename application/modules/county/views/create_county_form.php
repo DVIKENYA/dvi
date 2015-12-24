@@ -23,14 +23,14 @@
         <?php
         echo form_label('County Name','county_name');
         echo form_error('county_name');
-        echo form_input(['name' => 'county_name', 'id' => 'county',  'value' => $county_name ,'class' => 'form-control disabled', 'placeholder' => 'Enter County Name', 'readonly'=>'true']);
+        echo form_input(['name' => 'county_name', 'id' => 'county',  'value' => $county_name ,'class' => 'form-control disabled', 'placeholder' => 'Enter County Name', 'readonly'=>'true',  'AutoComplete' => 'off']);
         ?>
       </div>
       <div class="form-group">
         <?php
         echo form_label('County Headquarter','county_headquarter');
         echo form_error('county_headquarter');
-        echo form_input(['name' => 'county_headquarter', 'id' => 'county_headquarter', 'pattern'=>'[a-zA-Z\s]+', 'value' => $county_headquarter ,'class' => 'form-control', 'placeholder' => 'Enter County Headquarter']);
+        echo form_input(['name' => 'county_headquarter', 'id' => 'county_headquarter', 'pattern'=>'[a-zA-Z\s]+', 'value' => $county_headquarter ,'class' => 'form-control', 'placeholder' => 'Enter County Headquarter',  'AutoComplete' => 'off']);
         ?>
       </div>
       <div class="form-group">
@@ -45,21 +45,21 @@
         <?php
         echo form_label('Estimated Total Population','population');
         echo form_error('population');
-        echo form_input(['name' => 'population','type'=>'number' ,'min'=>'1', 'id' => 'population',  'value' => $population ,'class' => 'form-control', 'placeholder' => 'Enter Population']);
+        echo form_input(['name' => 'population','type'=>'number' ,'min'=>'1', 'id' => 'population',  'value' => $population ,'class' => 'form-control', 'placeholder' => 'Enter Population',  'AutoComplete' => 'off']);
         ?>
       </div>
        <div class="form-group">
         <?php
         echo form_label('Estimated Population Under One','population_one');
         echo form_error('population_one');
-        echo form_input(['name' => 'population_one','type'=>'number' ,'min'=>'1', 'id' => 'population_one',  'value' => $population_one ,'class' => 'form-control', 'placeholder' => 'Enter Population']);
+        echo form_input(['name' => 'population_one','type'=>'number' ,'min'=>'1', 'id' => 'population_one',  'value' => $population_one ,'class' => 'form-control', 'placeholder' => 'Enter Population',  'AutoComplete' => 'off']);
         ?>
       </div>
        <div class="form-group">
         <?php
         echo form_label('Estimated Population of Women','population_women');
         echo form_error('population_women');
-        echo form_input(['name' => 'population_women', 'type'=>'number' ,'min'=>'0','id' => 'population_women',  'value' => $population_women ,'class' => 'form-control', 'placeholder' => 'Enter Population']);
+        echo form_input(['name' => 'population_women', 'type'=>'number' ,'min'=>'0','id' => 'population_women',  'value' => $population_women ,'class' => 'form-control', 'placeholder' => 'Enter Population',  'AutoComplete' => 'off']);
         ?>
       </div>
 	  
@@ -67,7 +67,7 @@
         <?php
         echo form_label('County EPI Logistician','county_logistician');
         echo form_error('county_logistician');
-        echo form_input(['name' => 'county_logistician', 'id' => 'county_logistician', 'pattern'=>'[a-zA-Z\s]+', 'value' => $county_logistician ,'class' => 'form-control', 'placeholder' => 'Enter Name of County EPI Logistician']);
+        echo form_input(['name' => 'county_logistician', 'id' => 'county_logistician', 'pattern'=>'[a-zA-Z\s]+', 'value' => $county_logistician ,'class' => 'form-control', 'placeholder' => 'Enter Name of County EPI Logistician',  'AutoComplete' => 'off']);
         ?>
       </div>
 	  
@@ -75,7 +75,7 @@
         <?php
         echo form_label('Mobile Phone Number of EPI Logistician','county_logistician_phone');
         echo form_error('county_logistician_phone');
-        echo form_input(['name' => 'county_logistician_phone','id' => 'county_logistician_phone',  'pattern'=>"[07]{2}[0-9]{8}" , 'value' => $county_logistician_phone ,'class' => 'form-control', 'placeholder' => 'Start with 07....']);
+        echo form_input(['name' => 'county_logistician_phone','id' => 'county_logistician_phone',  'pattern'=>"[07]{2}[0-9]{8}" , 'value' => $county_logistician_phone ,'class' => 'form-control', 'placeholder' => 'Start with 07....',  'AutoComplete' => 'off']);
         ?>
       </div>
 	  
@@ -83,7 +83,7 @@
         <?php
         echo form_label('Email Address of EPI Logistician','county_logistician_email');
         echo form_error('county_logistician_email');
-        echo form_input(['name' => 'county_logistician_email', 'id' => 'county_logistician_email', 'pattern'=>"[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$",  'value' => $county_logistician_email ,'class' => 'form-control', 'placeholder' => 'Enter Email Address of EPI Logistician']);
+        echo form_input(['name' => 'county_logistician_email', 'id' => 'county_logistician_email', 'pattern'=>"[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$",  'value' => $county_logistician_email ,'class' => 'form-control', 'placeholder' => 'Enter Email Address of EPI Logistician',  'AutoComplete' => 'off']);
         ?>
       </div>
 	  
