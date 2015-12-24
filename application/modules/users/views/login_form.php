@@ -15,7 +15,7 @@
               <?php
               echo form_label('Enter User Name','username');
               echo form_error('username');
-              echo form_input(['name' => 'username', 'id' => 'username', 'class' => 'form-control', 'placeholder' => 'Enter Username Name']);
+              echo form_input(['name' => 'username', 'id' => 'username', 'class' => 'form-control', 'placeholder' => 'Enter Username Name', 'AutoComplete'=>'Off']);
               ?>
           </div>
     <div class="form-group">
