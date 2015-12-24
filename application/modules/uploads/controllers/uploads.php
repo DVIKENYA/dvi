@@ -52,6 +52,7 @@
                         }
 
                             $data = $this->upload->data();
+                            $data['user_object'] = $this->get_user_object();
                             $mydata = array(
                                'file_name' => $this->input->post('file_name'),
                                'raw_name' => $data["file_name"],
@@ -59,7 +60,7 @@
                                'full_path' => $data["full_path"], 
                                'published' => $this->input->post('published'),
                                'purpose' => $this->input->post('purpose'),
-                               'owner' => ($this->session->userdata['logged_in']['user_fname']),
+                               'owner' =>  $this->session->userdata['logged_in']['user_name'],
                                'upload_date' => date('Y-m-d')   
                                );
                             $this->load->model('mdl_uploads');

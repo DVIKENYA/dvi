@@ -15,14 +15,14 @@
               <?php
               echo form_label('Enter User Name','username');
               echo form_error('username');
-              echo form_input(['name' => 'username', 'id' => 'username', 'class' => 'form-control', 'placeholder' => 'Enter Username Name']);
+              echo form_input(['name' => 'username', 'id' => 'username', 'class' => 'form-control', 'placeholder' => 'Enter Username Name',  'AutoComplete' => 'off']);
               ?>
           </div>
     <div class="form-group">
               <?php
               echo form_label('Enter Password','password');
               echo form_error('modulename_name');
-              echo form_password(['name' => 'password', 'id' => 'password', 'class' => 'form-control', 'placeholder' => 'Enter Password']);
+              echo form_password(['name' => 'password', 'id' => 'password', 'class' => 'form-control', 'placeholder' => 'Enter Password',  'AutoComplete' => 'off']);
               ?>
     </div>
       

@@ -191,6 +191,7 @@ Modules::run('secure_tings/ni_admin');
                 'user_id' => $result[0]->id,
                 'user_fname' => $result[0]->f_name,
                 'user_lname' => $result[0]->l_name,
+                'user_name' => $result[0]->f_name.' '.$result[0]->l_name,
                 'user_group'=> $result[0]->user_group,
                 'user_level'=> $result[0]->user_level,
                 'logged_in'=>TRUE
