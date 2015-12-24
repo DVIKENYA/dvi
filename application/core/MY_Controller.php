@@ -79,7 +79,6 @@ class MY_Controller extends MX_Controller
 	{
 		if (isset($this->session->userdata['logged_in'])) {
 			$user_fname = ($this->session->userdata['logged_in']['user_fname']);
-			$user_lname = ($this->session->userdata['logged_in']['user_lname']);
 			$user_group = ($this->session->userdata['logged_in']['user_group']);
 			$user_level = ($this->session->userdata['logged_in']['user_level']);
 			$user_id = ($this->session->userdata['logged_in']['user_id']);

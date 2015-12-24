@@ -93,8 +93,9 @@
              <?php
              if ( $user_object['user_level']=='1') {?>
             <ul>
-              <li> <a href="<?php echo site_url('Inventory');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Inventory </b> </a> </li>
-              <li> <a href="<?php echo site_url('jobcard');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Job Cards</b> </a> </li>
+              <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Inventory Management</b> </a> </li>
+              <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Spare Requests</b> </a> </li>
+              <li> <a href="<?php echo site_url('jobcard/');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Job Cards</b> </a> </li>
               <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Field Engineers</b> </a> </li>
             </ul>
             <?php } elseif( $user_object['user_level']=='2')  {?>

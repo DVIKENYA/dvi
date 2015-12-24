@@ -128,8 +128,8 @@ function get_data_from_post(){
 
         function delete($id){
 $this->_delete($id);
-$this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">Group details deleted successfully!</div>');
-redirect('group');
+$this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">depot details deleted successfully!</div>');
+redirect('depot');
 }
 
 
