@@ -93,38 +93,37 @@
             </li>
             <li> <a href="javascript:void(0);"> <i class="fa fa-cubes"></i>MANAGE STOCK<span class="plus"><i class="fa fa-plus"></i></span></a>
               <ul>
-                <li> <a href="<?php echo site_url('stock/c_physical_stock/physical_count');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Physical Count</b> </a> </li>
-                <li> <a href="<?php echo site_url('stock/list_inventory');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Vaccines Ledger View</b> </a> </li>
-                <li> <a href="<?php echo site_url('stock/receive_stock');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Receive Stocks</b> </a> </li>
-                <li> <a href="<?php echo site_url('stock/issue_stock');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Issue Stocks</b> </a> </li>
+                <li> <a href="<?php echo site_url('stock/c_physical_stock/physical_count');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>STOCK COUNT</b> </a> </li>
+                <li> <a href="<?php echo site_url('stock/list_inventory');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>STOCK LEDGERS</b> </a> </li>
+                <li> <a href="<?php echo site_url('stock/receive_stock');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>RECEIVE STOCKS</b> </a> </li>
+                <li> <a href="<?php echo site_url('stock/issue_stock');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>ISSUE STOCKS</b> </a> </li>
                 <!-- <li> <a href="<?php echo site_url('stock/transfer_stock');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Transfer Stocks</b> </a> </li> -->
-                <li> <a href="<?php echo site_url("order/list_orders")?>" class="left_nav_sub_active"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Place/View Orders</b> </a> </li>
                 <!--  <li> <a href="#" class="left_nav_sub_active"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Arrival Tracking</b> </a> </li> -->
                 <!-- <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Settings</b> </a> </li> -->
               </ul>
             </li>
             <li> <a href="javascript:void(0);"> <i class="fa fa-th"></i>COLD CHAIN<span class="plus"><i class="fa fa-plus"></i></span> </a>
               <ul>
-                <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Log Reports</b> </a> </li> 
+                <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>LOG REPORTS</b> </a> </li> 
               </ul>
             </li>
             <li> <a href="javascript:void(0);"> <i class="fa fa-bar-chart "></i>REPORTS<span class="plus"><i class="fa fa-plus"></i></span> </a>
               <ul>
-                <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Report Module</b> </a> </li>
-                <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>County Reports</b> </a> </li>
-                <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Forecasting</b> </a> </li>
+                <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>REPORT MODULE</b> </a> </li>
+                <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>COUNTY REPORTS</b> </a> </li>
+                <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>FORECASTING</b> </a> </li>
               </ul>
             </li>
             <li> <a href="javascript:void(0);"> <i class="fa fa-user-plus"></i>DOCUMENTS<span class="plus"><i class="fa fa-plus"></i></span> </a>
   <?php            
 if ( $user_object['user_level']=='1') {?>
     <ul>
-     <li> <a href="<?php echo site_url('uploads/');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i><b>Upload Documents</b> </a> </li>
-    <li> <a href="<?php echo site_url('uploads/list_files');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i><b>Download Documents</b> </a> </li>
+     <li> <a href="<?php echo site_url('uploads/');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i><b>UPLOAD DOCUMENTS</b> </a> </li>
+    <li> <a href="<?php echo site_url('uploads/list_files');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i><b>DOWNLOAD DOCUMENTS</b> </a> </li>
     </ul>
  <?php } else  {?>
      <ul>
-     <li> <a href="<?php echo site_url('uploads/list_files');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i><b>Download Documents</b> </a> </li>
+     <li> <a href="<?php echo site_url('uploads/list_files');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i><b>DOWNLOAD DOCUMENTS</b> </a> </li>
      </ul>
  <?php }
  ?> 
@@ -132,20 +131,20 @@ if ( $user_object['user_level']=='1') {?>
             </li>
             <li> <a href="javascript:void(0);"> <i class="fa fa-gear"></i>CONFIGURATIONS<span class="plus"><i class="fa fa-plus"></i></span> </a>
               <ul>
-                <li> <a href="<?php echo site_url('group/');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Add Groups</b> </a> </li>
-                <li> <a href="<?php echo site_url('users/list_users');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i><b>Add Users</b> </a> </li>
-                <li> <a href="<?php echo site_url('vaccines');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Add Vaccines</b> </a> </li>
-                <li> <a href="<?php echo site_url('region/');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Add Regions</b> </a> </li>
-                <li> <a href="<?php echo site_url('county/');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Add County</b> </a> </li>
-                <li> <a href="<?php echo site_url('subcounty/');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Add Sub-County</b> </a> </li>
-                <li> <a href="<?php echo site_url('depot');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Add Depot</b> </a> </li>
-                <li> <a href="<?php echo site_url('facility');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Add Facilities</b> </a> </li>
+                <li> <a href="<?php echo site_url('group/');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>ADD GROUPS</b> </a> </li>
+                <li> <a href="<?php echo site_url('users/list_users');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i><b>ADD USERS</b> </a> </li>
+                <li> <a href="<?php echo site_url('vaccines');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>ADD VACCINES</b> </a> </li>
+                <li> <a href="<?php echo site_url('region/');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>ADD REGIONS</b> </a> </li>
+                <li> <a href="<?php echo site_url('county/');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>ADD COUNTY</b> </a> </li>
+                <li> <a href="<?php echo site_url('subcounty/');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>ADD SUB-COUNTY</b> </a> </li>
+                <li> <a href="<?php echo site_url('depot');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>ADD DEPOT</b> </a> </li>
+                <li> <a href="<?php echo site_url('facility');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>ADD FACILITIES</b> </a> </li>
                 <!--<li> <a href="<?php //echo site_url('fridges');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Add Fridges</b> </a> </li>-->
               </ul>
             </li>
             <li> <a href="javascript:void(0);"><img src="<?php echo base_url() ?>assets/images/coat_of_arms.png" width="30" height="30" /><span class="theme_color">&nbsp;&nbsp;<b>DVI KENYA</b></span>  <span class="plus"><i class="fa fa-plus"></i></span> </a>
               <ul>
-                <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>About</b> </a> </li>
+                <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>ABOUT</b> </a> </li>
               </ul>
             </li>
           </ul>

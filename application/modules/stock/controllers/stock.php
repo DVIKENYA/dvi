@@ -180,6 +180,7 @@ class Stock extends MY_Controller
           $this->load->model('stock/mdl_stock');
           $this->load->model('vaccines/mdl_vaccines');
           $data['vaccines']= $this->mdl_vaccines->get_vaccine_details();
+          $data['total']= $this->get_total_stkbl($selected_vaccine);
           $data['module'] = "stock";
           $data['view_file'] = "vaccine_ledger";
           $data['section'] = "stock";
@@ -306,6 +307,15 @@ class Stock extends MY_Controller
         $query= $this->mdl_stock->get_orders($station_id);
         return $query;
     //var_dump($query);
+    }
+
+      function get_total_stkbl($selected_vaccine){
+      $user_id = $this->session->userdata['logged_in']['user_id'];
+      $selected_vaccine=$this->input->post('selected_vaccine');
+      $this->load->model('stock/mdl_stock');
+      $data= $this->mdl_stock->getTotalStockBal($selected_vaccine);
+     /* echo json_encode($selected_vaccine);*/
+       return $data;
     }
 
     function count_all() {

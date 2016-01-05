@@ -91,50 +91,50 @@
             </li>
             <li> <a href="javascript:void(0);"> <i class="fa fa-cubes"></i>MANAGE STOCK<span class="plus"><i class="fa fa-plus"></i></span></a>
               <ul>
-                <li> <a href="<?php echo site_url('stock/c_physical_stock/physical_count');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Physical Count</b> </a> </li>
-                <li> <a href="<?php echo site_url('stock/list_inventory');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Vaccines Ledger View</b> </a> </li>
-                <li> <a href="<?php echo site_url('stock/receive_stock');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Receive Stocks</b> </a> </li>
-                <li> <a href="<?php echo site_url('stock/issue_stock');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Issue Stocks</b> </a> </li>
+                <li> <a href="<?php echo site_url('stock/c_physical_stock/physical_count');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>PHYSICAL COUNT</b> </a> </li>
+                <li> <a href="<?php echo site_url('stock/list_inventory');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>LEDGER VIEW</b> </a> </li>
+                <li> <a href="<?php echo site_url('stock/receive_stock');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>RECEIVE STOCKS</b> </a> </li>
+                <li> <a href="<?php echo site_url('stock/issue_stock');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>ISSUE STOCKS</b> </a> </li>
                 <!-- <li> <a href="<?php echo site_url('stock/transfer_stock');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Transfer Stocks</b> </a> </li> -->
-                <li> <a href="<?php echo site_url("order/list_orders")?>" class="left_nav_sub_active"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Place/View Orders</b> </a> </li>
+                <li> <a href="<?php echo site_url("order/list_orders")?>" class="left_nav_sub_active"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>REQUEST STOCKS</b> </a> </li>
                 <!--  <li> <a href="#" class="left_nav_sub_active"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Arrival Tracking</b> </a> </li> -->
                 <!-- <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Settings</b> </a> </li> -->
               </ul>
             </li>
             <li> <a href="javascript:void(0);"> <i class="fa fa-th"></i>COLD CHAIN<span class="plus"><i class="fa fa-plus"></i></span> </a>
               <ul>
-                <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Log Reports</b> </a> </li> 
+                <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>LOG REPORTS</b> </a> </li> 
               </ul>
             </li>
             <li> <a href="javascript:void(0);"> <i class="fa fa-bar-chart "></i>REPORTS<span class="plus"><i class="fa fa-plus"></i></span> </a>
               <ul>
-                <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Report Module</b> </a> </li>
-                <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>County Reports</b> </a> </li>
-                <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Forecasting</b> </a> </li>
+                <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>REPORT MODULE</b> </a> </li>
+                <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>COUNTY REPORTS</b> </a> </li>
+                <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>FORECASTING</b> </a> </li>
               </ul>
             </li>
             <li> <a href="javascript:void(0);"> <i class="fa fa-user-plus"></i>DOCUMENTS<span class="plus"><i class="fa fa-plus"></i></span> </a>
               <?php            
 if ($user_object['user_level']=='1') {?>
     <ul>
-     <li> <a href="<?php echo site_url('uploads/');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i><b>Upload Documents</b> </a> </li>
-    <li> <a href="<?php echo site_url('uploads/list_files');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i><b>Download Documents</b> </a> </li>
+     <li> <a href="<?php echo site_url('uploads/');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i><b>UPLOAD DOCUMENTS</b> </a> </li>
+    <li> <a href="<?php echo site_url('uploads/list_files');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i><b>DOWNLOAD DOCS</b> </a> </li>
     </ul>
  <?php } else  {?>
      <ul>
-     <li> <a href="<?php echo site_url('uploads/list_files');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i><b>Download Documents</b> </a> </li>
+     <li> <a href="<?php echo site_url('uploads/list_files');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i><b>DOWNLOAD DOCUMENTS</b> </a> </li>
      </ul>
  <?php }
  ?> 
             </li>
             <li> <a href="javascript:void(0);"> <i class="fa fa-gear"></i>CONFIGURATIONS<span class="plus"><i class="fa fa-plus"></i></span> </a>
               <ul>
-                <li> <a href="<?php echo site_url('depot');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Add Depot</b> </a> </li>
+                <li> <a href="<?php echo site_url('depot');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>ADD DEPOT</b> </a> </li>
               </ul>
             </li>
             <li> <a href="javascript:void(0);"><img src="<?php echo base_url() ?>assets/images/coat_of_arms.png" width="30" height="30" /><span class="theme_color">&nbsp;&nbsp;<b>DVI KENYA</b></span>  <span class="plus"><i class="fa fa-plus"></i></span> </a>
               <ul>
-                <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>About</b> </a> </li>
+                <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>ABOUT</b> </a> </li>
               </ul>
             </li>
           </ul>
@@ -189,6 +189,8 @@ if ($user_object['user_level']=='1') {?>
 <script src="<?php echo base_url() ?>assets/plugins/morris/morris-script.js"></script> 
 <script src="<?php echo base_url() ?>assets/plugins/data-tables/jquery.dataTables.min.js"></script>
 <script src="<?php echo base_url() ?>assets/plugins/data-tables/DT_bootstrap.js"></script>
+<script src="<?php echo base_url() ?>assets/plugins/highcharts/highcharts.js" type="text/javascript"></script>
+<script src="<?php echo base_url() ?>assets/plugins/highcharts/highcharts-more.js" type="text/javascript"></script>
 <script src="<?php echo base_url() ?>assets/plugins/demo-slider/demo-slider.js"></script>
 <script src="<?php echo base_url() ?>assets/plugins/knob/jquery.knob.min.js"></script> 
 </body>

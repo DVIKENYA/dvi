@@ -27,6 +27,18 @@ class Mdl_Stock extends CI_Model
 	parent::__construct();	
 	}
 
+function getTotalStockBal($selected_vaccine)
+{
+	$this->db->select_sum('stock_balance');  
+	$v = array('vaccine_id' => $selected_vaccine); 
+	//$u = array('user_id' => $user_id);
+    $this->db->where($v);
+    //$this->db->where($u);
+    $query = $this->db->get('m_stock_balance');
+    return $query->result_array();
+
+}
+
 	function get_transaction_type(){
 		$this->db->select('id,transaction_type');
         $query = $this->db->get('m_transaction_type');
