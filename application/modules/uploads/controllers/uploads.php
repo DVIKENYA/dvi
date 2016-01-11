@@ -9,6 +9,7 @@
 
         function index () {
            $this->load->model('mdl_uploads');
+
            $data['section'] = "DVI Kenya";
            $data['subtitle'] = "File Manager";
            $data['page_title'] = "Files";

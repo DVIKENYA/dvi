@@ -3,18 +3,30 @@
 class Mdl_Stock extends CI_Model
 {
 	var $order = array('id' => 'desc');
+	var $ledger_order_value = array('date_created' => 'desc');
 	var $column = array(
-			'id',
-			'name',
-			'batch_number',
-			'transaction_date',
+			'vaccine_id',
+			'vaccine_name',
+			'batch_no',
+			
+			'date_created',
 			'expiry_date',
-			'destination',
-			'source',
-			'transaction_type',
-			'quantity_in',
-			'quantity_out',
-			'user_id'
+			'order_destination',
+			'amount_ordered',
+			'amount_received',
+			'station_id',
+		);
+	var $column2 = array(
+			'vaccine_id',
+			'vaccine_name',
+			'batch_no',
+			
+			'date_created',
+			'expiry_date',
+			'issuing_station',
+			'amount_ordered',
+			'amount_issued',
+			'station_id',
 		);
 	
 	function __construct()
@@ -22,26 +34,39 @@ class Mdl_Stock extends CI_Model
 	parent::__construct();	
 	}
 
+function getTotalStockBal($selected_vaccine)
+{
+	$this->db->select_sum('stock_balance');  
+	$v = array('vaccine_id' => $selected_vaccine); 
+	//$u = array('user_id' => $user_id);
+    $this->db->where($v);
+    //$this->db->where($u);
+    $query = $this->db->get('m_stock_balance');
+    return $query->result_array();
+
+}
+
 	function get_transaction_type(){
 		$this->db->select('id,transaction_type');
         $query = $this->db->get('m_transaction_type');
         return $query->result_array();
 	}
-	function get_batches($selected_vaccine, $user_id){
-		$this->db->select('batch_number,expiry_date,stock_balance');
-		$s = array('vaccine_id' => $selected_vaccine, 'stock_balance !=' => '0');
-		$u = array('user_id' => $user_id);
+	function get_batches($selected_vaccine, $station_id){
+		$this->db->select('batch_number,expiry_date');
+		$s = array('vaccine_id' => $selected_vaccine);
+		$u = array('station_id' => $station_id);
         $this->db->where($s);
         $this->db->where($u);
-		$query = $this->db->get('m_stock_balance');
-		 return $query->result_array();
+		$query = $this->db->get('m_stock_movement');
+		return $query->result_array();
 	}
+
 	function get_batchdetails($selected_batch){
 		$this->db->select('expiry_date,stock_balance,mv.name');
-		$this->db->join('m_vvm_status mv', 'mv.id = vvm_status', 'left');
-		$array = array('batch_number' => $selected_batch, 'stock_balance !=' => '0');
+		$this->db->join('m_vvm_status mv', 'mv.id = vvm_status', 'inner');
+		$array = array('batch_number' => $selected_batch);
         $this->db->where($array);
-		$query = $this->db->get('m_stock_balance ');
+		$query = $this->db->get('m_stock_balance');
 		return $query->result_array();
 	
 	}
@@ -101,23 +126,26 @@ class Mdl_Stock extends CI_Model
 		return $query->result();
 	}
 
-	function get_vaccine_ledger($id, $user_id){
-		$this->_get_datatables_query($id, $user_id);
+	function get_vaccine_ledger_in($id, $station_id){
+		$this->_get_ledger_in_query($id, $station_id);
+		if($_POST['length'] != -1)
+		$this->db->limit($_POST['length'], $_POST['start']);
+		$query = $this->db->get();
+		return $query->result();
+	}
+	function get_vaccine_ledger_out($id, $station_id){
+		$this->_get_ledger_out_query($id, $station_id);
 		if($_POST['length'] != -1)
 		$this->db->limit($_POST['length'], $_POST['start']);
 		$query = $this->db->get();
 		return $query->result();
 	}
 
-	private function _get_datatables_query($id, $user_id){
+	private function _get_ledger_in_query($id, $station_id){
 		$this->db->select($this->column);
-		$this->db->from('vaccine_movement');
-		$this->db->where('id',$id);
-		$this->db->where('user_id',$user_id);
-		$this->search_order();
-	}
-
-	function search_order(){	
+		$this->db->from('view_orders_received');
+		$this->db->where('vaccine_id',$id);
+		$this->db->where('station_id',$station_id);
 		$i = 0;
 
 		foreach ($this->column as $item) 
@@ -132,15 +160,48 @@ class Mdl_Stock extends CI_Model
 		{
 			$this->db->order_by($column[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
 		} 
-		else if(isset($this->order))
+		else if(isset($this->ledger_order_value))
 		{
-			$order = $this->order;
+			$order = $this->ledger_order_value;
 			$this->db->order_by(key($order), $order[key($order)]);
 		}
 	}
+
+	private function _get_ledger_out_query($id, $station_id){
+		$this->db->select($this->column2);
+		$this->db->from('view_orders_issued');
+		$this->db->where('vaccine_id',$id);
+		$this->db->where('station_id',$station_id);
+		$i = 0;
+
+		foreach ($this->column2 as $item) 
+		{
+			if($_POST['search']['value'])
+				($i===0) ? $this->db->like($item, $_POST['search']['value']) : $this->db->or_like($item, $_POST['search']['value']);
+			$column2[$i] = $item;
+			$i++;
+		}
+
+		if(isset($_POST['order']))
+		{
+			$this->db->order_by($column2[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
+		} 
+		else if(isset($this->ledger_order_value))
+		{
+			$order = $this->ledger_order_value;
+			$this->db->order_by(key($order), $order[key($order)]);
+		}
+	}
+
 	
-	function count_filtered($id, $user_id){
-		$this->_get_datatables_query($id, $user_id);
+	function count_issued_filtered($id, $station_id){
+		$this->_get_ledger_out_query($id, $station_id);
+		$query = $this->db->get();
+		return $query->num_rows();
+	}
+
+	function count_received_filtered($id, $station_id){
+		$this->_get_ledger_in_query($id, $station_id);
 		$query = $this->db->get();
 		return $query->num_rows();
 	}

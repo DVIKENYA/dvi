@@ -43,7 +43,7 @@ class Stock extends MY_Controller
             user_level = national
             retrieve all regions 
             */
-            $data['location'] = "UNICEF";
+            $data['location'] = "National Arrival";
           }else{
             $data['location'] = $station_id;
           }
@@ -180,6 +180,7 @@ class Stock extends MY_Controller
           $this->load->model('stock/mdl_stock');
           $this->load->model('vaccines/mdl_vaccines');
           $data['vaccines']= $this->mdl_vaccines->get_vaccine_details();
+          $data['total']= $this->get_total_stkbl($selected_vaccine);
           $data['module'] = "stock";
           $data['view_file'] = "vaccine_ledger";
           $data['section'] = "stock";
@@ -199,33 +200,35 @@ class Stock extends MY_Controller
 
     }
     
-    function ledger(){
+      
+    function ledger_in(){
       
       $id= $this->uri->segment(3);
       $this->load->model('stock/mdl_stock');
-      $user_id = $this->session->userdata['logged_in']['user_id'];
-      $query= $this->mdl_stock->get_vaccine_ledger($id, $user_id);
+      $data['user_object'] = $this->get_user_object();
+      $station_id=$data['user_object']['user_statiton'];
+      $query= $this->mdl_stock->get_vaccine_ledger_in($id, $station_id);
       //var_dump($query);
       $data = array();
       $no = $_POST['start'];
       foreach ($query as $bal) {
           $no++;
           $row = array();
-          $row[] = $bal->transaction_date;
-          $row[] = $bal->transaction_type;
-          $row[] = $bal->source;
-          $row[] = $bal->destination;
-          $row[] = $bal->name;          
-          $row[] = $bal->quantity_in;
-          $row[] = $bal->quantity_out;
-          $row[] = $bal->batch_number;
-          $row[] = $bal->expiry_date;
+          $row[] = $bal->vaccine_name;
+          $row[] = $bal->batch_no;
+          $row[] = $bal->expiry_date; 
+          $row[] = $bal->date_created;
+                   
+          $row[] = $bal->order_destination;
+          $row[] = $bal->amount_ordered;
+          $row[] = $bal->amount_received;
           $data[] = $row;
+      
       }
       $output = array(
               "draw" => $_POST['draw'],
-              "recordsTotal" => $this->count_filtered($id, $user_id),
-              "recordsFiltered" => $this->count_filtered($id, $user_id),
+              // "recordsTotal" => $this->mdl_stock->count_received_filtered($id, $station_id),
+              // "recordsFiltered" => $this->mdl_stock->count_received_filtered($id, $station_id),
               "data" => $data,
             );
             
@@ -233,10 +236,46 @@ class Stock extends MY_Controller
 
     }
 
-    function store_balance($selected_vaccine){
-      $user_id = $this->session->userdata['logged_in']['user_id'];
+    function ledger_out(){
+      
+      $id= $this->uri->segment(3);
       $this->load->model('stock/mdl_stock');
-      $query= $this->mdl_stock->get_store_balance($selected_vaccine, $user_id);
+      $data['user_object'] = $this->get_user_object();
+      $station_id=$data['user_object']['user_statiton'];
+      $query= $this->mdl_stock->get_vaccine_ledger_out($id, $station_id);
+      //var_dump($query);
+      $data = array();
+      $no = $_POST['start'];
+      foreach ($query as $bal) {
+          $no++;
+          $row = array();
+          $row[] = $bal->vaccine_name;
+          $row[] = $bal->batch_no;
+       
+          $row[] = $bal->date_created;
+          $row[] = $bal->expiry_date;          
+          $row[] = $bal->issuing_station;
+          $row[] = $bal->amount_ordered;
+          $row[] = $bal->amount_issued;
+          $data[] = $row;
+      }
+      $output = array(
+              "draw" => $_POST['draw'],
+              // "recordsTotal" => $this->mdl_stock->count_issued_filtered($id, $station_id),
+              // "recordsFiltered" => $this->mdl_stock->count_issued_filtered($id, $station_id),
+              "data" => $data,
+            );
+            
+            echo json_encode($output);
+
+    }
+
+    
+    function store_balance($selected_vaccine){
+      $data['user_object'] = $this->get_user_object();
+      $station_id=$data['user_object']['user_statiton'];
+      $this->load->model('stock/mdl_stock');
+      $query= $this->mdl_stock->get_store_balance($selected_vaccine, $station_id);
       echo json_encode($query);
      
     }
@@ -254,10 +293,11 @@ class Stock extends MY_Controller
     }
 
     function get_batches(){
-      $user_id = $this->session->userdata['logged_in']['user_id'];
+      $data['user_object'] = $this->get_user_object();
+      $station_id=$data['user_object']['user_statiton'];
       $selected_vaccine=$this->input->post('selected_vaccine');
       $this->load->model('stock/mdl_stock');
-      $data= $this->mdl_stock->get_batches($selected_vaccine, $user_id);
+      $data= $this->mdl_stock->get_batches($selected_vaccine, $station_id);
      /* echo json_encode($selected_vaccine);*/
        echo json_encode($data);
     }
@@ -277,6 +317,15 @@ class Stock extends MY_Controller
         $query= $this->mdl_stock->get_orders($station_id);
         return $query;
     //var_dump($query);
+    }
+
+      function get_total_stkbl($selected_vaccine){
+      $user_id = $this->session->userdata['logged_in']['user_id'];
+      $selected_vaccine=$this->input->post('selected_vaccine');
+      $this->load->model('stock/mdl_stock');
+      $data= $this->mdl_stock->getTotalStockBal($selected_vaccine);
+     /* echo json_encode($selected_vaccine);*/
+       return $data;
     }
 
     function count_all() {

@@ -25,7 +25,7 @@ echo form_open('',$form_attributes);?>
              	<tr physical_row="1">
              	<input type="hidden" name ="transaction_type" class="transaction_type" value="2">
 			     <td> <select name="vaccine" class="form-control vaccine" id="vaccine">
-		                 <option value="">--Select One--</option> 
+		                 <option value="" selected="selected">--Select One--</option> 
 		                 <?php foreach ($vaccines as $vaccine) { 
 		                     echo "<option value='".$vaccine['ID']."'>".$vaccine['Vaccine_name']."</option>";
 		                     }?>
@@ -139,7 +139,7 @@ echo form_open('',$form_attributes);?>
 					     success:function(data, textStatus, jqXHR) 
 					        {
 					        	console.log(data);
-					        	//window.location.replace('<?php echo base_url().'stock/list_inventory'?>');
+					        	window.location.replace('<?php echo base_url().'stock/list_inventory'?>');
 					            //data: return data from server
 					        },
 					     error: function(jqXHR, textStatus, errorThrown) 

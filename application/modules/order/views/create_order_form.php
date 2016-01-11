@@ -1,8 +1,20 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');?>
 <?php
 $form_attributes = array('id' => 'create_orderfm','method' =>'post');
-echo form_open('order/save_order',$form_attributes);?>
-                
+echo form_open('order/save_order',$form_attributes);
+
+$region = Modules::run('template/getUserRegion');
+$county = Modules::run('template/getUserCounty');
+$subcounty = Modules::run('template/getUserSubcounty');
+
+if($region==$user_object['user_statiton']){
+  echo form_hidden('order_destination', 'KENYA');
+}elseif ($county==$user_object['user_statiton']) {
+  echo form_hidden('order_destination', $region);
+}elseif ($subcounty==$user_object['user_statiton']) {
+  echo form_hidden('order_destination', $county);
+}
+?>               
                   <!--Place order form -->
    <div id="order_infor">
 

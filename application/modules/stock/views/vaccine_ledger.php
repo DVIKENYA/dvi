@@ -1,4 +1,4 @@
- <div class="row">
+<div class="row">
     
 <?php
 $form_attributes = array('id' => 'vaccine_ledger','class'=>'form-inline','role'=>'form');
@@ -11,6 +11,29 @@ echo form_open('',$form_attributes);?>
 <div class="col-lg-12">    
 	<div class="table-responsive">
 		<div class="well well-sm"><b>Vaccine Ledger</b></div>
+
+ <div class="row">
+          <div id="total "class="col-sm-3 col-sm-6">
+            <div class="information green_info">   
+              <div class="information_inner">
+              	<div class="info green_symbols"><i class="fa fa-users icon"></i></div>
+                <span>TOTAL STOCK BALANCE</span>
+                <h1 class="bolded"><?php echo json_encode($total);?> </h1>
+                <div class="infoprogress_green">
+                  <div class="greenprogress"></div>
+                </div>
+                <b class=""><small>For:<?php echo $user_object['user_statiton']; ?></small></b>
+                <div class="pull-right" id="work-progress1">
+                  <canvas style="display: inline-block; width: 47px; height: 25px; vertical-align: top;" width="47" height="25"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+
+            <div class="col-sm-3 col-sm-6">
+			<div id="container-speed"></div>
+          </div>
+        </div>	
 
 <div class="row">
 	<div class="col-lg-3">
@@ -34,56 +57,111 @@ echo form_open('',$form_attributes);?>
 	
 <div class="margin-top-10"></div>
 
- <table id="table" class="display table table-bordered table-striped table-hover" cellspacing="0" width="100%">
-      <thead>
-      <tr class="button"></tr>
+     <div class="col-lg-12 col-sm-12">
+     <div class="panel default blue_title h2">
+        <div class="panel-body">
+        <ul class="nav nav-tabs">
 
-        <tr>
-		    <th class="small">Transaction Date</th>
-		    <th class="small">Transaction Type</th>
-		    <th class="small">Origin</th>
-		    <th class="small">Destination</th>
-		    <th class="small">Vaccines/Diluents</th>
-		    <th class="small">Quantity In</th>
-		    <th class="small">Quantity Out</th>
-		    <th class="small">Batch Number</th>
-			<th class="small">Expiry Date</th>
-		</tr>
-      </thead>
-      <tbody>
-      </tbody>
+        <li class="active"><a data-toggle="tab" href="#tab1"><b>Stock In</b></a></li>
+        <li><a data-toggle="tab" href="#tab2"><b>Stock Out</b></a></li>
+        </ul>
+        <div class="tab-content">
+        <div id="tab1" class="tab-pane fade in active">
+        <form>
 
-      <tfoot>
-        <tr>
-		    <th class="small">Transaction Date</th>
-		    <th class="small">Transaction Type</th>
-		    <th class="small">Origin</th>
-		    <th class="small">Destination</th>
-		    <th class="small">Vaccines/Diluents</th>
-		    <th class="small">Quantity In</th>
-		    <th class="small">Quantity Out</th>
-		    <th class="small">Batch Number</th>
-			<th class="small">Expiry Date</th>
-        </tr>
-      </tfoot>
-    </table>						
+          <div class="table-responsive">
+              <table id="table1" class="table table-bordered table-hover table-striped" cellspacing="0" width="100%">
+                <thead>
+                  <tr class="button"></tr>
+
+                    <tr>
+                        <th >Vaccine/Diluent</th>
+                        <th >Batch <br>Number</th>
+                        <th >Expiry <br>Date</th>
+                        <th >Transaction <br>Date</th>
+                        <th >Origin/Destination</th>
+                        <th >Amount <br>Ordered</th>
+                        <th >Amount <br>Received</th>
+                      
+                    </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+
+                  <tfoot>
+                    <tr>
+                        <th >Vaccine/Diluent</th>
+                        <th >Batch <br>Number</th>
+                        <th >Expiry <br>Date</th>
+                        <th >Transaction <br>Date</th>
+                        <th >Origin/Destination</th>
+                        <th >Amount <br>Ordered</th>
+                        <th >Amount <br>Received</th>
+                    </tr>
+                  </tfoot>
+              </table>
+            </div>
+
+        </form>
+        </div>
+        <div id="tab2" class="tab-pane fade">
+        <form id="">
+        <div class="table-responsive">
+          <table id="table2" class="table table-bordered table-hover table-striped" cellspacing="0" width="100%">
+            <thead>
+                  <tr class="button"></tr>
+
+                    <tr>
+                        <th >Vaccine/Diluent</th>
+                        <th >Batch <br>Number</th>
+                        <th >Expiry <br>Date</th>
+                        <th >Transaction <br>Date</th>
+                        <th >Origin/Destination</th>
+                        <th >Amount <br>Ordered</th>
+                        <th >Amount <br>Issued</th>
+                      
+                    </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+
+                  <tfoot>
+                    <tr>
+                        <th >Vaccine/Diluent</th>
+                        <th >Batch <br>Number</th>
+                        <th >Expiry <br>Date</th>
+                        <th >Transaction <br>Date</th>
+                        <th >Origin/Destination</th>
+                        <th >Amount <br>Ordered</th>
+                        <th >Amount <br>Issued</th>
+                    </tr>
+          </table>
+         </div>
+
+        </form>
+    </div>
+
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+
+	
 
 <?php echo form_close();?>
-</div>
-</div>
-</div>
-</div>
+
 <script type="text/javascript">
 
  	$(document).ready(function() {
  		
-		table = $('#table').DataTable({ 
+		table1 = $('#table1').DataTable({ 
 		"processing": true, //Feature control the processing indicator.
 		"serverSide": true, //Feature control DataTables' server-side processing mode.
 
 		// Load data for the table's content from an Ajax source
 		"ajax": {
-		    "url": "<?php echo site_url('stock/ledger/')."/".$id?>",
+		    "url": "<?php echo site_url('stock/ledger_in/')."/".$id?>",
 		    "type": "POST"
 		},
 		"dom": 'Bfrtip',
@@ -110,9 +188,45 @@ echo form_open('',$form_attributes);?>
 		
     });
 
-	
+    $(document).ready(function() {
+ 		
+		table2 = $('#table2').DataTable({ 
+		"processing": true, //Feature control the processing indicator.
+		"serverSide": true, //Feature control DataTables' server-side processing mode.
+
+		// Load data for the table's content from an Ajax source
+		"ajax": {
+		    "url": "<?php echo site_url('stock/ledger_out/')."/".$id?>",
+		    "type": "POST"
+		},
+		"dom": 'Bfrtip',
+        "buttons": [
+            'excelHtml5',
+            'csvHtml5',
+            'pdfHtml5',
+			],	
+		"responsive": {
+		    "details": {
+		        "type": 'column'
+		    }
+		},
+		//Set column definition initialisation properties.
+		"columnDefs": [
+		{ 
+		  "targets": [ -1 ], //last column
+		  "orderable": false, //set not orderable
+		},
+		],
+
+		});
+
+		
+    });
+
+
 	$(document).on( 'change','#v_list', function () {
 		var selected_vaccine=$(this).val();
+        console.log(selected_vaccine);
 		get_ledger(selected_vaccine);
 		});
 
@@ -133,14 +247,120 @@ echo form_open('',$form_attributes);?>
 				  
 				});
 			   
-			}
+			}		
 
-		$(document).on( 'change','#v_list', function () {
+	$(document).on( 'change','#v_list', function () {
 		var selected_vaccine=$(this).val();	
-		var _url="<?php echo site_url('stock/ledger/')?>/"+ selected_vaccine;
-		table.ajax.url( _url).load();
+        var _url1="<?php echo site_url('stock/ledger_in/')?>/"+ selected_vaccine;
+		var _url2="<?php echo site_url('stock/ledger_out/')?>/"+ selected_vaccine;
+		table1.ajax.url( _url1).load();
+		table2.ajax.url( _url2).load();
 		});	
+</script>
 	
+<script type="text/javascript">
+	$(document).ready(function() {
+
+    var gaugeOptions = {
+
+        chart: {
+            type: 'solidgauge'
+        },
+
+        title: null,
+
+        pane: {
+            center: ['50%', '85%'],
+            size: '140%',
+            startAngle: -90,
+            endAngle: 90,
+            background: {
+                backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || '#EEE',
+                innerRadius: '60%',
+                outerRadius: '100%',
+                shape: 'arc'
+            }
+        },
+
+        tooltip: {
+            enabled: false
+        },
+
+        // the value axis
+        yAxis: {
+            stops: [
+                [0.1, '#55BF3B'], // green
+                [0.5, '#DDDF0D'], // yellow
+                [0.9, '#DF5353'] // red
+            ],
+            lineWidth: 0,
+            minorTickInterval: null,
+            tickPixelInterval: 400,
+            tickWidth: 0,
+            title: {
+                y: -70
+            },
+            labels: {
+                y: 16
+            }
+        },
+
+        plotOptions: {
+            solidgauge: {
+                dataLabels: {
+                    y: 5,
+                    borderWidth: 0,
+                    useHTML: true
+                }
+            }
+        }
+    };
+
+    // The speed gauge
+    $('#container-speed').highcharts(Highcharts.merge(gaugeOptions, {
+        yAxis: {
+            min: 0,
+            max: 200,
+            title: {
+                text: 'Speed'
+            }
+        },
+
+        credits: {
+            enabled: false
+        },
+
+        series: [{
+            name: 'Speed',
+            data: [80],
+        }]
+
+    }));
+
+    // Bring life to the dials
+    setTimeout(function () {
+        // Speed
+        var chart = $('#container-speed').highcharts(),
+            point,
+            newVal,
+            inc;
+
+        if (chart) {
+            point = chart.series[0].points[0];
+            inc = Math.round((Math.random() - 0.5) * 100);
+            newVal = point.y + inc;
+
+            if (newVal < 0 || newVal > 200) {
+                newVal = point.y - inc;
+            }
+
+            point.update(newVal);
+        }
+
+    }, 2000);
+
+
+});
 			
 </script>
 

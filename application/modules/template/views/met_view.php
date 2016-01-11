@@ -3,22 +3,29 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <title><?php echo $main_title;?></title>
+  <title><?php echo $main_title; ?></title>
   <!--<META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">-->
+  
   
   <link href="<?php echo base_url() ?>assets/css/font-awesome.css" rel="stylesheet" type="text/css" />
   <link href="<?php echo base_url() ?>assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
   <link href="<?php echo base_url() ?>assets/css/animate.css" rel="stylesheet" type="text/css" />
   <link href="<?php echo base_url() ?>assets/css/admin.css" rel="stylesheet" type="text/css" />
-  
+  <link href="<?php echo base_url() ?>assets/plugins/data-tables/DT_bootstrap.css" rel="stylesheet">
+
+  <link href="<?php echo base_url() ?>assets/plugins/advanced-datatable/css/demo_page.css" rel="stylesheet">
+  <link href="<?php echo base_url() ?>assets/css/jquery-ui.css" rel="stylesheet" >
+  <link href="<?php echo base_url() ?>assets/plugins/advanced-datatable/css/demo_table.css" rel="stylesheet">
+<!--
   <script type="text/javascript" src="http://code.jquery.com/jquery.js"></script>
   <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
-  <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script> 
+  <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script> -->
   <script src="<?php echo base_url();?>assets/js/bootbox.min.js"></script>
-  <script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
-  <link rel="stylesheet" href="<?php echo base_url();?>assets/css/jquery-ui.css">
-  <script src="<?php echo base_url();?>assets/js/jquery-ui.min.js"></script>
+  
   <script src="<?php echo base_url() ?>assets/js/jquery-2.1.0.js"></script>
+  <script src="<?php echo base_url();?>assets/js/jquery-ui.min.js"></script>
+  <!--<script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>-->
+
  
 
 </head>
@@ -86,36 +93,72 @@
             </li>
             <li> <a href="javascript:void(0);"> <i class="fa fa-cubes"></i>MANAGE STOCK<span class="plus"><i class="fa fa-plus"></i></span></a>
               <ul>
-                <li> <a href="<?php echo site_url('stock/list_inventory');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Vaccines Ledger View</b> </a> </li>
+                <li> <a href="<?php echo site_url('stock/list_inventory');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Stock Ledgers</b> </a> </li>
               </ul>
             </li>
             <li> <a href="javascript:void(0);"> <i class="fa fa-th"></i>COLD CHAIN<span class="plus"><i class="fa fa-plus"></i></span> </a>
-              <ul>
-                <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Log Reports</b> </a> </li> 
-              </ul>
+            <ul>
+            <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Temp &amp; Monitoring</b> </a> </li>
+            <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Log Reports</b> </a> </li>              
+            </ul>
+          </li>
+          <li> <a href="javascript:void(0);"> <i class="fa fa-wrench "></i> CC MAINTENANCE<span class="plus"><i class="fa fa-plus"></i></span> </a>
+             <?php
+             if ( $user_object['user_level']=='1') {?>
+            <ul>
+              <li> <a href="<?php echo site_url('spareparts');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Spare Parts</b> </a> </li>
+              <li> <a href="<?php echo site_url('jobcard');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Job Cards</b> </a> </li>
+              <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Field Engineers</b> </a> </li>
+            </ul>
+            <?php } elseif( $user_object['user_level']=='2')  {?>
+            <ul>
+              <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Spare Requests</b> </a> </li>
+              <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Job Cards</b> </a> </li>
+              <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Field Engineers</b> </a> </li>
+            </ul>
+            <?php } elseif( $user_object['user_level']=='3')  {?>
+             <ul>
+              <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Spare Requests</b> </a> </li>
+              <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Job Cards</b> </a> </li>
+              <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Field Engineers</b> </a> </li>
+            </ul>
+            <?php } elseif( $user_object['user_level']=='4')  {?>
+             <ul>
+              <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Job Requests</b> </a> </li>
+              <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Job Cards</b> </a> </li>
+              
+            </ul>
+            <?php } else  {?>
+            <ul>
+               <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Job Requests</b> </a> </li>
+              <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Job Cards</b> </a> </li>
+            </ul>
+           <?php }
+           ?> 
+          </li>
+          <li> <a href="javascript:void(0);"> <i class="fa fa-bar-chart "></i>REPORTS<span class="plus"><i class="fa fa-plus"></i></span> </a>
+            <ul>
+              <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Report Module</b> </a> </li>
+              <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>County Reports</b> </a> </li>
+              <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Forecasting</b> </a> </li>
+            </ul>
+          </li>
+          <li> <a href="javascript:void(0);"> <i class="fa fa-user-plus"></i>DOCUMENTS<span class="plus"><i class="fa fa-plus"></i></span> </a>
+            <?php            
+            if ( $user_object['user_level']=='1') {?>
+            <ul>
+             <li> <a href="<?php echo site_url('uploads/');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i><b>Upload Documents</b> </a> </li>
+             <li> <a href="<?php echo site_url('uploads/list_files');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i><b>Download Documents</b> </a> </li>
+           </ul>
+           <?php } else  {?>
+           <ul>
+             <li> <a href="<?php echo site_url('uploads/list_files');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i><b>Download Documents</b> </a> </li>
+           </ul>
+           <?php }
+           ?> 
+         </li>
+             
             </li>
-            <li> <a href="javascript:void(0);"> <i class="fa fa-bar-chart "></i>REPORTS<span class="plus"><i class="fa fa-plus"></i></span> </a>
-              <ul>
-                <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Report Module</b> </a> </li>
-                <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>County Reports</b> </a> </li>
-                <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Forecasting</b> </a> </li>
-              </ul>
-            </li>
-            <li> <a href="javascript:void(0);"> <i class="fa fa-user-plus"></i>DOCUMENTS<span class="plus"><i class="fa fa-plus"></i></span> </a>
-              <?php            
-if ( $user_object['user_level']=='1') {?>
-    <ul>
-     <li> <a href="<?php echo site_url('uploads/');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i><b>Upload Documents</b> </a> </li>
-    <li> <a href="<?php echo site_url('uploads/list_files');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i><b>Download Documents</b> </a> </li>
-    </ul>
- <?php } else  {?>
-     <ul>
-     <li> <a href="<?php echo site_url('users/list_files');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i><b>Download Documents</b> </a> </li>
-     </ul>
- <?php }
- ?> 
-            </li>
-           
             <li> <a href="javascript:void(0);"><img src="<?php echo base_url() ?>assets/images/coat_of_arms.png" width="30" height="30" /><span class="theme_color">&nbsp;&nbsp;<b>DVI KENYA</b></span>  <span class="plus"><i class="fa fa-plus"></i></span> </a>
               <ul>
                 <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>About</b> </a> </li>
@@ -156,7 +199,7 @@ if ( $user_object['user_level']=='1') {?>
           </div><!--\\\\\\\ contentpanel end \\\\\\-->
     </div><!--\\\\\\\ inner end\\\\\\-->
   </div><!--\\\\\\\ wrapper end\\\\\\-->
-<script src="<?php echo base_url() ?>assets/js/jquery-2.1.0.js"></script>
+                  
 <script src="<?php echo base_url() ?>assets/js/bootstrap.min.js"></script>
 <script src="<?php echo base_url() ?>assets/js/common-script.js"></script>
 <script src="<?php echo base_url() ?>assets/js/jquery.slimscroll.min.js"></script>
@@ -169,10 +212,12 @@ if ( $user_object['user_level']=='1') {?>
 <script src="<?php echo base_url() ?>assets/plugins/sparkline/jquery.sparkline.js" type="text/javascript"></script>
 <script src="<?php echo base_url() ?>assets/plugins/sparkline/jquery.customSelect.min.js" ></script> 
 <script src="<?php echo base_url() ?>assets/plugins/sparkline/sparkline-chart.js"></script> 
-<script src="<?php echo base_url() ?>assets/<?php echo base_url() ?>assets/plugins/sparkline/easy-pie-chart.js"></script>
 <script src="<?php echo base_url() ?>assets/plugins/morris/morris.min.js" type="text/javascript"></script> 
 <script src="<?php echo base_url() ?>assets/plugins/morris/raphael-min.js" type="text/javascript"></script>  
 <script src="<?php echo base_url() ?>assets/plugins/morris/morris-script.js"></script> 
+<script src="<?php echo base_url() ?>assets/plugins/highcharts/highcharts.js" type="text/javascript"></script>
+<script src="<?php echo base_url() ?>assets/plugins/data-tables/jquery.dataTables.min.js"></script>
+<script src="<?php echo base_url() ?>assets/plugins/data-tables/DT_bootstrap.js"></script>
 <script src="<?php echo base_url() ?>assets/plugins/demo-slider/demo-slider.js"></script>
 <script src="<?php echo base_url() ?>assets/plugins/knob/jquery.knob.min.js"></script> 
 </body>

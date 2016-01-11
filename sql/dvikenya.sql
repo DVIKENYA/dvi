@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.5.1
+-- version 4.4.7
 -- http://www.phpmyadmin.net
 --
--- Host: 127.0.0.1
--- Generation Time: Dec 13, 2015 at 03:15 AM
--- Server version: 10.1.9-MariaDB
--- PHP Version: 5.6.15
+-- Host: localhost:3306
+-- Generation Time: Jan 05, 2016 at 01:41 AM
+-- Server version: 5.6.25
+-- PHP Version: 5.5.27
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -14,7 +14,7 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+/*!40101 SET NAMES utf8 */;
 
 --
 -- Database: `dvikenya`
@@ -24,11 +24,20 @@ DELIMITER $$
 --
 -- Procedures
 --
-CREATE DEFINER=`root`@`localhost` PROCEDURE `calc_orders` (IN `$` STATION_ID, ``, ``, ``)  ,
+CREATE DEFINER=`root`@`localhost` PROCEDURE `calc_orders`(
+IN $station_id VARCHAR(255),
 IN $station_level VARCHAR(255)
 )
 begin
-if($station_level=3)THEN
+if($station_level=2)THEN
+SELECT ID, Vaccine_name,first_expiry_date,Doses_required,Wastage_factor,
+stock_on_hand,region_name,population_one,
+period_stock,calc_max_stock(period_stock)as maxstock,
+calc_min_stock(period_stock)as minstock
+ FROM calc_region_orders
+ WHERE region_name=$station_id
+ ;
+else if($station_level=3)THEN
 SELECT ID, Vaccine_name,first_expiry_date,Doses_required,Wastage_factor,
 stock_on_hand,county_name,population_one,
 period_stock,calc_max_stock(period_stock)as maxstock,
@@ -57,24 +66,29 @@ calc_min_stock(period_stock)as minstock
 END IF;
 END IF;
 END IF;
+END IF;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `GetAllVaccines` ()  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetAllVaccines`()
+BEGIN
 SELECT Vaccine_name,ID FROM m_vaccines;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `GetStoreBalance` (IN `$selected_vaccine` VARCHAR(255), IN `$user_id` VARCHAR(10))  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetStoreBalance`(IN `$selected_vaccine` VARCHAR(255), IN `$user_id` VARCHAR(10))
+BEGIN
 SELECT mv.Vaccine_name,SUM(sb.stock_balance) AS balance
 FROM m_stock_movement ms 
 INNER JOIN m_stock_balance sb ON sb.batch_number=ms.batch_number 
 
-INNER JOIN m_vaccines mv ON mv.ID=ms.vaccine_id 
+LEFT JOIN m_vvm_status mvvm ON mvvm.id=ms.VVM_status 
+LEFT JOIN m_vaccines mv ON mv.ID=ms.vaccine_id 
 WHERE ms.vaccine_id= $selected_vaccine AND ms.user_id= $user_id
 ORDER BY ms.batch_number,ms.transaction_type;
 
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `GetVaccinesLedger` (IN `$selected_vaccine` VARCHAR(255))  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetVaccinesLedger`(IN `$selected_vaccine` VARCHAR(255))
+BEGIN
 SELECT mv.Vaccine_name, ms.transaction_date, ms.quantity_in,ms.quantity_out,sb.stock_balance, ms.batch_number,ms.expiry_date,mvvm.name 
 FROM m_stock_movement ms 
 INNER JOIN m_stock_balance sb ON sb.batch_number=ms.batch_number 
@@ -86,7 +100,9 @@ ORDER BY ms.batch_number,ms.transaction_type;
 
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_orders` (IN `$` STATION, ``, ``, ``)  )
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_orders`(
+IN $station VARCHAR(255)
+)
 begin
 if ($station= '1') then
 SELECT l.date_created  FROM m_order l;
@@ -114,7 +130,42 @@ END IF;
 END IF;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_order_values` (IN `$` SELECTED_VACCINE, ``, ``, ``)  )
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_order_infor`(
+IN $order_id varchar(255))
+BEGIN
+SELECT m.order_id,m.order_by,m.station_id
+FROM m_order m
+WHERE m.order_id=$order_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_order_to_issue`(
+IN $order_id varchar(255),
+IN $station_id varchar(255))
+BEGIN
+SELECT m.order_id,m.order_by,m.station_id,o.vaccine_id,mv.Vaccine_name,ms.batch_number,ms.expiry_date,ms.stock_balance,o.qty_order_doses,mvm.name
+FROM m_order m
+LEFT JOIN order_item o ON o.order_id=m.order_id
+LEFT JOIN m_vaccines mv ON mv.ID=o.vaccine_id
+LEFT JOIN m_stock_balance ms on ms.vaccine_id=mv.ID
+LEFT JOIN m_vvm_status mvm on mvm.id=ms.vvm_status
+WHERE m.order_id=$order_id AND ms.station_id=$station_id  ;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_order_to_receive`(
+IN $order_id varchar(255))
+BEGIN
+
+SELECT mi.order_id,mi.issue_id,mi.S11,mi.issued_by_station_id,mv.Vaccine_name,mv.ID,msi.batch_no,msi.expiry_date,msi.amount_ordered,msi.amount_issued,mvs.name 
+FROM m_issue_stock mi
+RIGHT JOIN m_issue_stock_item msi  ON msi.issue_id=mi.issue_id
+LEFT JOIN m_vaccines mv on mv.ID=msi.vaccine_id
+LEFT join m_vvm_status mvs on mvs.id=msi.vvm_status
+WHERE mi.order_id=$order_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_order_values`(
+IN $selected_vaccine VARCHAR(255)
+)
 begin
 SELECT sum(msb.`stock_balance`) AS stock_balance,
 	   min(msb.`expiry_date`) as first_expiry_date, mv.Doses_required, mv.Wastage_factor 
@@ -123,24 +174,25 @@ SELECT sum(msb.`stock_balance`) AS stock_balance,
        WHERE msb.vaccine_id=$selected_vaccine;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_placed_orders` (IN `$` STATION, ``, ``, ``)  ,
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_placed_orders`(
+IN $station VARCHAR(255),
 IN $station_id VARCHAR(255)
 )
 begin
 if ($station= '1') then
-SELECT DISTINCT(date_created),station_id,order_by FROM m_order m ;
+SELECT DISTINCT(date_created),station_id,order_by,order_id,status_name FROM m_order m WHERE station_level= 2 AND status_name ="pending";
 
 ELSE if($station= '2' )THEN
-SELECT DISTINCT(date_created),station_id,order_by FROM view_county_orders fv WHERE fv.region= $station_id ;
+SELECT DISTINCT(date_created),station_id,order_by,order_id,status_name FROM view_county_orders fv WHERE fv.region_name= $station_id AND status_name ="pending";
 
 ELSE if($station= '3' )THEN
-SELECT DISTINCT(date_created),station_id,order_by FROM view_subcounty_orders fv WHERE fv.county_name= $station_id ;
+SELECT DISTINCT(date_created),station_id,order_by,order_id,status_name FROM view_subcounty_orders fv WHERE fv.county_name= $station_id AND status_name ="pending" ;
 
 ELSE if($station= '4' )THEN
-SELECT DISTINCT(date_created),station_id,order_by FROM view_facility_orders fv WHERE fv.subcounty_name= $station_id ;
+SELECT DISTINCT(date_created),station_id,order_by,order_id,status_name FROM view_facility_orders fv WHERE fv.subcounty_name= $station_id AND status_name ="pending" ;
 
 ELSE if($station= '5' )THEN
-SELECT DISTINCT(date_created),station_id,order_by FROM view_facility_orders fv WHERE fv.facility_name= $station_id ;
+SELECT DISTINCT(date_created),station_id,order_by,order_id,status_name FROM view_facility_orders fv WHERE fv.facility_name= $station_id AND status_name ="pending";
 
 END IF;
 END IF;
@@ -149,13 +201,8 @@ END IF;
 END IF;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `setphysicalcount` (IN `p_vaccine_id` INT(11), IN `p_batch_number` VARCHAR(20), IN `p_date_of_count` DATE, IN `p_available_quantity` INT, IN `p_physical_count` INT, IN `p_discrepancy` INT)  BEGIN
- SET p_discrepancy = p_available_quantity - p_physical_count;
-	INSERT INTO m_physical_count(vaccine_id,batch_number, date_of_count,available_quantity,physical_count,discrepancy)
-               VALUES(p_vaccine_id,p_batch_number,p_date_of_count,p_available_quantity,p_physical_count,p_discrepancy);
-               END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_prepare_order_values` (IN `$` STATION, ``, ``, ``)  ,
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_prepare_order_values`(
+IN $station VARCHAR(255),
 IN $selected_vaccine VARCHAR(255),
 IN $station_id VARCHAR(255)
 )
@@ -191,24 +238,25 @@ END IF;
 END IF;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_submitted_orders` (IN `$` STATION, ``, ``, ``)  ,
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_submitted_orders`(
+IN $station VARCHAR(255),
 IN $station_id VARCHAR(255)
 )
 begin
 if ($station= '1') then
-SELECT DISTINCT(date_created),station_id,order_by FROM m_order m ;
+SELECT DISTINCT(date_created),station_id,order_by,order_id,status_name FROM m_order m ;
 
 ELSE if($station= '2' )THEN
-SELECT DISTINCT(date_created),station_id,order_by FROM view_region_orders fv WHERE fv.region_name= $station_id ;
+SELECT DISTINCT(date_created),station_id,order_by,order_id,status_name FROM view_region_orders fv ;
 
 ELSE if($station= '3' )THEN
-SELECT DISTINCT(date_created),station_id,order_by FROM view_county_orders fv WHERE fv.county_name= $station_id ;
+SELECT DISTINCT(date_created),station_id,order_by,order_id,status_name FROM view_county_orders fv WHERE fv.county_name= $station_id ;
 
 ELSE if($station= '4' )THEN
-SELECT DISTINCT(date_created),station_id,order_by FROM view_subcounty_orders fv WHERE fv.subcounty_name= $station_id ;
+SELECT DISTINCT(date_created),station_id,order_by,order_id,status_name FROM view_subcounty_orders fv WHERE fv.subcounty_name= $station_id ;
 
 ELSE if($station= '5' )THEN
-SELECT DISTINCT(date_created),station_id,order_by FROM view_facility_orders fv WHERE fv.facility_name= $station_id ;
+SELECT DISTINCT(date_created),station_id,order_by,order_id,status_name FROM view_facility_orders fv WHERE fv.facility_name= $station_id ;
 
 END IF;
 END IF;
@@ -217,7 +265,35 @@ END IF;
 END IF;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `test_orders` (IN `$` STATION_ID, ``, ``, ``)  ,
+CREATE DEFINER=`root`@`localhost` PROCEDURE `julie`(input_number INT, out output_number float)
+BEGIN
+
+Set output_number = sqrt(input_number);
+
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `proc_add_inventory_1`(IN `equipment` INT(14), IN `etype` INT(14), INOUT `part_type` VARCHAR(50), INOUT `brand` VARCHAR(50), INOUT `model` VARCHAR(50), INOUT `serial` VARCHAR(50), INOUT `catalogue` VARCHAR(50), INOUT `unit_price` DECIMAL(16,2), INOUT `date_purchased` DATE, INOUT `quantity` INT(14), INOUT `decomisioned` BOOLEAN, INOUT `date_added` TIMESTAMP, INOUT `location` INT(14), INOUT `added_by` VARCHAR(50), OUT `equipment_o` VARCHAR(50), OUT `etype_o` INT, OUT `year_o` INT, OUT `catalogue_o` INT)
+    NO SQL
+BEGIN
+	SELECT "hello";
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `setphysicalcount`(
+IN p_vaccine_id  INT(11) ,
+IN p_batch_number VARCHAR(20) ,
+IN p_date_of_count DATE,
+IN p_available_quantity INT,
+IN p_physical_count INT,
+IN p_discrepancy INT
+)
+BEGIN
+ SET p_discrepancy = p_available_quantity - p_physical_count;
+	INSERT INTO m_physical_count(vaccine_id,batch_number, date_of_count,available_quantity,physical_count,discrepancy)
+               VALUES(p_vaccine_id,p_batch_number,p_date_of_count,p_available_quantity,p_physical_count,p_discrepancy);
+               END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `test_orders`(
+IN $station_id VARCHAR(255),
 IN $station_level VARCHAR(255)
 )
 begin
@@ -233,6 +309,7 @@ calc_min_stock(period_stock)as minstock
 else if($station_level=4)THEN
 SELECT ID, Vaccine_name,first_expiry_date,Doses_required,Wastage_factor,
 stock_on_hand,county_name,population_one,
+
 period_stock,calc_max_stock(period_stock)as maxstock,
 calc_min_stock(period_stock)as minstock
  FROM calc_subcounty_orders
@@ -255,13 +332,15 @@ END$$
 --
 -- Functions
 --
-CREATE DEFINER=`root`@`localhost` FUNCTION `calc_max_stock` (`period_stock` FLOAT) RETURNS DECIMAL(9,2) BEGIN
+CREATE DEFINER=`root`@`localhost` FUNCTION `calc_max_stock`(period_stock FLOAT) RETURNS decimal(9,2)
+BEGIN
   DECLARE max_stock DECIMAL(9,2);
   SET max_stock= 1.25 * period_stock;
   RETURN max_stock;
 END$$
 
-CREATE DEFINER=`root`@`localhost` FUNCTION `calc_min_stock` (`period_stock` FLOAT) RETURNS DECIMAL(9,2) BEGIN
+CREATE DEFINER=`root`@`localhost` FUNCTION `calc_min_stock`(period_stock FLOAT) RETURNS decimal(9,2)
+BEGIN
   DECLARE min_stock DECIMAL(9,2);
   SET min_stock= 0.25 * period_stock;
   RETURN min_stock;
@@ -274,7 +353,7 @@ DELIMITER ;
 --
 -- Stand-in structure for view `calc_county_orders`
 --
-CREATE TABLE `calc_county_orders` (
+CREATE TABLE IF NOT EXISTS `calc_county_orders` (
 `ID` int(11)
 ,`Vaccine_name` varchar(45)
 ,`first_expiry_date` date
@@ -291,7 +370,7 @@ CREATE TABLE `calc_county_orders` (
 --
 -- Stand-in structure for view `calc_facility_order`
 --
-CREATE TABLE `calc_facility_order` (
+CREATE TABLE IF NOT EXISTS `calc_facility_order` (
 `ID` int(11)
 ,`Vaccine_name` varchar(45)
 ,`first_expiry_date` date
@@ -306,9 +385,26 @@ CREATE TABLE `calc_facility_order` (
 -- --------------------------------------------------------
 
 --
+-- Stand-in structure for view `calc_region_orders`
+--
+CREATE TABLE IF NOT EXISTS `calc_region_orders` (
+`ID` int(11)
+,`Vaccine_name` varchar(45)
+,`first_expiry_date` date
+,`Doses_required` int(15)
+,`Wastage_factor` decimal(14,2)
+,`stock_on_hand` decimal(32,0)
+,`period_stock` decimal(42,6)
+,`region_name` varchar(100)
+,`population_one` int(11)
+);
+
+-- --------------------------------------------------------
+
+--
 -- Stand-in structure for view `calc_subcounty_orders`
 --
-CREATE TABLE `calc_subcounty_orders` (
+CREATE TABLE IF NOT EXISTS `calc_subcounty_orders` (
 `ID` int(11)
 ,`Vaccine_name` varchar(45)
 ,`first_expiry_date` date
@@ -325,7 +421,7 @@ CREATE TABLE `calc_subcounty_orders` (
 --
 -- Stand-in structure for view `children_immunized`
 --
-CREATE TABLE `children_immunized` (
+CREATE TABLE IF NOT EXISTS `children_immunized` (
 `Months` varchar(14)
 ,`Above2yrs` double
 ,`Above1yr` double
@@ -337,11 +433,11 @@ CREATE TABLE `children_immunized` (
 -- Table structure for table `ci_sessions`
 --
 
-CREATE TABLE `ci_sessions` (
+CREATE TABLE IF NOT EXISTS `ci_sessions` (
   `session_id` varchar(40) NOT NULL DEFAULT '0',
   `ip_address` varchar(45) NOT NULL DEFAULT '0',
   `user_agent` varchar(120) NOT NULL,
-  `last_activity` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  `last_activity` int(10) unsigned NOT NULL DEFAULT '0',
   `user_data` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -350,14 +446,14 @@ CREATE TABLE `ci_sessions` (
 --
 
 INSERT INTO `ci_sessions` (`session_id`, `ip_address`, `user_agent`, `last_activity`, `user_data`) VALUES
-('d965161d29f261c4cdd418d7a2cc911c', '::1', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.80 Safari/537.36', 1449972367, 'a:2:{s:9:"user_data";s:0:"";s:9:"logged_in";a:6:{s:7:"user_id";s:1:"2";s:10:"user_fname";s:5:"Admin";s:10:"user_lname";s:8:"Dvikenya";s:10:"user_group";s:1:"1";s:10:"user_level";s:1:"1";s:9:"logged_in";b:1;}}');
+('7f41cb05ec9a8e5083e17d01eee85a78', '::1', 'Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101 Firefox/38.0 Iceweasel/38.5.0', 1451986473, 'a:2:{s:9:"user_data";s:0:"";s:9:"logged_in";a:6:{s:7:"user_id";s:2:"13";s:10:"user_fname";s:4:"Rift";s:10:"user_lname";s:6:"Valley";s:10:"user_group";s:1:"3";s:10:"user_level";s:1:"2";s:9:"logged_in";b:1;}}');
 
 -- --------------------------------------------------------
 
 --
 -- Stand-in structure for view `county_userbase_view`
 --
-CREATE TABLE `county_userbase_view` (
+CREATE TABLE IF NOT EXISTS `county_userbase_view` (
 `id` int(14)
 ,`county_name` varchar(255)
 ,`user_id` int(11)
@@ -371,7 +467,7 @@ CREATE TABLE `county_userbase_view` (
 --
 -- Stand-in structure for view `coverage_all`
 --
-CREATE TABLE `coverage_all` (
+CREATE TABLE IF NOT EXISTS `coverage_all` (
 `periodname` varchar(6)
 ,`bcgdosesadm` varchar(3)
 ,`dpt2dosesadministered` varchar(3)
@@ -398,7 +494,7 @@ CREATE TABLE `coverage_all` (
 -- Table structure for table `dhis_usage`
 --
 
-CREATE TABLE `dhis_usage` (
+CREATE TABLE IF NOT EXISTS `dhis_usage` (
   `id` int(14) NOT NULL,
   `periodid` int(6) DEFAULT NULL,
   `periodname` varchar(14) DEFAULT NULL,
@@ -462,7 +558,7 @@ CREATE TABLE `dhis_usage` (
   `yellow fever in stoc` varchar(3) DEFAULT NULL,
   `yellow fever receive` varchar(10) DEFAULT NULL,
   `yellow fever remaini` varchar(10) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=637 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `dhis_usage`
@@ -1116,7 +1212,7 @@ INSERT INTO `dhis_usage` (`id`, `periodid`, `periodname`, `periodcode`, `periodd
 -- Table structure for table `dvi_dump`
 --
 
-CREATE TABLE `dvi_dump` (
+CREATE TABLE IF NOT EXISTS `dvi_dump` (
   `id` int(11) NOT NULL,
   `periodid` int(6) DEFAULT NULL,
   `periodname` varchar(6) DEFAULT NULL,
@@ -1180,7 +1276,7 @@ CREATE TABLE `dvi_dump` (
   `yellowfeverinstoc` varchar(3) DEFAULT NULL,
   `yellowfeverreceive` varchar(3) DEFAULT NULL,
   `yellowfeverremaini` varchar(3) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2569 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `dvi_dump`
@@ -3778,9 +3874,20 @@ INSERT INTO `dvi_dump` (`id`, `periodid`, `periodname`, `periodcode`, `perioddes
 -- --------------------------------------------------------
 
 --
+-- Stand-in structure for view `equip_type_view`
+--
+CREATE TABLE IF NOT EXISTS `equip_type_view` (
+`id` int(14)
+,`equipment` varchar(50)
+,`equipment_type` varchar(50)
+);
+
+-- --------------------------------------------------------
+
+--
 -- Stand-in structure for view `facility_userbase_view`
 --
-CREATE TABLE `facility_userbase_view` (
+CREATE TABLE IF NOT EXISTS `facility_userbase_view` (
 `id` int(11)
 ,`facility_name` text
 ,`user_id` int(11)
@@ -3794,10 +3901,43 @@ CREATE TABLE `facility_userbase_view` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `m_cold_chain_equip`
+--
+
+CREATE TABLE IF NOT EXISTS `m_cold_chain_equip` (
+  `id` int(14) NOT NULL,
+  `equipment` varchar(10) NOT NULL,
+  `etype` varchar(50) NOT NULL,
+  `part_type` varchar(50) NOT NULL,
+  `brand` varchar(50) NOT NULL,
+  `model` varchar(50) NOT NULL,
+  `serial` varchar(50) NOT NULL,
+  `catalogue` varchar(50) NOT NULL,
+  `unit_price` decimal(16,2) NOT NULL,
+  `date_purchased` date NOT NULL,
+  `quantity` int(14) NOT NULL,
+  `decomission` varchar(2) NOT NULL,
+  `date_added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `location` int(14) NOT NULL,
+  `added_by` varchar(50) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `m_cold_chain_equip`
+--
+
+INSERT INTO `m_cold_chain_equip` (`id`, `equipment`, `etype`, `part_type`, `brand`, `model`, `serial`, `catalogue`, `unit_price`, `date_purchased`, `quantity`, `decomission`, `date_added`, `location`, `added_by`) VALUES
+(1, 'Cold Box', 'Long term', 'Cover', 'samsung', 'S23232', '123456', '121212', '1000.00', '2014-11-02', 1223, '0', '2015-12-22 21:00:00', 0, '0'),
+(2, 'Refrigirat', 'Freezer', 'Door Seal', 'Hiebel', 'H4545', '232323', '32323345', '500.00', '2015-12-05', 30, '0', '2015-12-22 21:00:00', 0, 'metNation User'),
+(3, '3', '0', 'test', 'samsung', 'S23232', '232323', '1', '500.00', '2015-12-05', 30, '0', '2015-12-23 21:00:00', 0, 'metNation User');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `m_county`
 --
 
-CREATE TABLE `m_county` (
+CREATE TABLE IF NOT EXISTS `m_county` (
   `id` int(14) NOT NULL,
   `county_name` varchar(255) NOT NULL,
   `region_id` varchar(255) NOT NULL,
@@ -3880,7 +4020,7 @@ INSERT INTO `m_county` (`id`, `county_name`, `region_id`, `county_headquarter`, 
 -- Table structure for table `m_depot`
 --
 
-CREATE TABLE `m_depot` (
+CREATE TABLE IF NOT EXISTS `m_depot` (
   `id` int(14) NOT NULL,
   `depot_location` varchar(255) NOT NULL,
   `region_id` varchar(255) NOT NULL,
@@ -3888,14 +4028,13 @@ CREATE TABLE `m_depot` (
   `subcounty_id` varchar(255) NOT NULL,
   `depot_level` int(11) NOT NULL,
   `user_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_depot`
 --
 
 INSERT INTO `m_depot` (`id`, `depot_location`, `region_id`, `county_id`, `subcounty_id`, `depot_level`, `user_id`) VALUES
-(3, 'Nairobi', '', '', '', 1, 2),
 (6, 'Baringo', '', '', '', 3, 14),
 (7, 'Kariobangi', '', '', '', 1, 2);
 
@@ -3905,7 +4044,7 @@ INSERT INTO `m_depot` (`id`, `depot_location`, `region_id`, `county_id`, `subcou
 -- Table structure for table `m_depot_fridges`
 --
 
-CREATE TABLE `m_depot_fridges` (
+CREATE TABLE IF NOT EXISTS `m_depot_fridges` (
   `id` int(10) NOT NULL,
   `fridge_id` int(11) NOT NULL,
   `temperature_monitor_no` int(11) NOT NULL,
@@ -3916,8 +4055,8 @@ CREATE TABLE `m_depot_fridges` (
   `station_level` int(10) NOT NULL,
   `station_id` varchar(100) NOT NULL,
   `depot_id` int(11) NOT NULL,
-  `refrigerator_status` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `refrigerator_status` varchar(45) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_depot_fridges`
@@ -3926,13 +4065,49 @@ CREATE TABLE `m_depot_fridges` (
 INSERT INTO `m_depot_fridges` (`id`, `fridge_id`, `temperature_monitor_no`, `main_power_source`, `age`, `user_id`, `date_added`, `station_level`, `station_id`, `depot_id`, `refrigerator_status`) VALUES
 (52, 2, 10, 'Electricity', 1, 2, '2015-11-23', 1, 'KENYA', 3, ''),
 (53, 0, 0, '', 0, 14, '2015-11-23', 3, 'Baringo County', 6, ''),
-(54, 2, 11, 'Electricity', 1, 2, '2015-11-24', 1, 'KENYA', 3, ''),
-(55, 3, 456, 'Gasoline', 2015, 2, '2015-12-13', 1, 'KENYA', 3, 'Functional'),
-(56, 4, 44, '', 2015, 2, '2015-12-13', 1, 'KENYA', 3, 'Functional'),
-(57, 2, 100, 'Solar', 2016, 2, '2015-12-13', 1, 'KENYA', 3, 'Functional'),
-(58, 2, 555, 'Electricity', 2015, 2, '2015-12-13', 1, 'KENYA', 3, 'Functional'),
-(59, 2, 65, 'Electricity', 2010, 2, '2015-12-13', 1, 'KENYA', 3, 'Functional'),
-(60, 2, 55, 'Solar', 1996, 2, '2015-12-13', 1, 'KENYA', 3, 'Awaiting Repair');
+(54, 2, 11, 'Electricity', 1, 2, '2015-11-24', 1, 'KENYA', 3, '');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `m_equipment_options`
+--
+
+CREATE TABLE IF NOT EXISTS `m_equipment_options` (
+  `id` int(14) NOT NULL,
+  `name` varchar(50) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `m_equipment_options`
+--
+
+INSERT INTO `m_equipment_options` (`id`, `name`) VALUES
+(1, 'Cold Box'),
+(2, 'Refrigerator'),
+(3, 'Ice Packs'),
+(4, 'Data Loggers');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `m_equipment_type`
+--
+
+CREATE TABLE IF NOT EXISTS `m_equipment_type` (
+  `id` int(14) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `equipment` int(14) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `m_equipment_type`
+--
+
+INSERT INTO `m_equipment_type` (`id`, `name`, `equipment`) VALUES
+(1, 'Long Time Temp', 1),
+(2, 'Freezer', 2),
+(3, 'Short Term Temp', 1);
 
 -- --------------------------------------------------------
 
@@ -3940,7 +4115,7 @@ INSERT INTO `m_depot_fridges` (`id`, `fridge_id`, `temperature_monitor_no`, `mai
 -- Table structure for table `m_facility`
 --
 
-CREATE TABLE `m_facility` (
+CREATE TABLE IF NOT EXISTS `m_facility` (
   `id` int(11) NOT NULL,
   `facility_name` text NOT NULL,
   `type` varchar(100) NOT NULL,
@@ -3966,16 +4141,13 @@ CREATE TABLE `m_facility` (
   `cold_box` int(11) DEFAULT NULL,
   `vaccine_carrier` int(11) DEFAULT NULL,
   `status` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=9759 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_facility`
 --
 
 INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
-(2, 'Namuduru Dispensary', '', '', '0', 16069, 'James', 0, '', 0, 0, 16, 2, '', '', '', 0, 0, 0, 0, 0, 5000, 0, 0, ''),
-(3, 'Yunasi Medical Clinic', '', '', 'gTF9GTKAEKG', 0, '', 0, '', 0, 0, 21, 16, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(4, 'Saokon Clinic', '', '', 'bpyuIqQTies', 14067, '', 0, '', 0, 0, 31, 149, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (5, 'Tyaa Kamuthale Dispensary', '', '', 'WPFI84EO5Ew', 12819, '', 0, '', 0, 0, 10, 108, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (6, 'Bokimai Dispensary', '', '', 'dZ06ZU1Ls42', 16974, '', 0, '', 0, 0, 28, 273, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (7, 'Boige Health Centre', '', '', 'xkktH1TfvFt', 13505, '', 0, '', 0, 0, 28, 273, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
@@ -4349,10 +4521,10 @@ INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mf
 (375, 'Itetani Dispenasary', '', '', 'gI1p2LXVLR4', 20092, '', 0, '', 0, 0, 29, 154, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (376, 'Ugua Pole Clinic', '', '', 'z4ye3IxRE6f', 0, '', 0, '', 0, 0, 16, 146, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (377, 'Mitini Miracle Revival Church Clinic', '', '', 'ri9BwbyHMBZ', 20207, '', 0, '', 0, 0, 29, 299, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(378, 'Awasi Mission Health Center', '', '', 'ISsRMwepdm7', 13491, '', 0, '', 0, 0, 44, 211, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
-INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
+(378, 'Awasi Mission Health Center', '', '', 'ISsRMwepdm7', 13491, '', 0, '', 0, 0, 44, 211, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (379, 'Kilala Health Centre', '', '', 'OjwX5IrpWkM', 12309, '', 0, '', 0, 0, 29, 299, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(380, 'Kaliani Dispensary', '', '', 'T0UkaIvU3F9', 20579, '', 0, '', 0, 0, 10, 181, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
+(380, 'Kaliani Dispensary', '', '', 'T0UkaIvU3F9', 20579, '', 0, '', 0, 0, 10, 181, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
+INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
 (381, 'Kwa Mutalia Dispensary', '', '', 'OcfK91mpcJq', 18449, '', 0, '', 0, 0, 3, 64, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (382, 'Olive Health Care/Laboratory', '', '', 'GTmTkdHc8ub', 16509, '', 0, '', 0, 0, 14, 279, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (383, 'Kauwi Sub-District Hospital', '', '', 'nLISoUBRUAF', 12255, '', 0, '', 0, 0, 10, 272, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
@@ -4723,10 +4895,10 @@ INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mf
 (748, 'PCEA Smyrna', '', '', 'Ui00bALtkQv', 18116, '', 0, '', 0, 0, 39, 294, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (749, 'Kabati Maternity Nursing Home', '', '', 'ri7X73Ol3uM', 17449, '', 0, '', 0, 0, 10, 272, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (750, 'Iqra Medical & Nursing Home', '', '', 'BxRJqwIQXV0', 19915, '', 0, '', 0, 0, 40, 75, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(751, 'Omiro Dispensary', '', '', 'leauT4PYfDm', 13981, '', 0, '', 0, 0, 31, 149, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
-INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
+(751, 'Omiro Dispensary', '', '', 'leauT4PYfDm', 13981, '', 0, '', 0, 0, 31, 149, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (752, 'Nuu Catholic Dispensary', '', '', 'JiATg9WAIRG', 12680, '', 0, '', 0, 0, 10, 210, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(753, 'Riachina Dispensary', '', '', 'yGXMuAvTOta', 12711, '', 0, '', 0, 0, 21, 16, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
+(753, 'Riachina Dispensary', '', '', 'yGXMuAvTOta', 12711, '', 0, '', 0, 0, 21, 16, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
+INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
 (754, 'Tirriondonin Dispensary', '', '', 'Ui7hsRoGKo9', 15730, '', 0, '', 0, 6, 12, 190, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (755, 'Impact Research-Tuungane (Nyando)', '', '', 'wYzsobXtVqC', 18456, '', 0, '', 0, 0, 44, 211, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (756, 'Oloiyangalani Dispensary', '', '', 'CEgezsmC9GZ', 15419, '', 0, '', 0, 0, 39, 80, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
@@ -5097,10 +5269,10 @@ INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mf
 (1121, 'St Mary (ACK) Mugumo Dispensary', '', '', 'EL2RWRacg4V', 10746, '', 0, '', 0, 0, 14, 305, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (1122, 'Ndere Dispensary', '', '', 'N1efDo6sbnn', 0, '', 0, '', 0, 0, 31, 47, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (1123, 'Asumbi Annex Dispensary', '', '', 'XhmqFp8Mwgs', 16987, '', 0, '', 0, 0, 31, 107, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(1124, 'St Jones &Ring Road Health Clinic', '', '', 'BeyRouwSiVk', 16882, '', 0, '', 0, 0, 44, 20, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
-INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
+(1124, 'St Jones &Ring Road Health Clinic', '', '', 'BeyRouwSiVk', 16882, '', 0, '', 0, 0, 44, 20, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (1125, 'Cherwa Dispensary', '', '', 'i687P6dSq5L', 20240, '', 0, '', 0, 0, 44, 220, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(1126, 'Kasarani Medical Clinic Wote', '', '', 'H3Tr1iicLPZ', 18545, '', 0, '', 0, 0, 29, 238, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
+(1126, 'Kasarani Medical Clinic Wote', '', '', 'H3Tr1iicLPZ', 18545, '', 0, '', 0, 0, 29, 238, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
+INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
 (1127, 'Sisi Kwa Sisi Medical Clinic', '', '', 'DJwPuMIpL60', 12736, '', 0, '', 0, 0, 3, 297, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (1128, 'Emali Model Health Centre', '', '', 'Lbsm3keaoKp', 18260, '', 0, '', 0, 0, 29, 114, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (1129, 'Lwandeti Dispensary', '', '', 'jUfObe1gBho', 15981, '', 0, '', 0, 0, 46, 217, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
@@ -5469,10 +5641,10 @@ INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mf
 (1492, 'Ssema Medical Clinic', '', '', 'OkR7GBs3Rvk', 11019, '', 0, '', 0, 0, 14, 279, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (1493, 'Sipili Catholic Dispensary', '', '', 'gAttDI0sdJX', 15588, '', 0, '', 0, 0, 15, 192, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (1494, 'Kalabata Dispensary', '', '', 'gYQ0p6264fQ', 17100, '', 0, '', 0, 6, 12, 190, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(1495, 'Khayo Dispensary', '', '', 'I4BCLbgxYm4', 15937, '', 0, '', 0, 0, 16, 156, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
-INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
+(1495, 'Khayo Dispensary', '', '', 'I4BCLbgxYm4', 15937, '', 0, '', 0, 0, 16, 156, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (1496, 'Tabasamu Medical Clinic', '', '', 'sbSA7hs5c2z', 12783, '', 0, '', 0, 0, 3, 90, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(1497, 'Bar Korwa Dispensary', '', '', 'lq9mb305HDu', 13498, '', 0, '', 0, 0, 44, 35, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
+(1497, 'Bar Korwa Dispensary', '', '', 'lq9mb305HDu', 13498, '', 0, '', 0, 0, 44, 35, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
+INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
 (1498, 'Chegulo Dispensary', '', '', 'LJ5JNqUKr2k', 15850, '', 0, '', 0, 0, 46, 231, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (1499, 'Kibwezi Health Care Clinic', '', '', 'oAqwXA5oThM', 12056, '', 0, '', 0, 0, 29, 114, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (1500, 'Kaviani Health Centre', '', '', 'P3f1rMxZYHL', 12257, '', 0, '', 0, 0, 3, 187, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
@@ -5843,10 +6015,10 @@ INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mf
 (1865, 'Liboi Health Centre', '', '', 'weyYbGwh5nK', 13398, '', 0, '', 0, 0, 26, 79, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (1866, 'Chemses Dispensary', '', '', 'h5WmFEvULKu', 18584, '', 0, '', 0, 0, 8, 286, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (1867, 'Dida Dispensary', '', '', 'uCHPPTPXtBt', 11305, '', 0, '', 0, 0, 42, 288, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(1868, 'Kokwanyo Health Centre', '', '', 'Eiae4BkyI7w', 13712, '', 0, '', 0, 0, 31, 149, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
-INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
+(1868, 'Kokwanyo Health Centre', '', '', 'Eiae4BkyI7w', 13712, '', 0, '', 0, 0, 31, 149, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (1869, 'Chesubet Dispensary', '', '', 'OjHIGzoNcNz', 14388, '', 0, '', 0, 0, 13, 233, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(1870, 'Tumaini Medical Centre (Tezo)', '', '', 'XCVPuf8qt6q', 0, '', 0, '', 0, 0, 42, 269, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
+(1870, 'Tumaini Medical Centre (Tezo)', '', '', 'XCVPuf8qt6q', 0, '', 0, '', 0, 0, 42, 269, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
+INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
 (1871, 'Yana Dispensary', '', '', 'Qm1AKNPtTrG', 0, '', 0, '', 0, 0, 10, 181, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (1872, 'MUTHUNZUU DISPENSARY', '', '', 'y8VPgytGMF6', 0, '', 0, '', 0, 0, 10, 10, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (1873, 'Whemis', '', '', 'Kwe3ON0XikF', 17487, '', 0, '', 0, 0, 7, 120, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
@@ -6216,10 +6388,10 @@ INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mf
 (2237, 'Rurii Kiandegwa Dispensary', '', '', 'RMXHTIcHNxM', 10980, '', 0, '', 0, 0, 14, 63, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (2238, 'St Peter Kware Medical Clinic', '', '', 'qFYuRcwKbJO', 15664, '', 0, '', 0, 0, 39, 294, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (2239, 'Weyeta clinic', '', '', 'wE3FXrujwY6', 0, '', 0, '', 0, 0, 8, 74, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(2240, 'Nazareth Hospital (Ruiru)', '', '', 'GmnUAmcCmsV', 17490, '', 0, '', 0, 0, 7, 142, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
-INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
+(2240, 'Nazareth Hospital (Ruiru)', '', '', 'GmnUAmcCmsV', 17490, '', 0, '', 0, 0, 7, 142, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (2241, 'Star Maternity & Nursing Home', '', '', 'zkY1vTT6ZhX', 14129, '', 0, '', 0, 0, 44, 20, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(2242, 'Garissa Provincial General Hospital (PGH)', '', '', 'eOwcPUHIpgE', 13346, '', 0, '', 0, 0, 26, 304, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
+(2242, 'Garissa Provincial General Hospital (PGH)', '', '', 'eOwcPUHIpgE', 13346, '', 0, '', 0, 0, 26, 304, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
+INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
 (2243, 'Ndindika Health Centre', '', '', 'DoHbN85NkUa', 15325, '', 0, '', 0, 0, 15, 57, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (2244, 'Githunguri Heathwatch Clinic', '', '', 'wZIjfTwwfbr', 10271, '', 0, '', 0, 0, 7, 214, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (2245, 'St Paul''s Health Centre', '', '', 'pd0Tfwmciex', 17195, '', 0, '', 0, 0, 31, 107, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
@@ -6589,10 +6761,10 @@ INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mf
 (2609, 'Mogotio Catholic Dispensary', '', '', 'TT8Rw8Ygikn', 15198, '', 0, '', 0, 0, 12, 113, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (2610, 'St Paul''s Health Centre', '', '', 'QDx1Cr19K3c', 14124, '', 0, '', 0, 0, 31, 107, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (2611, 'Didewaride Dispensary', '', '', 'kJUBoBhpyKK', 11306, '', 0, '', 0, 0, 9, 165, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(2612, 'M K M Medical Clinic', '', '', 'TJGfV5eIek2', 16505, '', 0, '', 0, 0, 14, 305, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
-INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
+(2612, 'M K M Medical Clinic', '', '', 'TJGfV5eIek2', 16505, '', 0, '', 0, 0, 14, 305, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (2613, 'Jamii Health Services Medical Clinic', '', '', 'gvU8Mn2GPHl', 15907, '', 0, '', 0, 0, 46, 106, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(2614, 'Port Victoria Hospital', '', '', 'vqZ76KANEWN', 16091, '', 0, '', 0, 0, 16, 123, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
+(2614, 'Port Victoria Hospital', '', '', 'vqZ76KANEWN', 16091, '', 0, '', 0, 0, 16, 123, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
+INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
 (2615, 'Kapsiya', '', '', 'PoOiJkPNtpN', 17313, '', 0, '', 0, 0, 11, 282, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (2616, 'Mbavani Dispensary', '', '', 'v7tHjnqJp4v', 17839, '', 0, '', 0, 0, 29, 154, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (2617, 'Kari-Kiboko Dispensary', '', '', 'FK7kfDLQ6NI', 0, '', 0, '', 0, 0, 29, 114, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
@@ -6962,10 +7134,10 @@ INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mf
 (2981, 'BUYEMI DISPENSARY', '', '', 'O9z0alrbAid', 20188, '', 0, '', 0, 0, 46, 240, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (2982, 'Mtepeni Dispensary', '', '', 'B6rHrU256iw', 11666, '', 0, '', 0, 0, 42, 264, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (2983, 'Mukangu (ACK) Dispensary', '', '', 'hT4pDyFR1XT', 12559, '', 0, '', 0, 0, 21, 117, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(2984, 'Afya Medical Clinic (Kirinyaga)', '', '', 'qtG0bLpXIP9', 10006, '', 0, '', 0, 0, 14, 287, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
-INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
+(2984, 'Afya Medical Clinic (Kirinyaga)', '', '', 'qtG0bLpXIP9', 10006, '', 0, '', 0, 0, 14, 287, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (2985, 'Kaptalelio Dispensary', '', '', 'oBrCyL6MzyC', 15924, '', 0, '', 0, 0, 8, 286, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(2986, 'Ilparakuo dispensary', '', '', 'x4l8N04bnYR', 19724, '', 0, '', 0, 0, 39, 200, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
+(2986, 'Ilparakuo dispensary', '', '', 'x4l8N04bnYR', 19724, '', 0, '', 0, 0, 39, 200, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
+INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
 (2987, 'Itumbi Dispensary', '', '', 'aEW1zGjWO1b', 0, '', 0, '', 0, 0, 10, 10, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (2988, 'Nyanchwa Dispensary', '', '', 'ag64ujDJHs6', 13918, '', 0, '', 0, 0, 28, 136, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (2989, 'Moigutwo Dispensary', '', '', 'MCMUwgGJGcf', 17115, '', 0, '', 0, 6, 12, 190, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
@@ -7336,9 +7508,9 @@ INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mf
 (3354, 'Penda Health Medical Clinic', '', '', 'NilK1ubEqEG', 18402, '', 0, '', 0, 0, 39, 168, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (3355, 'Kaptumin Dispensary', '', '', 'ZkexKmEmFI6', 14790, '', 0, '', 0, 6, 12, 190, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (3356, 'Miguta Communitydispensary', '', '', 'MmGcmWUP6Ub', 0, '', 0, '', 0, 0, 7, 214, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(3357, 'Khunyangu Sub-District Hospital', '', '', 'TJnBh1U3GEs', 15939, '', 0, '', 0, 0, 16, 92, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
+(3357, 'Khunyangu Sub-District Hospital', '', '', 'TJnBh1U3GEs', 15939, '', 0, '', 0, 0, 16, 92, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
+(3358, 'Highway Medical Clinic Iten', '', '', 'SkZHBPu6iXm', 19876, '', 0, '', 0, 0, 13, 143, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
 INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
-(3358, 'Highway Medical Clinic Iten', '', '', 'SkZHBPu6iXm', 19876, '', 0, '', 0, 0, 13, 143, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (3359, 'Tulia Dispensary', '', '', 'gCfHf4tRoe8', 12806, '', 0, '', 0, 0, 10, 272, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (3360, 'Matete Health Centre', '', '', 'rxOzjXrbCkg', 16005, '', 0, '', 0, 0, 46, 217, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (3361, 'Liviero Dispensary', '', '', 'gwSSgY6zYfC', 12431, '', 0, '', 0, 0, 21, 16, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
@@ -7710,9 +7882,9 @@ INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mf
 (3727, 'Kiptulos Dispensary', '', '', 'xSfblCDzc79', 14931, '', 0, '', 0, 0, 13, 291, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (3728, 'Ebenezer Medical Clinic (Lamu)', '', '', 'DbxBCBWGjij', 11361, '', 0, '', 0, 0, 9, 165, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (3729, 'Medical Plaza Clinic Banana', '', '', 'qS2VZ702Ptx', 19834, '', 0, '', 0, 0, 7, 1, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(3730, 'Ngauni Dispensary', '', '', 'Q3utOWybP5o', 20662, '', 0, '', 0, 0, 10, 181, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
+(3730, 'Ngauni Dispensary', '', '', 'Q3utOWybP5o', 20662, '', 0, '', 0, 0, 10, 181, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
+(3731, 'Aenue Health Care', '', '', 'bZVgAr4LNDW', 0, '', 0, '', 0, 0, 7, 120, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
 INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
-(3731, 'Aenue Health Care', '', '', 'bZVgAr4LNDW', 0, '', 0, '', 0, 0, 7, 120, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (3732, 'Mataara Dispensary', '', '', 'rUVlUh0zuMA', 10703, '', 0, '', 0, 0, 7, 218, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (3733, 'Nuu Medical Clinic', '', '', 'KU5uWjVbuvg', 20277, '', 0, '', 0, 0, 10, 210, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (3734, 'Thiba Health Centre ', '', '', 'rW142rztOPK', 11092, '', 0, '', 0, 0, 14, 63, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
@@ -8085,9 +8257,9 @@ INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mf
 (4101, 'Chemamul Dispensary', '', '', 'sjb5gw3ucqg', 14310, '', 0, '', 0, 0, 27, 45, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (4102, 'Mbirikani Dispensary', '', '', 'CHV0rH9hpGA', 0, '', 0, '', 0, 0, 39, 19, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (4103, 'The Haven Medical Clinic', '', '', 'e7i2S4cXOr5', 18041, '', 0, '', 0, 0, 7, 142, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(4104, 'Renguti (PCEA) Women''s Guild Clinic', '', '', 'E6PSP4lfo4x', 17373, '', 0, '', 0, 0, 7, 135, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
+(4104, 'Renguti (PCEA) Women''s Guild Clinic', '', '', 'E6PSP4lfo4x', 17373, '', 0, '', 0, 0, 7, 135, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
+(4105, 'Muhotetu Dispensary', '', '', 'MgkI0k0bcEQ', 15247, '', 0, '', 0, 0, 15, 192, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
 INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
-(4105, 'Muhotetu Dispensary', '', '', 'MgkI0k0bcEQ', 15247, '', 0, '', 0, 0, 15, 192, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (4106, 'Khachonge Dispensary', '', '', 'LjaXt70429Q', 15929, '', 0, '', 0, 0, 8, 74, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (4107, 'Mwaani Dispensary', '', '', 'R2xNnNvQ7vT', 16956, '', 0, '', 0, 0, 29, 299, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (4108, 'Ngeteti Community Health Dispesary', '', '', 'l5GwQkkkJdo', 17122, '', 0, '', 0, 0, 7, 214, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
@@ -8460,9 +8632,9 @@ INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mf
 (4475, 'Highway Marternity Nursing Home', '', '', 'GqX3BQTHSTD', 0, '', 0, '', 0, 0, 46, 230, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (4476, 'Samaria (AIC) Mission Dispensary', '', '', 'ZrwEr6sWZZK', 15523, '', 0, '', 0, 0, 39, 80, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (4477, 'Mwavumbo Ward', '', '', 'vjeHNVWOsRk', 0, '', 0, '', 0, 0, 47, 89, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(4478, 'Kianjokoma Sub-District Hospital', '', '', 'MxxUSfpmXEr', 12279, '', 0, '', 0, 0, 21, 253, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
+(4478, 'Kianjokoma Sub-District Hospital', '', '', 'MxxUSfpmXEr', 12279, '', 0, '', 0, 0, 21, 253, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
+(4479, 'Eshikalame Dispensary', '', '', 'pAjKlmU1EzO', 20679, '', 0, '', 0, 0, 46, 151, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
 INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
-(4479, 'Eshikalame Dispensary', '', '', 'pAjKlmU1EzO', 20679, '', 0, '', 0, 0, 46, 151, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (4480, 'Madunguni Dispensary', '', '', 'RELmuAM0tcj', 11534, '', 0, '', 0, 0, 42, 250, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (4481, 'Olgumi Dispensary', '', '', 'tiZyhMxJYhw', 15403, '', 0, '', 0, 0, 39, 200, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (4482, 'Masingu Health Services', '', '', 'MRg99sJeWEH', 17652, '', 0, '', 0, 0, 3, 95, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
@@ -8831,9 +9003,9 @@ INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mf
 (4845, 'Kauri Medical Clinic', '', '', 'E3a1XOtvXyl', 12254, '', 0, '', 0, 0, 34, 280, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (4846, 'Kiria-Ini Mission Hospital', '', '', 'l1J71xfA3v7', 10627, '', 0, '', 0, 0, 23, 122, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (4847, 'Getambwega Dispensary', '', '', 'nt3hEvSThtX', 13565, '', 0, '', 0, 0, 18, 12, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(4848, 'Thimangiri Medical Clinic', '', '', 'O2pWECYjtse', 16228, '', 0, '', 0, 0, 34, 300, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
+(4848, 'Thimangiri Medical Clinic', '', '', 'O2pWECYjtse', 16228, '', 0, '', 0, 0, 34, 300, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
+(4849, 'New Nairobi Area Police VCT', '', '', 'dFHLATu08cj', 0, '', 0, '', 0, 0, 20, 184, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
 INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
-(4849, 'New Nairobi Area Police VCT', '', '', 'dFHLATu08cj', 0, '', 0, '', 0, 0, 20, 184, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (4850, 'Institute for Development and Welfare Services', '', '', 'vdbC2ilbiWt', 20145, '', 0, '', 0, 0, 20, 139, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (4851, 'Kibokoni Medical Clinic', '', '', 'xrbQYs5s3WF', 11465, '', 0, '', 0, 0, 32, 134, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (4852, 'Savannah Health Services', '', '', 'YEYIpWrQjOe', 20103, '', 0, '', 0, 0, 20, 36, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
@@ -9202,9 +9374,9 @@ INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mf
 (5215, 'Kianjuri Dispensary', '', '', 'EBvqkoNLT3z', 0, '', 0, '', 0, 0, 34, 300, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (5216, 'El-Ram Dispensary', '', '', 'cYtoTH4TJYL', 17230, '', 0, '', 0, 0, 4, 274, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (5217, 'Jahmii Medical Hospital', '', '', 'O4bON1ra4sM', 12986, '', 0, '', 0, 0, 20, 53, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(5218, 'Kumoni Dispensary', '', '', 'eTq4ADfHRhW', 16271, '', 0, '', 0, 0, 18, 82, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
+(5218, 'Kumoni Dispensary', '', '', 'eTq4ADfHRhW', 16271, '', 0, '', 0, 0, 18, 82, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
+(5219, 'Maria Dominica Dispensary', '', '', 'i4tV309s7wV', 13061, '', 0, '', 0, 0, 20, 139, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
 INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
-(5219, 'Maria Dominica Dispensary', '', '', 'i4tV309s7wV', 13061, '', 0, '', 0, 0, 20, 139, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (5220, 'St Patricks Dispensary', '', '', 'GrKOEQVUc8L', 18305, '', 0, '', 0, 0, 32, 23, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (5221, 'North Horr Health Centre', '', '', 'GaTME9yPkIr', 12668, '', 0, '', 0, 0, 45, 61, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (5222, 'Embakasi Medical Centre (AUn)', '', '', 'oqvgqMBwdvU', 0, '', 0, '', 0, 0, 20, 302, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
@@ -9572,9 +9744,9 @@ INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mf
 (5584, 'Provide Mutindindwa', '', '', 'H8NMxClMve6', 0, '', 0, '', 0, 0, 20, 301, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (5585, 'Kmc Clinic Mwichune', '', '', 'mNN9ahK5NSF', 12380, '', 0, '', 0, 0, 34, 280, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (5586, 'Rhamudimtu Health Centre', '', '', 'fu30kCMEUYr', 13424, '', 0, '', 0, 0, 4, 283, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(5587, 'MCK Ndoleli Dispensary', '', '', 'wTz2jroRlzU', 0, '', 0, '', 0, 0, 34, 245, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
+(5587, 'MCK Ndoleli Dispensary', '', '', 'wTz2jroRlzU', 0, '', 0, '', 0, 0, 34, 245, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
+(5588, 'Kmtc Mombasa Students Clinic', '', '', 'pNKBJZ4FXTq', 18347, '', 0, '', 0, 0, 32, 134, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
 INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
-(5588, 'Kmtc Mombasa Students Clinic', '', '', 'pNKBJZ4FXTq', 18347, '', 0, '', 0, 0, 32, 134, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (5589, 'St John Marieni Dispensary', '', '', 'raGCUs4bP0a', 12510, '', 0, '', 0, 0, 34, 24, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (5590, 'Matharite Dispensary', '', '', 'opxZultu9xu', 10706, '', 0, '', 0, 0, 23, 176, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (5591, 'Kiairathe Dispensary', '', '', 'ISZigsZaIlY', 10528, '', 0, '', 0, 0, 23, 232, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
@@ -9942,10 +10114,10 @@ INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mf
 (5953, 'Dr Were Medical Clinic', '', '', 'RfpcjJgm6yf', 12928, '', 0, '', 0, 0, 20, 184, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (5954, 'AAR Parklands Medical Centre', '', '', 'Do1rjVqnLEK', 0, '', 0, '', 0, 0, 20, 203, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (5955, 'Meridian Medical Centre (Capital Centre)', '', '', 'VEde2ZaEcYZ', 0, '', 0, '', 0, 0, 20, 36, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(5956, 'Gaturi Catholic Parish Dispensary', '', '', 's24GG1kFkTQ', 16976, '', 0, '', 0, 0, 23, 259, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
-INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
+(5956, 'Gaturi Catholic Parish Dispensary', '', '', 's24GG1kFkTQ', 16976, '', 0, '', 0, 0, 23, 259, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (5957, 'Hope Community VCT', '', '', 'BgTKQSYJhxi', 12970, '', 0, '', 0, 0, 20, 148, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(5958, 'Aberdare Health Services', '', '', 'AxoRQlxUmOL', 10003, '', 0, '', 0, 0, 23, 145, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
+(5958, 'Aberdare Health Services', '', '', 'AxoRQlxUmOL', 10003, '', 0, '', 0, 0, 23, 145, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
+INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
 (5959, 'Royal Clinic & Laboratory', '', '', 'TFVJJghk77G', 16836, '', 0, '', 0, 0, 34, 276, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (5960, 'Kisauni Drop In VCT', '', '', 'bHyL9kqP653', 17623, '', 0, '', 0, 0, 32, 66, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (5961, 'Meru Diagnostic Laboratory Services', '', '', 'IzGQCjxOWV7', 16603, '', 0, '', 0, 0, 34, 300, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
@@ -10313,10 +10485,10 @@ INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mf
 (6323, 'Muthithi (PCEA) Dispensary', '', '', 'j46MqgkK8CE', 16175, '', 0, '', 0, 0, 23, 145, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (6324, 'Mandera Medicare Nursing Home', '', '', 'lPnSCubFVlG', 13403, '', 0, '', 0, 0, 4, 38, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (6325, 'Royal Medical Clinic', '', '', 'eantLRbbmk7', 19106, '', 0, '', 0, 0, 34, 300, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(6326, 'Timbwani Medical Clinic', '', '', 'GEXGFwAkMUG', 17759, '', 0, '', 0, 0, 32, 306, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
-INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
+(6326, 'Timbwani Medical Clinic', '', '', 'GEXGFwAkMUG', 17759, '', 0, '', 0, 0, 32, 306, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (6327, 'Light House For Christ Eye Centre', '', '', 'PJ8zrVDzBVA', 11519, '', 0, '', 0, 0, 32, 134, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(6328, 'Nyikendo Medical Clinic', '', '', 'xDx6zrbtC72', 18052, '', 0, '', 0, 0, 18, 72, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
+(6328, 'Nyikendo Medical Clinic', '', '', 'xDx6zrbtC72', 18052, '', 0, '', 0, 0, 18, 72, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
+INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
 (6329, 'Ukuu MCK Dispensary', '', '', 'ZdcJie5EAVP', 18215, '', 0, '', 0, 0, 34, 280, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (6330, 'Melchezedek Hospital', '', '', 'O8JiuIlnJqW', 13086, '', 0, '', 0, 0, 20, 184, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (6331, 'Nyamasare Dispensary', '', '', 'pJP2SYBe0bB', 13900, '', 0, '', 0, 0, 18, 13, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
@@ -10683,10 +10855,10 @@ INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mf
 (6692, 'Ithiki Dispensary', '', '', 'vY4HiGFVdDs', 0, '', 0, '', 0, 0, 23, 176, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (6693, 'Doga Clinic', '', '', 'SYDTovYd5tq', 11309, '', 0, '', 0, 0, 32, 101, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (6694, 'AAR Medical Services (Docks)', '', '', 'lvBP7xY9W2N', 11194, '', 0, '', 0, 0, 32, 134, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(6695, 'PCEA Kuwinda Health Clinic', '', '', 'lIgOTBaAd7b', 18763, '', 0, '', 0, 0, 20, 139, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
-INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
+(6695, 'PCEA Kuwinda Health Clinic', '', '', 'lIgOTBaAd7b', 18763, '', 0, '', 0, 0, 20, 139, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (6696, 'Ray of Hope Health Centre', '', '', 'GYeXCtw2Jji', 13159, '', 0, '', 0, 0, 20, 184, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(6697, 'Vegpro In House Clinic', '', '', 'CJOE1alfBij', 18202, '', 0, '', 0, 0, 20, 302, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
+(6697, 'Vegpro In House Clinic', '', '', 'CJOE1alfBij', 18202, '', 0, '', 0, 0, 20, 302, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
+INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
 (6698, 'Hulahula Dispensary', '', '', 'lKVgKDw7Xqb', 16205, '', 0, '', 0, 0, 45, 236, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (6699, 'Guba Dispensary', '', '', 'ErBiK473y5e', 13353, '', 0, '', 0, 0, 4, 30, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (6700, 'Silanga (Msf Belgium) Dispensary', '', '', 'UmN02RNDmtB', 13186, '', 0, '', 0, 0, 20, 228, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
@@ -11055,10 +11227,10 @@ INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mf
 (7063, 'Ndalat Gaa Dispensary', '', '', 'vowFWx01wvB', 15320, '', 0, '', 0, 0, 41, 130, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (7064, 'Ptoyo Dipensary', '', '', 'gTjjeqB5TrI', 15473, '', 0, '', 0, 0, 38, 204, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (7065, 'Dagahley Dispensary', '', '', 'G8qbTFIFxXz', 17006, '', 0, '', 0, 0, 43, 86, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(7066, 'Iduku Dispensary', '', '', 'QXAvtxBS2Ts', 15896, '', 0, '', 0, 0, 24, 183, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
-INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
+(7066, 'Iduku Dispensary', '', '', 'QXAvtxBS2Ts', 15896, '', 0, '', 0, 0, 24, 183, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (7067, 'Oxallis Medical Clinic', '', '', 'BsB9pwwdr8i', 15453, '', 0, '', 0, 0, 36, 197, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(7068, 'Ndege Medical Clinic', '', '', 'nNuSkmb3TPW', 19029, '', 0, '', 0, 0, 43, 86, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
+(7068, 'Ndege Medical Clinic', '', '', 'nNuSkmb3TPW', 19029, '', 0, '', 0, 0, 43, 86, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
+INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
 (7069, 'Benga Dispensary', '', '', 'YjzBFHmaVTv', 16786, '', 0, '', 0, 0, 35, 285, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (7070, 'Madiany District Hospital', '', '', 'NFVVCDVuAkk', 13747, '', 0, '', 0, 0, 35, 76, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (7071, 'Mowlem Diagnostic Medical Centre', '', '', 'CQBWuEw1aSM', 20066, '', 0, '', 0, 0, 1, 15, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
@@ -11427,10 +11599,10 @@ INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mf
 (7434, 'Paula Nursing Home', '', '', 'cboaO7vmAZg', 16419, '', 0, '', 0, 0, 35, 285, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (7435, 'Esther Memorial Nursing Home', '', '', 'eRPHPaOmHQp', 14478, '', 0, '', 0, 0, 36, 267, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (7436, 'St James Medical Clinic', '', '', 'CoT1pXQWHCV', 16685, '', 0, '', 0, 0, 36, 43, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(7437, 'Inuka Hospital & Maternity Home', '', '', 'NJ9UDodbyoQ', 13618, '', 0, '', 0, 0, 35, 111, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
-INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
+(7437, 'Inuka Hospital & Maternity Home', '', '', 'NJ9UDodbyoQ', 13618, '', 0, '', 0, 0, 35, 111, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (7438, 'Manyuanda Health Centre (Rarieda)', '', '', 'EZCHSlG09NE', 13771, '', 0, '', 0, 0, 35, 76, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(7439, 'Kiandege M Clinic', '', '', 'ESuELQhr8Ym', 10550, '', 0, '', 0, 0, 22, 4, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
+(7439, 'Kiandege M Clinic', '', '', 'ESuELQhr8Ym', 10550, '', 0, '', 0, 0, 22, 4, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
+INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
 (7440, 'Kamburaini Dispensary', '', '', 'qsyC3i5A8QP', 10447, '', 0, '', 0, 0, 25, 188, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (7441, 'St Lukes Orthopaedic and Trauma Hospital', '', '', 'rwxUyNVju1l', 18776, '', 0, '', 0, 0, 17, 179, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (7442, 'Sekerr Dispensary', '', '', 'FLyT7XDQxf6', 15542, '', 0, '', 0, 0, 38, 169, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
@@ -11801,10 +11973,10 @@ INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mf
 (7807, 'Mpata Club Dispensary', '', '', 'K1528hf4Jmx', 15237, '', 0, '', 0, 0, 33, 44, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (7808, 'Isoge Health Centre', '', '', 'aqfZGfHVbn2', 13626, '', 0, '', 0, 0, 6, 70, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (7809, 'Dela Dispensary', '', '', 't7g8esxRT51', 0, '', 0, '', 0, 0, 43, 71, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(7810, 'Afya Medical Clinic (Munyaka)', '', '', 'sncIvEveeK3', 17566, '', 0, '', 0, 0, 22, 295, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
-INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
+(7810, 'Afya Medical Clinic (Munyaka)', '', '', 'sncIvEveeK3', 17566, '', 0, '', 0, 0, 22, 295, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (7811, 'POTO-POTO Dispensary', '', '', 'ROIhxQyzYDQ', 0, '', 0, '', 0, 0, 41, 99, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(7812, 'Bugina Health Centre', '', '', 'gkvsBoZvbH1', 15815, '', 0, '', 0, 0, 24, 261, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
+(7812, 'Bugina Health Centre', '', '', 'gkvsBoZvbH1', 15815, '', 0, '', 0, 0, 24, 261, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
+INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
 (7813, 'Kanakurudio Dispensary', '', '', 'yZi8q6XCExA', 14681, '', 0, '', 0, 0, 2, 9, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (7814, 'Hola District Hospital', '', '', 'xKMnsppaRLE', 11411, '', 0, '', 0, 0, 19, 118, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (7815, 'Ogirgir Tea Dispensary', '', '', 'F8vpf1TsBk2', 15383, '', 0, '', 0, 0, 41, 99, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
@@ -12173,10 +12345,10 @@ INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mf
 (8178, 'Savannah Medical Clinic', '', '', 'jHgsQ6isgva', 15535, '', 0, '', 0, 0, 2, 199, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (8179, 'St Mary Kalokol Primary Health Care Programme', '', '', 'NGhrinWu2pY', 15656, '', 0, '', 0, 0, 2, 199, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (8180, 'Kamla Bamako Initiative Dispensary', '', '', 'mbkyayQfgfO', 16372, '', 0, '', 0, 0, 38, 205, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(8181, 'Longonot Dispensary', '', '', 'o0Qm0Zj3Hgm', 15078, '', 0, '', 0, 0, 36, 197, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
-INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
+(8181, 'Longonot Dispensary', '', '', 'o0Qm0Zj3Hgm', 15078, '', 0, '', 0, 0, 36, 197, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (8182, 'Olive Medical Clinic', '', '', 'AjYreEnv4HK', 10913, '', 0, '', 0, 0, 22, 4, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(8183, 'Pioneer Health Centre', '', '', 'krlkd35ayXK', 15463, '', 0, '', 0, 0, 17, 104, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
+(8183, 'Pioneer Health Centre', '', '', 'krlkd35ayXK', 15463, '', 0, '', 0, 0, 17, 104, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
+INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
 (8184, 'Orwo Dispensary', '', '', 'Xe6r3IhjQz9', 20318, '', 0, '', 0, 0, 38, 169, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (8185, 'Eunice Medical Clinic', '', '', 'NoZIrttrkFr', 10173, '', 0, '', 0, 0, 25, 262, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (8186, 'Mathingira Medical Clinic', '', '', 'aMNaWn8WHGy', 10707, '', 0, '', 0, 0, 25, 262, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
@@ -12547,10 +12719,10 @@ INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mf
 (8551, 'Kakwanyang Dispensary', '', '', 'f7TDgxVqVaD', 14656, '', 0, '', 0, 0, 2, 199, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (8552, 'Lkuroto Dispensary', '', '', 'wW5ggFuj9M2', 17145, '', 0, '', 0, 0, 37, 208, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (8553, 'Kiawarigi Medical Clinic', '', '', 'MynlNTkRjYE', 10570, '', 0, '', 0, 0, 25, 26, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(8554, 'Kiandere Dispensary', '', '', 'f8jD8IqHV91', 10552, '', 0, '', 0, 0, 25, 298, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
-INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
+(8554, 'Kiandere Dispensary', '', '', 'f8jD8IqHV91', 10552, '', 0, '', 0, 0, 25, 298, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (8555, 'Dadhantalay Dispensary', '', '', 'jXfNdXduqaa', 0, '', 0, '', 0, 0, 43, 71, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(8556, 'Nguruki-Iruma Dispensary', '', '', 'Ps9kWPr86pD', 12659, '', 0, '', 0, 0, 1, 87, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
+(8556, 'Nguruki-Iruma Dispensary', '', '', 'Ps9kWPr86pD', 12659, '', 0, '', 0, 0, 1, 87, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
+INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
 (8557, 'Esiarambatsi Health Centre', '', '', 'fs0p5MurBkl', 15885, '', 0, '', 0, 0, 24, 237, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (8558, 'Kimuri Dispensary', '', '', 'Qoxzr8UwgyL', 17028, '', 0, '', 0, 0, 5, 22, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (8559, 'Tumaini Medical Clinic (Turkana Central)', '', '', 'DHFyI08F3cu', 15749, '', 0, '', 0, 0, 2, 199, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
@@ -12920,10 +13092,10 @@ INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mf
 (8923, 'Voi Medical Centre', '', '', 'sUsYUE1bRKr', 17704, '', 0, '', 0, 0, 30, 241, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (8924, 'Melchizedek Medical clinic', '', '', 'jpAv4FtKk8D', 0, '', 0, '', 0, 0, 25, 270, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (8925, 'Lolupe Dispensary', '', '', 'K8OtwaWi5Ms', 20000, '', 0, '', 0, 0, 2, 199, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(8926, 'Karia Health Centre (Nyeri South)', '', '', 'J9pTqQfwbcA', 16998, '', 0, '', 0, 0, 25, 160, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
-INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
+(8926, 'Karia Health Centre (Nyeri South)', '', '', 'J9pTqQfwbcA', 16998, '', 0, '', 0, 0, 25, 160, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (8927, 'Gatina Dispensary', '', '', 'I9x3IXwZfm5', 10220, '', 0, '', 0, 0, 25, 270, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(8928, 'Leberio Dispensary', '', '', 're8IEd5Ckaf', 17361, '', 0, '', 0, 0, 17, 104, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
+(8928, 'Leberio Dispensary', '', '', 're8IEd5Ckaf', 17361, '', 0, '', 0, 0, 17, 104, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
+INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
 (8929, 'Nyambaria Geke Dispensary', '', '', 'iYpP2OYAWcL', 13905, '', 0, '', 0, 0, 6, 185, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (8930, 'Wajir North Nomadic Clinic', '', '', 'Os6bQGoOlG5', 18166, '', 0, '', 0, 0, 43, 21, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (8931, 'Lingwai Dispensary', '', '', 'KzNdM0INeLJ', 15038, '', 0, '', 0, 0, 17, 189, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
@@ -13291,10 +13463,10 @@ INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mf
 (9293, 'Imani Dispensary', '', '', 'JXffziAqjrf', 16357, '', 0, '', 0, 0, 17, 17, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (9294, 'Great Comm Medical Clinic', '', '', 'EQrX5OjiAns', 14537, '', 0, '', 0, 0, 36, 267, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (9295, 'Mai Mahiu Maternity and Hospital', '', '', 'DjQ7VRdeHdP', 19124, '', 0, '', 0, 0, 36, 197, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(9296, 'Musitinyi Dispensary', '', '', 'p8nULMcL3p5', 16052, '', 0, '', 0, 0, 24, 25, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
-INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
+(9296, 'Musitinyi Dispensary', '', '', 'p8nULMcL3p5', 16052, '', 0, '', 0, 0, 24, 25, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (9297, 'Makwasinyi Dispensary', '', '', 'eqM0sRFaYP3', 11552, '', 0, '', 0, 0, 30, 241, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(9298, 'Sagana Medical Care', '', '', 'Xm79WEEkUHA', 10992, '', 0, '', 0, 0, 25, 26, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
+(9298, 'Sagana Medical Care', '', '', 'Xm79WEEkUHA', 10992, '', 0, '', 0, 0, 25, 26, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
+INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
 (9299, 'GK Prisons Dispensary (Kapenguria)', '', '', 'ulGSHXB0K1p', 14520, '', 0, '', 0, 0, 38, 204, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (9300, 'Moi Ndabi Dispensary', '', '', 'I3B5p98nl4j', 15203, '', 0, '', 0, 0, 36, 197, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (9301, 'Alliance Clinic', '', '', 'lBSKqMNnHEz', 15794, '', 0, '', 0, 0, 24, 261, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
@@ -13663,9 +13835,9 @@ INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mf
 (9664, 'Moi''s Bridge Health Centre', '', '', 'cxqZPcA0nwV', 15209, '', 0, '', 0, 0, 17, 308, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (9665, 'Kiairugu Dispensary', '', '', 'lIb3B26lHD1', 12270, '', 0, '', 0, 0, 1, 87, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (9666, 'Rural Medical Clinic (Nyeri South)', '', '', 'NYxI45x0rMe', 10977, '', 0, '', 0, 0, 25, 160, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(9667, 'Nandi Hills District Hospital', '', '', 'ANPNPVyDJi5', 14179, '', 0, '', 0, 0, 41, 99, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
+(9667, 'Nandi Hills District Hospital', '', '', 'ANPNPVyDJi5', 14179, '', 0, '', 0, 0, 41, 99, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
+(9668, 'Afya Bora Medical Clinic (Turkana Central)', '', '', 'JaM1GSe7mpQ', 14186, '', 0, '', 0, 0, 2, 199, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
 INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mfl_code`, `officer_incharge`, `staff`, `email`, `phone`, `region_id`, `county_id`, `subcounty_id`, `constituency`, `ward`, `nearest_town`, `nearest_town_distance`, `nearest_depot_distance`, `wcba_population`, `catchment_population`, `catchment_population_under_one`, `population_one`, `cold_box`, `vaccine_carrier`, `status`) VALUES
-(9668, 'Afya Bora Medical Clinic (Turkana Central)', '', '', 'JaM1GSe7mpQ', 14186, '', 0, '', 0, 0, 2, 199, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (9669, '3Kr Health Centre', '', '', 'CgMmkS9jWI6', 14181, '', 0, '', 0, 0, 36, 222, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (9670, 'Mureru Dispensary', '', '', 'faNJdzJAvKw', 10780, '', 0, '', 0, 0, 25, 188, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (9671, 'Simboiyon Dispensary', '', '', 'ACI6a4LUYnA', 17988, '', 0, '', 0, 0, 36, 227, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
@@ -13754,7 +13926,8 @@ INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mf
 (9754, 'Amatierio Health Centre', '', '', 'R6OvNgtymXw', 13475, '', 0, '', 0, 0, 6, 70, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (9755, 'Mweiga Estate Medical Clinic', '', '', 'DhvfD4GfmMF', 10810, '', 0, '', 0, 0, 25, 26, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
 (9756, 'Port Health Dispensary (Lokichoggio)', '', '', 'JMDLJKYjtld', 18098, '', 0, '', 0, 0, 2, 257, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
-(9757, 'Anyuongi Dispensary', '', '', 'Tkgo1tPTOv2', 13482, '', 0, '', 0, 0, 35, 225, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, '');
+(9757, 'Anyuongi Dispensary', '', '', 'Tkgo1tPTOv2', 13482, '', 0, '', 0, 0, 35, 225, '', '', '', 0, 0, 0, 0, 0, 0, NULL, NULL, ''),
+(9758, 'Saokon Clinic', '', '', '', 0, 'James', 0, 'j@g.com', 712345689, 0, 0, 0, '', '', '1', 0, 0, 0, 0, 0, 0, 1, 1, '');
 
 -- --------------------------------------------------------
 
@@ -13762,7 +13935,7 @@ INSERT INTO `m_facility` (`id`, `facility_name`, `type`, `owner`, `dhis_id`, `mf
 -- Table structure for table `m_facility_fridges`
 --
 
-CREATE TABLE `m_facility_fridges` (
+CREATE TABLE IF NOT EXISTS `m_facility_fridges` (
   `id` int(11) NOT NULL,
   `facility_id` int(11) NOT NULL,
   `refrigerator_id` int(11) NOT NULL,
@@ -13770,7 +13943,7 @@ CREATE TABLE `m_facility_fridges` (
   `main_power_source` varchar(32) NOT NULL,
   `backup_power_source` varchar(32) NOT NULL,
   `refrigerator_age` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `m_facility_fridges`
@@ -13784,9 +13957,7 @@ INSERT INTO `m_facility_fridges` (`id`, `facility_id`, `refrigerator_id`, `tempe
 (8, 2, 5, 45, 'Electricity', '', 10),
 (9, 2, 0, 0, '', '', 0),
 (10, 2, 0, 0, '', '', 0),
-(11, 2, 0, 0, '', '', 0),
-(12, 2, 0, 0, '', '', 7),
-(13, 2, 0, 0, '', '', 8);
+(11, 5, 2, 2, 'Electricity', '', 10);
 
 -- --------------------------------------------------------
 
@@ -13794,7 +13965,7 @@ INSERT INTO `m_facility_fridges` (`id`, `facility_id`, `refrigerator_id`, `tempe
 -- Table structure for table `m_fridges`
 --
 
-CREATE TABLE `m_fridges` (
+CREATE TABLE IF NOT EXISTS `m_fridges` (
   `id` int(11) NOT NULL,
   `Model` varchar(10) NOT NULL,
   `Manufacturer` varchar(10) NOT NULL,
@@ -13881,11 +14052,11 @@ INSERT INTO `m_fridges` (`id`, `Model`, `Manufacturer`, `Technology Type`, `Vacc
 -- Table structure for table `m_group`
 --
 
-CREATE TABLE `m_group` (
+CREATE TABLE IF NOT EXISTS `m_group` (
   `id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
   `description` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_group`
@@ -13897,7 +14068,8 @@ INSERT INTO `m_group` (`id`, `name`, `description`) VALUES
 (3, 'EPI Logististian', 'EPI Logististian'),
 (4, 'HRIO Personel', 'HRIO Personel'),
 (5, 'MOH Personel', 'MOH Personel'),
-(6, 'PHN Personel', 'PHN Personel');
+(6, 'PHN Personel', 'PHN Personel'),
+(7, 'MET Personel', 'MET Personel');
 
 -- --------------------------------------------------------
 
@@ -13905,7 +14077,7 @@ INSERT INTO `m_group` (`id`, `name`, `description`) VALUES
 -- Table structure for table `m_inventory`
 --
 
-CREATE TABLE `m_inventory` (
+CREATE TABLE IF NOT EXISTS `m_inventory` (
   `id` int(11) NOT NULL,
   `Vaccine_name` varchar(30) NOT NULL,
   `max_stock` int(11) NOT NULL,
@@ -13916,29 +14088,115 @@ CREATE TABLE `m_inventory` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `m_issue_stock`
+--
+
+CREATE TABLE IF NOT EXISTS `m_issue_stock` (
+  `issue_id` int(11) NOT NULL,
+  `order_id` int(11) NOT NULL,
+  `S11` varchar(25) NOT NULL,
+  `date_issued` date NOT NULL,
+  `date_recorded` date NOT NULL,
+  `issued_by_user` varchar(25) NOT NULL,
+  `issued_by_station_level` varchar(25) NOT NULL,
+  `issued_by_station_id` varchar(25) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `m_issue_stock`
+--
+
+INSERT INTO `m_issue_stock` (`issue_id`, `order_id`, `S11`, `date_issued`, `date_recorded`, `issued_by_user`, `issued_by_station_level`, `issued_by_station_id`) VALUES
+(3, 2, '987654321', '2015-12-16', '2015-12-15', '2', '1', 'KENYA'),
+(4, 4, '987654322', '2015-12-16', '2015-12-16', '2', '1', 'KENYA'),
+(5, 5, '', '2015-12-16', '2015-12-16', '2', '1', 'KENYA');
+
+--
+-- Triggers `m_issue_stock`
+--
+DELIMITER $$
+CREATE TRIGGER `update_status_issued` AFTER INSERT ON `m_issue_stock`
+ FOR EACH ROW begin 
+UPDATE m_order
+SET status_name="issued"
+WHERE order_id=new.order_id;
+
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `m_issue_stock_item`
+--
+
+CREATE TABLE IF NOT EXISTS `m_issue_stock_item` (
+  `vaccine_id` int(11) NOT NULL,
+  `batch_no` varchar(25) NOT NULL,
+  `expiry_date` date NOT NULL,
+  `vvm_status` int(10) NOT NULL,
+  `stock_on_hand` int(11) NOT NULL,
+  `amount_ordered` int(11) NOT NULL,
+  `amount_issued` int(11) NOT NULL,
+  `discrepancy` int(11) NOT NULL,
+  `comment` varchar(255) NOT NULL,
+  `issue_id` int(11) NOT NULL,
+  `order_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `m_issue_stock_item`
+--
+
+INSERT INTO `m_issue_stock_item` (`vaccine_id`, `batch_no`, `expiry_date`, `vvm_status`, `stock_on_hand`, `amount_ordered`, `amount_issued`, `discrepancy`, `comment`, `issue_id`, `order_id`) VALUES
+(11, '12356', '2017-09-08', 0, 1000000, 100000, 100000, 0, '', 3, 0),
+(11, '12356', '2017-09-08', 0, 900000, 100000, 100000, 0, '', 4, 0),
+(11, '12356', '2017-09-08', 0, 800000, 100000, 100000, 0, '', 5, 0),
+(11, '1111', '2015-12-16', 0, 1000000, 100000, 100000, 0, '', 5, 0);
+
+--
+-- Triggers `m_issue_stock_item`
+--
+DELIMITER $$
+CREATE TRIGGER `new_stock_issued_balance` AFTER INSERT ON `m_issue_stock_item`
+ FOR EACH ROW begin
+ 
+UPDATE m_stock_balance
+SET stock_balance= (stock_balance - new.amount_issued)
+WHERE batch_number= new.batch_no AND expiry_date=new.expiry_date AND order_id=new.order_id;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `m_order`
 --
 
-CREATE TABLE `m_order` (
+CREATE TABLE IF NOT EXISTS `m_order` (
   `order_id` int(11) NOT NULL,
   `order_by` varchar(100) NOT NULL,
   `date_created` date NOT NULL,
   `station_level` int(11) NOT NULL,
   `station_id` varchar(100) NOT NULL,
   `order_destination` varchar(10) NOT NULL,
-  `status` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `status` int(11) NOT NULL DEFAULT '1',
+  `status_name` varchar(25) NOT NULL DEFAULT 'pending'
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_order`
 --
 
-INSERT INTO `m_order` (`order_id`, `order_by`, `date_created`, `station_level`, `station_id`, `order_destination`, `status`) VALUES
-(1, '14', '2015-11-05', 3, 'Baringo County', '', 0),
-(2, '14', '2015-11-05', 3, 'Baringo County', '', 0),
-(3, '16', '2015-11-06', 5, 'Bossei Dispensary', '', 0),
-(4, '14', '2015-11-15', 3, 'Baringo County', '', 0),
-(5, '15', '2015-11-15', 4, 'Baringo North', '', 0);
+INSERT INTO `m_order` (`order_id`, `order_by`, `date_created`, `station_level`, `station_id`, `order_destination`, `status`, `status_name`) VALUES
+(2, '13', '2015-12-15', 2, 'Rift Valley', '', 1, 'received'),
+(3, '14', '2015-12-15', 3, 'Baringo County', '', 1, 'pending'),
+(4, '13', '2015-12-16', 2, 'Rift Valley', '', 1, 'received'),
+(5, '13', '2015-12-16', 2, 'Rift Valley', '', 1, 'received'),
+(6, '13', '2015-12-17', 2, 'Rift Valley', '', 1, 'pending'),
+(7, '13', '2015-12-17', 2, 'Rift Valley', 'KENYA', 1, 'pending');
 
 -- --------------------------------------------------------
 
@@ -13946,7 +14204,7 @@ INSERT INTO `m_order` (`order_id`, `order_by`, `date_created`, `station_level`, 
 -- Table structure for table `m_physical_count`
 --
 
-CREATE TABLE `m_physical_count` (
+CREATE TABLE IF NOT EXISTS `m_physical_count` (
   `id` int(11) NOT NULL,
   `vaccine_id` int(11) NOT NULL,
   `batch_number` varchar(20) NOT NULL,
@@ -13960,7 +14218,8 @@ CREATE TABLE `m_physical_count` (
 -- Triggers `m_physical_count`
 --
 DELIMITER $$
-CREATE TRIGGER `new_physical_count` AFTER INSERT ON `m_physical_count` FOR EACH ROW begin
+CREATE TRIGGER `new_physical_count` AFTER INSERT ON `m_physical_count`
+ FOR EACH ROW begin
 UPDATE m_stock_movement
 SET physical_count= new.physical_count
 WHERE vaccine_id = new.vaccine_id AND batch_number=new.batch_number;
@@ -13975,31 +14234,136 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `m_receive_stock`
+--
+
+CREATE TABLE IF NOT EXISTS `m_receive_stock` (
+  `receive_id` int(11) NOT NULL,
+  `issue_id` int(11) NOT NULL,
+  `order_id` int(11) NOT NULL,
+  `S11` varchar(25) NOT NULL,
+  `date_received` date NOT NULL,
+  `date_recorded` date NOT NULL,
+  `received_by_user` varchar(25) NOT NULL,
+  `station_level` varchar(25) NOT NULL,
+  `station_id` varchar(25) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `m_receive_stock`
+--
+
+INSERT INTO `m_receive_stock` (`receive_id`, `issue_id`, `order_id`, `S11`, `date_received`, `date_recorded`, `received_by_user`, `station_level`, `station_id`) VALUES
+(1, 3, 2, '987654321', '2015-12-16', '2015-12-15', '13', '2', 'Rift Valley'),
+(2, 4, 4, '987654322', '2015-12-16', '2015-12-16', '13', '2', 'Rift Valley'),
+(3, 5, 5, '', '0000-00-00', '2015-12-16', '13', '2', 'Rift Valley');
+
+--
+-- Triggers `m_receive_stock`
+--
+DELIMITER $$
+CREATE TRIGGER `update_status_received` AFTER INSERT ON `m_receive_stock`
+ FOR EACH ROW begin 
+UPDATE m_order
+SET status_name="received"
+WHERE order_id=new.order_id;
+
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `m_receive_stock_item`
+--
+
+CREATE TABLE IF NOT EXISTS `m_receive_stock_item` (
+  `vaccine_id` varchar(25) NOT NULL,
+  `batch_no` varchar(25) NOT NULL,
+  `expiry_date` date NOT NULL,
+  `vvm_status` varchar(25) NOT NULL,
+  `amount_ordered` int(11) NOT NULL,
+  `amount_received` int(11) NOT NULL,
+  `discrepancy` int(11) NOT NULL,
+  `comment` varchar(25) NOT NULL,
+  `receive_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `m_receive_stock_item`
+--
+
+INSERT INTO `m_receive_stock_item` (`vaccine_id`, `batch_no`, `expiry_date`, `vvm_status`, `amount_ordered`, `amount_received`, `discrepancy`, `comment`, `receive_id`) VALUES
+('11', '12356', '2017-09-08', '1', 100000, 100000, 0, '', 1),
+('11', '12356', '2017-09-08', '1', 100000, 100000, 0, '', 2),
+('11', '12356', '2017-09-08', '', 100000, 100000, 0, '', 3),
+('11', '1111', '2015-12-16', '', 100000, 100000, 0, '', 3);
+
+--
+-- Triggers `m_receive_stock_item`
+--
+DELIMITER $$
+CREATE TRIGGER `new_stock_received_balance` AFTER INSERT ON `m_receive_stock_item`
+ FOR EACH ROW begin 
+INSERT INTO m_stock_balance (vaccine_id, batch_number, expiry_date, stock_balance,last_update,vvm_status,user_id,station_level,station_id,order_id)
+SELECT new.vaccine_id,new.batch_no,new.expiry_date,new.amount_received,mr.date_recorded,new.vvm_status, mr.received_by_user,mr.station_level,mr.station_id,mr.order_id 
+FROM m_receive_stock mr 
+LEFT JOIN m_receive_stock_item ms on ms.receive_id= mr.receive_id;
+
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `m_region`
 --
 
-CREATE TABLE `m_region` (
+CREATE TABLE IF NOT EXISTS `m_region` (
   `id` int(11) NOT NULL,
   `region_name` varchar(100) NOT NULL,
   `region_headquarter` varchar(100) NOT NULL,
   `region_manager` varchar(255) NOT NULL,
   `region_manager_phone` int(10) NOT NULL,
-  `region_manager_email` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `region_manager_email` varchar(255) NOT NULL,
+  `population_one` int(11) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_region`
 --
 
-INSERT INTO `m_region` (`id`, `region_name`, `region_headquarter`, `region_manager`, `region_manager_phone`, `region_manager_email`) VALUES
-(1, 'Nairobi', 'Nairobi', 'Sheila Knowles', 723598743, 'sheilaknowles@gmail.com'),
-(3, 'Coast', 'Mombasa', 'Mike Ouma', 766974235, 'mike.ouma@gmail.com'),
-(4, 'Nyanza', 'Kisumu', 'Mike Osoro', 722874365, 'osorom@gmail.com'),
-(5, 'Western', 'Kakamega', 'Getrude Opanga', 722414789, 'gopanga@gmail.com'),
-(6, 'Rift Valley', 'Nakuru', 'Sarah Misisi', 723214872, 'herosarah@gmail.com'),
-(7, 'Central', 'Nyeri', 'Damaris Kipyegon', 733741568, 'damarisk@gmail.com'),
-(8, 'North Eastern', 'Garissa', 'Ahmed Wadi', 722365413, 'hwadi@gmail.com'),
-(9, 'Eastern ', 'Embu', 'Nkirote Mercy', 785419574, 'nkirotemercy@gmail.com');
+INSERT INTO `m_region` (`id`, `region_name`, `region_headquarter`, `region_manager`, `region_manager_phone`, `region_manager_email`, `population_one`) VALUES
+(1, 'Nairobi', 'Nairobi', 'Sheila Knowles', 723598743, 'sheilaknowles@gmail.com', 0),
+(3, 'Coast', 'Mombasa', 'Mike Ouma', 766974235, 'mike.ouma@gmail.com', 0),
+(4, 'Nyanza', 'Kisumu', 'Mike Osoro', 722874365, 'osorom@gmail.com', 0),
+(5, 'Western', 'Kakamega', 'Getrude Opanga', 722414789, 'gopanga@gmail.com', 0),
+(6, 'Rift Valley', 'Nakuru', 'Sarah Misisi', 723214872, 'herosarah@gmail.com', 198211),
+(7, 'Central', 'Nyeri', 'Damaris Kipyegon', 733741568, 'damarisk@gmail.com', 0),
+(8, 'North Eastern', 'Garissa', 'Ahmed Wadi', 722365413, 'hwadi@gmail.com', 0),
+(9, 'Eastern ', 'Embu', 'Nkirote Mercy', 785419574, 'nkirotemercy@gmail.com', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `m_status`
+--
+
+CREATE TABLE IF NOT EXISTS `m_status` (
+  `status_id` int(11) NOT NULL,
+  `status_name` varchar(20) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `m_status`
+--
+
+INSERT INTO `m_status` (`status_id`, `status_name`) VALUES
+(1, 'pending'),
+(2, 'issued'),
+(3, 'received');
 
 -- --------------------------------------------------------
 
@@ -14007,7 +14371,7 @@ INSERT INTO `m_region` (`id`, `region_name`, `region_headquarter`, `region_manag
 -- Table structure for table `m_stock_balance`
 --
 
-CREATE TABLE `m_stock_balance` (
+CREATE TABLE IF NOT EXISTS `m_stock_balance` (
   `id` int(11) NOT NULL,
   `vaccine_id` int(11) NOT NULL,
   `batch_number` varchar(11) NOT NULL,
@@ -14017,19 +14381,27 @@ CREATE TABLE `m_stock_balance` (
   `vvm_status` varchar(10) NOT NULL,
   `user_id` varchar(30) NOT NULL,
   `station_level` int(10) NOT NULL,
-  `station_id` varchar(30) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `station_id` varchar(30) NOT NULL,
+  `order_id` int(11) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_stock_balance`
 --
 
-INSERT INTO `m_stock_balance` (`id`, `vaccine_id`, `batch_number`, `expiry_date`, `stock_balance`, `last_update`, `vvm_status`, `user_id`, `station_level`, `station_id`) VALUES
-(1, 11, '00001', '2016-06-08', 8000, '2015-12-07', '1', '2', 1, 'KENYA'),
-(2, 0, '', '0000-00-00', 0, '0000-00-00', '0', '2', 1, 'KENYA'),
-(3, 0, '', '0000-00-00', -8, '2015-12-09', '0', '2', 1, 'KENYA'),
-(4, 0, 'plkm', '2015-12-12', 10, '2015-12-07', '0', '2', 1, 'KENYA'),
-(5, 0, 'hgf', '2015-12-12', 78, '2015-12-08', '1', '2', 1, 'KENYA');
+INSERT INTO `m_stock_balance` (`id`, `vaccine_id`, `batch_number`, `expiry_date`, `stock_balance`, `last_update`, `vvm_status`, `user_id`, `station_level`, `station_id`, `order_id`) VALUES
+(1, 11, '12356', '2017-09-08', 700000, '2015-12-16', '1', '2', 1, 'KENYA', 0),
+(2, 11, '12356', '2017-09-08', 100000, '2015-12-15', '1', '13', 2, 'Rift Valley', 2),
+(3, 11, '12356', '2017-09-08', 100000, '2015-12-15', '1', '13', 2, 'Rift Valley', 2),
+(4, 11, '12356', '2017-09-08', 100000, '2015-12-16', '1', '13', 2, 'Rift Valley', 4),
+(6, 11, '1111', '2015-12-16', 900000, '2015-12-16', '0', '2', 1, 'KENYA', 0),
+(7, 11, '12356', '2017-09-08', 100000, '2015-12-15', '', '13', 2, 'Rift Valley', 2),
+(8, 11, '12356', '2017-09-08', 100000, '2015-12-16', '', '13', 2, 'Rift Valley', 4),
+(9, 11, '12356', '2017-09-08', 100000, '2015-12-16', '', '13', 2, 'Rift Valley', 5),
+(10, 11, '1111', '2015-12-16', 100000, '2015-12-15', '', '13', 2, 'Rift Valley', 2),
+(11, 11, '1111', '2015-12-16', 100000, '2015-12-16', '', '13', 2, 'Rift Valley', 4),
+(12, 11, '1111', '2015-12-16', 100000, '2015-12-16', '', '13', 2, 'Rift Valley', 5),
+(13, 11, '1111', '2015-12-16', 100000, '2015-12-16', '', '13', 2, 'Rift Valley', 5);
 
 -- --------------------------------------------------------
 
@@ -14037,7 +14409,7 @@ INSERT INTO `m_stock_balance` (`id`, `vaccine_id`, `batch_number`, `expiry_date`
 -- Table structure for table `m_stock_movement`
 --
 
-CREATE TABLE `m_stock_movement` (
+CREATE TABLE IF NOT EXISTS `m_stock_movement` (
   `stock_id` int(11) NOT NULL,
   `vaccine_id` int(11) DEFAULT NULL,
   `batch_number` varchar(11) DEFAULT NULL,
@@ -14056,28 +14428,24 @@ CREATE TABLE `m_stock_movement` (
   `user_id` varchar(30) DEFAULT NULL,
   `station_level` int(11) NOT NULL,
   `station_id` varchar(30) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_stock_movement`
 --
 
 INSERT INTO `m_stock_movement` (`stock_id`, `vaccine_id`, `batch_number`, `expiry_date`, `transaction_date`, `transaction_type`, `s11`, `source`, `destination`, `quantity_in`, `quantity_out`, `physical_count`, `disparity_reason`, `VVM_status`, `order_number`, `user_id`, `station_level`, `station_id`) VALUES
-(1, 11, '00001', '2016-06-08', '2015-12-07', 1, 'Y8F8SD', 'Nairobi', 'KENYA', 10000, NULL, 9000, NULL, 1, NULL, '2', 1, 'KENYA'),
-(2, 11, '00001', '2016-06-08', '2015-12-06', 2, 'J45SKL', 'KENYA', 'Nairobi', NULL, 1000, 9000, NULL, 0, NULL, '2', 1, 'KENYA'),
-(3, 0, '', '0000-00-00', '0000-00-00', 1, '', '0', 'KENYA', 0, NULL, NULL, NULL, 0, NULL, '2', 1, 'KENYA'),
-(4, 11, '0', '0000-00-00', '2015-12-08', 2, '', 'KENYA', '0', NULL, 0, NULL, NULL, 0, NULL, '2', 1, 'KENYA'),
-(5, 11, '00001', '2016-06-08', '2015-12-10', 2, 'llll', 'KENYA', '0', NULL, 1000, NULL, NULL, 0, NULL, '2', 1, 'KENYA'),
-(6, 11, '0', '0000-00-00', '2015-12-08', 2, 'pol', 'KENYA', '0', NULL, 41, NULL, NULL, 0, NULL, '2', 1, 'KENYA'),
-(7, 0, '', '0000-00-00', '2015-12-09', 1, 'oo', '0', 'KENYA', -8, NULL, NULL, NULL, 0, NULL, '2', 1, 'KENYA'),
-(8, 0, 'plkm', '2015-12-12', '2015-12-07', 1, 'pol', '0', 'KENYA', 10, NULL, NULL, NULL, 0, NULL, '2', 1, 'KENYA'),
-(9, 0, 'hgf', '2015-12-12', '2015-12-08', 1, 'jhytr', '0', 'KENYA', 78, NULL, NULL, NULL, 1, NULL, '2', 1, 'KENYA');
+(1, 11, '12345', '2017-12-26', '2015-12-15', 1, '987654321', 'UNICEF', 'KENYA', 1000000, NULL, NULL, NULL, 1, NULL, '2', 1, 'KENYA'),
+(2, 12, '12356', '2017-05-04', '2015-12-15', 1, '123456789', 'UNICEF', 'KENYA', 1000000, NULL, NULL, NULL, 1, NULL, '2', 1, 'KENYA'),
+(3, 11, '12356', '2017-09-08', '2015-12-16', 1, '123456789', 'UNICEF', 'KENYA', 1000000, NULL, NULL, NULL, 1, NULL, '2', 1, 'KENYA'),
+(4, 11, '1111', '2015-12-16', '2015-12-16', 1, '11111', 'UNICEF', 'KENYA', 1000000, NULL, NULL, NULL, 0, NULL, '2', 1, 'KENYA');
 
 --
 -- Triggers `m_stock_movement`
 --
 DELIMITER $$
-CREATE TRIGGER `new_stock_balance` AFTER INSERT ON `m_stock_movement` FOR EACH ROW begin
+CREATE TRIGGER `new_stock_balance` AFTER INSERT ON `m_stock_movement`
+ FOR EACH ROW begin
  IF (new.transaction_type = 1) THEN 
 INSERT INTO m_stock_balance (vaccine_id, batch_number, expiry_date, stock_balance,last_update,vvm_status,user_id,station_level,station_id)
 Values (new.vaccine_id,new.batch_number,new.expiry_date,new.quantity_in,new.transaction_date,new.vvm_status,new.user_id,new.station_level,new.station_id);
@@ -14100,7 +14468,7 @@ DELIMITER ;
 -- Table structure for table `m_subcounty`
 --
 
-CREATE TABLE `m_subcounty` (
+CREATE TABLE IF NOT EXISTS `m_subcounty` (
   `id` int(11) NOT NULL,
   `subcounty_name` varchar(255) NOT NULL,
   `county_id` int(14) NOT NULL,
@@ -14443,10 +14811,10 @@ INSERT INTO `m_subcounty` (`id`, `subcounty_name`, `county_id`, `population`, `p
 -- Table structure for table `m_transaction_type`
 --
 
-CREATE TABLE `m_transaction_type` (
+CREATE TABLE IF NOT EXISTS `m_transaction_type` (
   `id` int(11) NOT NULL,
   `transaction_type` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_transaction_type`
@@ -14463,7 +14831,7 @@ INSERT INTO `m_transaction_type` (`id`, `transaction_type`) VALUES
 -- Table structure for table `m_uploads`
 --
 
-CREATE TABLE `m_uploads` (
+CREATE TABLE IF NOT EXISTS `m_uploads` (
   `id` int(11) NOT NULL,
   `file_name` varchar(200) NOT NULL,
   `raw_name` varchar(200) NOT NULL,
@@ -14473,7 +14841,7 @@ CREATE TABLE `m_uploads` (
   `published` varchar(50) NOT NULL,
   `purpose` varchar(250) NOT NULL,
   `owner` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_uploads`
@@ -14489,7 +14857,7 @@ INSERT INTO `m_uploads` (`id`, `file_name`, `raw_name`, `file_type`, `full_path`
 -- Table structure for table `m_users`
 --
 
-CREATE TABLE `m_users` (
+CREATE TABLE IF NOT EXISTS `m_users` (
   `id` int(11) NOT NULL,
   `f_name` varchar(50) NOT NULL,
   `l_name` varchar(50) NOT NULL,
@@ -14499,7 +14867,7 @@ CREATE TABLE `m_users` (
   `password` varchar(255) NOT NULL,
   `user_group` int(12) NOT NULL,
   `user_level` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_users`
@@ -14514,7 +14882,12 @@ INSERT INTO `m_users` (`id`, `f_name`, `l_name`, `username`, `phone`, `email`, `
 (15, 'Baringo', 'North', 'bnorth', '0703121212', 'bnorth@dvikenya.com', '0a692f089b30b507bc881486d21a15f4ce7534ba02cf4d9bcc0062375fdcde1a364a9370593c274e0f0632fc7ae7448bdee5d267b64685f07bd7192128f6ff38', 3, 4),
 (16, 'Samson', 'Peter', 'speter', '0703121212', 'speter@dvikenya.com', '0a692f089b30b507bc881486d21a15f4ce7534ba02cf4d9bcc0062375fdcde1a364a9370593c274e0f0632fc7ae7448bdee5d267b64685f07bd7192128f6ff38', 3, 5),
 (17, 'Magret', 'Awinyi', 'mawinyi', '079495955', 'maggie@dvikenya.com', '0a692f089b30b507bc881486d21a15f4ce7534ba02cf4d9bcc0062375fdcde1a364a9370593c274e0f0632fc7ae7448bdee5d267b64685f07bd7192128f6ff38', 3, 5),
-(18, 'Test', 'User', 'User', '0712345678', 't@g.com', '0fa00577a7836a7caf09656edef44a5ba8477e5cde965059d4f88da0e9851c68f74036ecda61d3b5ec14426683e72851536f8828fb0cb6d2992a437d640b3b33', 1, 1);
+(18, 'Test', 'User', 'User', '0712345678', 't@g.com', '0fa00577a7836a7caf09656edef44a5ba8477e5cde965059d4f88da0e9851c68f74036ecda61d3b5ec14426683e72851536f8828fb0cb6d2992a437d640b3b33', 1, 1),
+(19, 'metNation', 'User', 'metNational', '07070760675', 'admin@dvi.co.ke', '0a692f089b30b507bc881486d21a15f4ce7534ba02cf4d9bcc0062375fdcde1a364a9370593c274e0f0632fc7ae7448bdee5d267b64685f07bd7192128f6ff38', 7, 1),
+(20, 'metRegion', 'User', 'metRegion', '0703121212', 'admin@dvi.co.ke', '0a692f089b30b507bc881486d21a15f4ce7534ba02cf4d9bcc0062375fdcde1a364a9370593c274e0f0632fc7ae7448bdee5d267b64685f07bd7192128f6ff38', 7, 2),
+(21, 'metCounty', 'User', 'metCounty', '07070760675', 'admin@dvi.co.ke', '0a692f089b30b507bc881486d21a15f4ce7534ba02cf4d9bcc0062375fdcde1a364a9370593c274e0f0632fc7ae7448bdee5d267b64685f07bd7192128f6ff38', 7, 3),
+(22, 'metSubcounty', 'User', 'metSubcounty', '07070760675', 'admin@dvi.co.ke', '0a692f089b30b507bc881486d21a15f4ce7534ba02cf4d9bcc0062375fdcde1a364a9370593c274e0f0632fc7ae7448bdee5d267b64685f07bd7192128f6ff38', 7, 4),
+(23, 'metFacility', 'User', 'metFacility', '07070760675', 'admin@dvi.co.ke', '0a692f089b30b507bc881486d21a15f4ce7534ba02cf4d9bcc0062375fdcde1a364a9370593c274e0f0632fc7ae7448bdee5d267b64685f07bd7192128f6ff38', 7, 5);
 
 -- --------------------------------------------------------
 
@@ -14522,7 +14895,7 @@ INSERT INTO `m_users` (`id`, `f_name`, `l_name`, `username`, `phone`, `email`, `
 -- Table structure for table `m_vaccines`
 --
 
-CREATE TABLE `m_vaccines` (
+CREATE TABLE IF NOT EXISTS `m_vaccines` (
   `ID` int(11) NOT NULL,
   `Vaccine_name` varchar(45) DEFAULT NULL,
   `Doses_required` int(15) NOT NULL,
@@ -14537,7 +14910,7 @@ CREATE TABLE `m_vaccines` (
   `Diluents_pck_vol` decimal(14,1) NOT NULL,
   `Vaccine_price_vial` decimal(14,2) NOT NULL,
   `Vaccine_price_dose` decimal(14,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_vaccines`
@@ -14555,10 +14928,10 @@ INSERT INTO `m_vaccines` (`ID`, `Vaccine_name`, `Doses_required`, `Wastage_facto
 -- Table structure for table `m_vvm_status`
 --
 
-CREATE TABLE `m_vvm_status` (
+CREATE TABLE IF NOT EXISTS `m_vvm_status` (
   `id` int(11) NOT NULL,
   `name` varchar(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_vvm_status`
@@ -14575,7 +14948,7 @@ INSERT INTO `m_vvm_status` (`id`, `name`) VALUES
 --
 -- Stand-in structure for view `m_wastage`
 --
-CREATE TABLE `m_wastage` (
+CREATE TABLE IF NOT EXISTS `m_wastage` (
 `BCG` double
 ,`DPT1` double
 ,`DPT2` double
@@ -14599,7 +14972,7 @@ CREATE TABLE `m_wastage` (
 --
 -- Stand-in structure for view `new_wastage`
 --
-CREATE TABLE `new_wastage` (
+CREATE TABLE IF NOT EXISTS `new_wastage` (
 `UnitID` varchar(11)
 ,`BCG` double
 ,`DPT` double
@@ -14618,7 +14991,7 @@ CREATE TABLE `new_wastage` (
 --
 -- Stand-in structure for view `new_wastage_unitdid`
 --
-CREATE TABLE `new_wastage_unitdid` (
+CREATE TABLE IF NOT EXISTS `new_wastage_unitdid` (
 `UnitId` varchar(11)
 ,`bcgwastage` double
 ,`dptwastage` double
@@ -14634,7 +15007,7 @@ CREATE TABLE `new_wastage_unitdid` (
 -- Table structure for table `order_item`
 --
 
-CREATE TABLE `order_item` (
+CREATE TABLE IF NOT EXISTS `order_item` (
   `vaccine_id` int(14) NOT NULL,
   `stock_on_hand` int(14) NOT NULL,
   `min_stock` int(14) NOT NULL,
@@ -14650,26 +15023,37 @@ CREATE TABLE `order_item` (
 --
 
 INSERT INTO `order_item` (`vaccine_id`, `stock_on_hand`, `min_stock`, `max_stock`, `period_stock`, `first_expiry`, `qty_order_doses`, `order_id`) VALUES
-(11, 70000, 23, 113, 0, '2015-12-04', 2000, 1),
-(12, 41000, 20, 96, 0, '2016-01-01', 6000, 2),
-(0, 0, 0, 0, 0, '0000-00-00', 0, 3),
-(11, 0, 0, 0, 0, '0000-00-00', 2000, 4),
-(12, 0, 0, 0, 0, '0000-00-00', 4000, 4),
-(13, 0, 0, 0, 0, '0000-00-00', 5000, 4),
-(14, 5000, 222775, 1113875, 0, '2015-12-05', 6000, 4),
-(15, 0, 0, 0, 0, '0000-00-00', 20, 4),
-(11, 0, 0, 0, 0, '0000-00-00', 8000, 5),
-(12, 0, 0, 0, 0, '0000-00-00', 63000, 5),
-(13, 0, 0, 0, 0, '0000-00-00', 96000, 5),
-(14, 0, 0, 0, 0, '0000-00-00', 25000, 5),
-(15, 0, 0, 0, 0, '0000-00-00', 15000, 5);
+(11, 0, 0, 0, 0, '0000-00-00', 100000, 2),
+(12, 0, 0, 0, 0, '0000-00-00', 0, 2),
+(13, 0, 0, 0, 0, '0000-00-00', 0, 2),
+(14, 0, 0, 0, 0, '0000-00-00', 0, 2),
+(11, 0, 0, 0, 0, '0000-00-00', 100000, 3),
+(12, 0, 0, 0, 0, '0000-00-00', 100000, 3),
+(13, 0, 0, 0, 0, '0000-00-00', 100000, 3),
+(14, 0, 0, 0, 0, '0000-00-00', 100000, 3),
+(11, 100000, 369994, 1849969, 0, '2017-09-08', 100000, 4),
+(12, 0, 0, 0, 0, '0000-00-00', 0, 4),
+(13, 0, 0, 0, 0, '0000-00-00', 0, 4),
+(14, 0, 0, 0, 0, '0000-00-00', 0, 4),
+(11, 300000, 369994, 1849969, 0, '2017-09-08', 100000, 5),
+(12, 0, 0, 0, 0, '0000-00-00', 0, 5),
+(13, 0, 0, 0, 0, '0000-00-00', 0, 5),
+(14, 0, 0, 0, 0, '0000-00-00', 0, 5),
+(11, 1000000, 369994, 1849969, 0, '2015-12-16', 50000, 6),
+(12, 0, 0, 0, 0, '0000-00-00', 0, 6),
+(13, 0, 0, 0, 0, '0000-00-00', 0, 6),
+(14, 0, 0, 0, 0, '0000-00-00', 0, 6),
+(11, 1000000, 369994, 1849969, 0, '2015-12-16', 5000, 7),
+(12, 0, 0, 0, 0, '0000-00-00', 0, 7),
+(13, 0, 0, 0, 0, '0000-00-00', 0, 7),
+(14, 0, 0, 0, 0, '0000-00-00', 0, 7);
 
 -- --------------------------------------------------------
 
 --
 -- Stand-in structure for view `region_userbase_view`
 --
-CREATE TABLE `region_userbase_view` (
+CREATE TABLE IF NOT EXISTS `region_userbase_view` (
 `id` int(11)
 ,`region_name` varchar(100)
 ,`user_id` int(11)
@@ -14682,7 +15066,7 @@ CREATE TABLE `region_userbase_view` (
 --
 -- Stand-in structure for view `subcounty_userbase`
 --
-CREATE TABLE `subcounty_userbase` (
+CREATE TABLE IF NOT EXISTS `subcounty_userbase` (
 `id` int(11)
 ,`subcounty_name` varchar(255)
 ,`user_id` int(11)
@@ -14697,7 +15081,7 @@ CREATE TABLE `subcounty_userbase` (
 --
 -- Stand-in structure for view `total_doses_adm`
 --
-CREATE TABLE `total_doses_adm` (
+CREATE TABLE IF NOT EXISTS `total_doses_adm` (
 `periodid` int(6)
 ,`periodname` varchar(14)
 ,`BCG` double
@@ -14720,7 +15104,7 @@ CREATE TABLE `total_doses_adm` (
 --
 -- Stand-in structure for view `total_wastage`
 --
-CREATE TABLE `total_wastage` (
+CREATE TABLE IF NOT EXISTS `total_wastage` (
 `periodid` int(6)
 ,`periodname` varchar(6)
 ,`bcgwastage` double
@@ -14741,7 +15125,7 @@ CREATE TABLE `total_wastage` (
 -- Table structure for table `user_base`
 --
 
-CREATE TABLE `user_base` (
+CREATE TABLE IF NOT EXISTS `user_base` (
   `id` int(11) NOT NULL,
   `user_id` int(11) DEFAULT NULL,
   `national` int(11) DEFAULT NULL,
@@ -14749,7 +15133,7 @@ CREATE TABLE `user_base` (
   `county` int(11) DEFAULT NULL,
   `subcounty` int(11) DEFAULT NULL,
   `facility` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `user_base`
@@ -14777,11 +15161,11 @@ INSERT INTO `user_base` (`id`, `user_id`, `national`, `region`, `county`, `subco
 -- Table structure for table `user_levels`
 --
 
-CREATE TABLE `user_levels` (
+CREATE TABLE IF NOT EXISTS `user_levels` (
   `id` int(11) NOT NULL,
   `name` varchar(20) NOT NULL,
   `description` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `user_levels`
@@ -14799,7 +15183,7 @@ INSERT INTO `user_levels` (`id`, `name`, `description`) VALUES
 --
 -- Stand-in structure for view `vaccine_movement`
 --
-CREATE TABLE `vaccine_movement` (
+CREATE TABLE IF NOT EXISTS `vaccine_movement` (
 `id` int(11)
 ,`name` varchar(45)
 ,`batch_number` varchar(11)
@@ -14818,11 +15202,12 @@ CREATE TABLE `vaccine_movement` (
 --
 -- Stand-in structure for view `vaccine_stockbalance`
 --
-CREATE TABLE `vaccine_stockbalance` (
+CREATE TABLE IF NOT EXISTS `vaccine_stockbalance` (
 `id` int(11)
 ,`Vaccine` varchar(45)
-,`Stock_Balance` int(11)
+,`Stock_Balance` decimal(32,0)
 ,`user_id` varchar(30)
+,`station_id` varchar(30)
 );
 
 -- --------------------------------------------------------
@@ -14830,9 +15215,10 @@ CREATE TABLE `vaccine_stockbalance` (
 --
 -- Stand-in structure for view `view_county_orders`
 --
-CREATE TABLE `view_county_orders` (
+CREATE TABLE IF NOT EXISTS `view_county_orders` (
 `order_by` varchar(100)
 ,`order_id` int(11)
+,`status_name` varchar(25)
 ,`date_created` date
 ,`station_id` varchar(100)
 ,`county` int(11)
@@ -14846,7 +15232,7 @@ CREATE TABLE `view_county_orders` (
 --
 -- Stand-in structure for view `view_coverage_county`
 --
-CREATE TABLE `view_coverage_county` (
+CREATE TABLE IF NOT EXISTS `view_coverage_county` (
 `periodname` varchar(6)
 ,`bcgdosesadm` varchar(3)
 ,`dpt2dosesadministered` varchar(3)
@@ -14870,7 +15256,7 @@ CREATE TABLE `view_coverage_county` (
 --
 -- Stand-in structure for view `view_coverage_subcounty`
 --
-CREATE TABLE `view_coverage_subcounty` (
+CREATE TABLE IF NOT EXISTS `view_coverage_subcounty` (
 `periodname` varchar(6)
 ,`bcgdosesadm` varchar(3)
 ,`dpt2dosesadministered` varchar(3)
@@ -14895,9 +15281,10 @@ CREATE TABLE `view_coverage_subcounty` (
 --
 -- Stand-in structure for view `view_facility_orders`
 --
-CREATE TABLE `view_facility_orders` (
+CREATE TABLE IF NOT EXISTS `view_facility_orders` (
 `order_by` varchar(100)
 ,`order_id` int(11)
+,`status_name` varchar(25)
 ,`date_created` date
 ,`station_id` varchar(100)
 ,`facility_name` text
@@ -14909,11 +15296,54 @@ CREATE TABLE `view_facility_orders` (
 -- --------------------------------------------------------
 
 --
+-- Stand-in structure for view `view_orders_issued`
+--
+CREATE TABLE IF NOT EXISTS `view_orders_issued` (
+`order_id` int(11)
+,`station_id` varchar(100)
+,`date_created` date
+,`date_issued` date
+,`order_by` varchar(100)
+,`issuing_station` varchar(25)
+,`vaccine_id` int(11)
+,`vaccine_name` varchar(45)
+,`batch_no` varchar(25)
+,`expiry_date` date
+,`vvm_status` int(10)
+,`amount_ordered` int(11)
+,`amount_issued` int(11)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `view_orders_received`
+--
+CREATE TABLE IF NOT EXISTS `view_orders_received` (
+`order_id` int(11)
+,`station_id` varchar(100)
+,`date_created` date
+,`date_received` date
+,`order_by` varchar(100)
+,`order_destination` varchar(10)
+,`vaccine_id` varchar(25)
+,`vaccine_name` varchar(45)
+,`batch_no` varchar(25)
+,`expiry_date` date
+,`vvm_status` varchar(25)
+,`amount_ordered` int(11)
+,`amount_received` int(11)
+);
+
+-- --------------------------------------------------------
+
+--
 -- Stand-in structure for view `view_region_orders`
 --
-CREATE TABLE `view_region_orders` (
+CREATE TABLE IF NOT EXISTS `view_region_orders` (
 `order_by` varchar(100)
 ,`order_id` int(11)
+,`status_name` varchar(25)
 ,`date_created` date
 ,`station_id` varchar(100)
 ,`region` int(11)
@@ -14925,7 +15355,7 @@ CREATE TABLE `view_region_orders` (
 --
 -- Stand-in structure for view `view_subcountycov_calculated`
 --
-CREATE TABLE `view_subcountycov_calculated` (
+CREATE TABLE IF NOT EXISTS `view_subcountycov_calculated` (
 `periodname` varchar(6)
 ,`county_id` int(32)
 ,`subcounty_id` int(32)
@@ -14949,9 +15379,10 @@ CREATE TABLE `view_subcountycov_calculated` (
 --
 -- Stand-in structure for view `view_subcounty_orders`
 --
-CREATE TABLE `view_subcounty_orders` (
+CREATE TABLE IF NOT EXISTS `view_subcounty_orders` (
 `order_by` varchar(100)
 ,`order_id` int(11)
+,`status_name` varchar(25)
 ,`date_created` date
 ,`station_id` varchar(100)
 ,`subcounty_name` varchar(255)
@@ -14964,7 +15395,7 @@ CREATE TABLE `view_subcounty_orders` (
 --
 -- Stand-in structure for view `view_wastage_unitid`
 --
-CREATE TABLE `view_wastage_unitid` (
+CREATE TABLE IF NOT EXISTS `view_wastage_unitid` (
 `UnitId` varchar(11)
 ,`bcgwastage` double
 ,`dptwastage` double
@@ -14989,7 +15420,7 @@ CREATE TABLE `view_wastage_unitid` (
 --
 -- Stand-in structure for view `wastage_view_userlevel`
 --
-CREATE TABLE `wastage_view_userlevel` (
+CREATE TABLE IF NOT EXISTS `wastage_view_userlevel` (
 `UnitId` varchar(11)
 ,`bcgwastage` double
 ,`dptwastage` double
@@ -15014,7 +15445,7 @@ CREATE TABLE `wastage_view_userlevel` (
 --
 DROP TABLE IF EXISTS `calc_county_orders`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `calc_county_orders`  AS  select `mv`.`ID` AS `ID`,`mv`.`Vaccine_name` AS `Vaccine_name`,min(`msb`.`expiry_date`) AS `first_expiry_date`,`mv`.`Doses_required` AS `Doses_required`,`mv`.`Wastage_factor` AS `Wastage_factor`,sum(`msb`.`stock_balance`) AS `stock_on_hand`,(((`mv`.`Wastage_factor` * `mv`.`Doses_required`) * `ms`.`population_one`) / 12) AS `period_stock`,`ms`.`county_name` AS `county_name`,`ms`.`population_one` AS `population_one` from ((`m_vaccines` `mv` left join `m_stock_balance` `msb` on((`mv`.`ID` = `msb`.`vaccine_id`))) left join `m_county` `ms` on((`ms`.`county_name` = `msb`.`station_id`))) where (`msb`.`station_level` = 3) group by `mv`.`Vaccine_name` order by `mv`.`ID` ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `calc_county_orders` AS select `mv`.`ID` AS `ID`,`mv`.`Vaccine_name` AS `Vaccine_name`,min(`msb`.`expiry_date`) AS `first_expiry_date`,`mv`.`Doses_required` AS `Doses_required`,`mv`.`Wastage_factor` AS `Wastage_factor`,sum(`msb`.`stock_balance`) AS `stock_on_hand`,(((`mv`.`Wastage_factor` * `mv`.`Doses_required`) * `ms`.`population_one`) / 12) AS `period_stock`,`ms`.`county_name` AS `county_name`,`ms`.`population_one` AS `population_one` from ((`m_vaccines` `mv` left join `m_stock_balance` `msb` on((`mv`.`ID` = `msb`.`vaccine_id`))) left join `m_county` `ms` on((`ms`.`county_name` = `msb`.`station_id`))) where (`msb`.`station_level` = 3) group by `mv`.`Vaccine_name` order by `mv`.`ID`;
 
 -- --------------------------------------------------------
 
@@ -15023,7 +15454,16 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `calc_facility_order`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `calc_facility_order`  AS  select `mv`.`ID` AS `ID`,`mv`.`Vaccine_name` AS `Vaccine_name`,min(`msb`.`expiry_date`) AS `first_expiry_date`,`mv`.`Doses_required` AS `Doses_required`,`mv`.`Wastage_factor` AS `Wastage_factor`,sum(`msb`.`stock_balance`) AS `stock_on_hand`,(((`mv`.`Wastage_factor` * `mv`.`Doses_required`) * `ms`.`population_one`) / 12) AS `period_stock`,`ms`.`facility_name` AS `facility_name`,`ms`.`population_one` AS `population_one` from ((`m_vaccines` `mv` left join `m_stock_balance` `msb` on((`mv`.`ID` = `msb`.`vaccine_id`))) left join `m_facility` `ms` on((`ms`.`facility_name` = `msb`.`station_id`))) where (`msb`.`station_level` = 5) group by `mv`.`Vaccine_name` order by `mv`.`ID` ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `calc_facility_order` AS select `mv`.`ID` AS `ID`,`mv`.`Vaccine_name` AS `Vaccine_name`,min(`msb`.`expiry_date`) AS `first_expiry_date`,`mv`.`Doses_required` AS `Doses_required`,`mv`.`Wastage_factor` AS `Wastage_factor`,sum(`msb`.`stock_balance`) AS `stock_on_hand`,(((`mv`.`Wastage_factor` * `mv`.`Doses_required`) * `ms`.`population_one`) / 12) AS `period_stock`,`ms`.`facility_name` AS `facility_name`,`ms`.`population_one` AS `population_one` from ((`m_vaccines` `mv` left join `m_stock_balance` `msb` on((`mv`.`ID` = `msb`.`vaccine_id`))) left join `m_facility` `ms` on((`ms`.`facility_name` = `msb`.`station_id`))) where (`msb`.`station_level` = 5) group by `mv`.`Vaccine_name` order by `mv`.`ID`;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `calc_region_orders`
+--
+DROP TABLE IF EXISTS `calc_region_orders`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `calc_region_orders` AS select `mv`.`ID` AS `ID`,`mv`.`Vaccine_name` AS `Vaccine_name`,min(`msb`.`expiry_date`) AS `first_expiry_date`,`mv`.`Doses_required` AS `Doses_required`,`mv`.`Wastage_factor` AS `Wastage_factor`,sum(`msb`.`stock_balance`) AS `stock_on_hand`,(((`mv`.`Wastage_factor` * `mv`.`Doses_required`) * `ms`.`population_one`) / 12) AS `period_stock`,`ms`.`region_name` AS `region_name`,`ms`.`population_one` AS `population_one` from ((`m_vaccines` `mv` left join `m_stock_balance` `msb` on((`mv`.`ID` = `msb`.`vaccine_id`))) left join `m_region` `ms` on((`ms`.`region_name` = `msb`.`station_id`))) where (`msb`.`station_level` = 2) group by `mv`.`Vaccine_name` order by `mv`.`ID`;
 
 -- --------------------------------------------------------
 
@@ -15032,7 +15472,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `calc_subcounty_orders`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `calc_subcounty_orders`  AS  select `mv`.`ID` AS `ID`,`mv`.`Vaccine_name` AS `Vaccine_name`,min(`msb`.`expiry_date`) AS `first_expiry_date`,`mv`.`Doses_required` AS `Doses_required`,`mv`.`Wastage_factor` AS `Wastage_factor`,sum(`msb`.`stock_balance`) AS `stock_on_hand`,(((`mv`.`Wastage_factor` * `mv`.`Doses_required`) * `ms`.`population_one`) / 12) AS `period_stock`,`ms`.`subcounty_name` AS `subcounty_name`,`ms`.`population_one` AS `population_one` from ((`m_vaccines` `mv` left join `m_stock_balance` `msb` on((`mv`.`ID` = `msb`.`vaccine_id`))) left join `m_subcounty` `ms` on((`ms`.`subcounty_name` = `msb`.`station_id`))) where (`msb`.`station_level` = 4) group by `mv`.`Vaccine_name` order by `mv`.`ID` ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `calc_subcounty_orders` AS select `mv`.`ID` AS `ID`,`mv`.`Vaccine_name` AS `Vaccine_name`,min(`msb`.`expiry_date`) AS `first_expiry_date`,`mv`.`Doses_required` AS `Doses_required`,`mv`.`Wastage_factor` AS `Wastage_factor`,sum(`msb`.`stock_balance`) AS `stock_on_hand`,(((`mv`.`Wastage_factor` * `mv`.`Doses_required`) * `ms`.`population_one`) / 12) AS `period_stock`,`ms`.`subcounty_name` AS `subcounty_name`,`ms`.`population_one` AS `population_one` from ((`m_vaccines` `mv` left join `m_stock_balance` `msb` on((`mv`.`ID` = `msb`.`vaccine_id`))) left join `m_subcounty` `ms` on((`ms`.`subcounty_name` = `msb`.`station_id`))) where (`msb`.`station_level` = 4) group by `mv`.`Vaccine_name` order by `mv`.`ID`;
 
 -- --------------------------------------------------------
 
@@ -15041,7 +15481,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `children_immunized`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `children_immunized`  AS  select distinct `dhis_usage`.`periodname` AS `Months`,sum(`dhis_usage`.`fullyimmunizedchildficabove2years`) AS `Above2yrs`,sum(`dhis_usage`.`fullyimmunizedchildrenficunder1ye`) AS `Above1yr` from `dhis_usage` group by `dhis_usage`.`periodname` ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `children_immunized` AS select distinct `dhis_usage`.`periodname` AS `Months`,sum(`dhis_usage`.`fullyimmunizedchildficabove2years`) AS `Above2yrs`,sum(`dhis_usage`.`fullyimmunizedchildrenficunder1ye`) AS `Above1yr` from `dhis_usage` group by `dhis_usage`.`periodname`;
 
 -- --------------------------------------------------------
 
@@ -15050,7 +15490,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `county_userbase_view`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `county_userbase_view`  AS  select `m_county`.`id` AS `id`,`m_county`.`county_name` AS `county_name`,`user_base`.`user_id` AS `user_id`,`user_base`.`national` AS `national`,`user_base`.`region` AS `region`,`user_base`.`county` AS `county` from (`m_county` join `user_base` on((`user_base`.`county` = `m_county`.`id`))) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `county_userbase_view` AS select `m_county`.`id` AS `id`,`m_county`.`county_name` AS `county_name`,`user_base`.`user_id` AS `user_id`,`user_base`.`national` AS `national`,`user_base`.`region` AS `region`,`user_base`.`county` AS `county` from (`m_county` join `user_base` on((`user_base`.`county` = `m_county`.`id`)));
 
 -- --------------------------------------------------------
 
@@ -15059,7 +15499,16 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `coverage_all`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `coverage_all`  AS  select `dvi_dump`.`periodname` AS `periodname`,`dvi_dump`.`bcgdosesadm` AS `bcgdosesadm`,`dvi_dump`.`dpt2dosesadministered` AS `dpt2dosesadministered`,`dvi_dump`.`dpt3dosesadm` AS `dpt3dosesadm`,`dvi_dump`.`measlesdosesadm` AS `measlesdosesadm`,`dvi_dump`.`opvbirthdosesadm` AS `opvbirthdosesadm`,`dvi_dump`.`opv1dosesadm` AS `opv1dosesadm`,`dvi_dump`.`opv2dosesadm` AS `opv2dosesadm`,`dvi_dump`.`opv3dosesadm` AS `opv3dosesadm`,`dvi_dump`.`pneumococal1adm` AS `pneumococal1adm`,`dvi_dump`.`pneumococal2adm` AS `pneumococal2adm`,`dvi_dump`.`pneumococal3administered` AS `pneumococal3administered`,`dvi_dump`.`rotavirus1dosesadministered` AS `rotavirus1dosesadministered`,`dvi_dump`.`rotavirus2dosesadministered` AS `rotavirus2dosesadministered`,`m_facility`.`id` AS `facility_id`,`m_facility`.`county_id` AS `county_id`,`m_facility`.`subcounty_id` AS `subcounty_id`,`m_subcounty`.`population_one` AS `population_one` from (((`dvi_dump` join `m_facility` on((`dvi_dump`.`organisationunitid` = convert(`m_facility`.`dhis_id` using utf8)))) join `m_county` on((`m_county`.`id` = `m_facility`.`county_id`))) join `m_subcounty` on((`m_subcounty`.`id` = `m_facility`.`subcounty_id`))) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `coverage_all` AS select `dvi_dump`.`periodname` AS `periodname`,`dvi_dump`.`bcgdosesadm` AS `bcgdosesadm`,`dvi_dump`.`dpt2dosesadministered` AS `dpt2dosesadministered`,`dvi_dump`.`dpt3dosesadm` AS `dpt3dosesadm`,`dvi_dump`.`measlesdosesadm` AS `measlesdosesadm`,`dvi_dump`.`opvbirthdosesadm` AS `opvbirthdosesadm`,`dvi_dump`.`opv1dosesadm` AS `opv1dosesadm`,`dvi_dump`.`opv2dosesadm` AS `opv2dosesadm`,`dvi_dump`.`opv3dosesadm` AS `opv3dosesadm`,`dvi_dump`.`pneumococal1adm` AS `pneumococal1adm`,`dvi_dump`.`pneumococal2adm` AS `pneumococal2adm`,`dvi_dump`.`pneumococal3administered` AS `pneumococal3administered`,`dvi_dump`.`rotavirus1dosesadministered` AS `rotavirus1dosesadministered`,`dvi_dump`.`rotavirus2dosesadministered` AS `rotavirus2dosesadministered`,`m_facility`.`id` AS `facility_id`,`m_facility`.`county_id` AS `county_id`,`m_facility`.`subcounty_id` AS `subcounty_id`,`m_subcounty`.`population_one` AS `population_one` from (((`dvi_dump` join `m_facility` on((`dvi_dump`.`organisationunitid` = convert(`m_facility`.`dhis_id` using utf8)))) join `m_county` on((`m_county`.`id` = `m_facility`.`county_id`))) join `m_subcounty` on((`m_subcounty`.`id` = `m_facility`.`subcounty_id`)));
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `equip_type_view`
+--
+DROP TABLE IF EXISTS `equip_type_view`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `equip_type_view` AS select `b`.`id` AS `id`,`a`.`name` AS `equipment`,`b`.`name` AS `equipment_type` from (`m_equipment_options` `a` join `m_equipment_type` `b`) where (`a`.`id` = `b`.`equipment`) order by `b`.`id`;
 
 -- --------------------------------------------------------
 
@@ -15068,7 +15517,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `facility_userbase_view`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `facility_userbase_view`  AS  select `m_facility`.`id` AS `id`,`m_facility`.`facility_name` AS `facility_name`,`user_base`.`user_id` AS `user_id`,`user_base`.`national` AS `national`,`user_base`.`region` AS `region`,`user_base`.`county` AS `county`,`user_base`.`subcounty` AS `subcounty`,`user_base`.`facility` AS `facility` from (`m_facility` join `user_base` on((`m_facility`.`id` = `user_base`.`facility`))) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `facility_userbase_view` AS select `m_facility`.`id` AS `id`,`m_facility`.`facility_name` AS `facility_name`,`user_base`.`user_id` AS `user_id`,`user_base`.`national` AS `national`,`user_base`.`region` AS `region`,`user_base`.`county` AS `county`,`user_base`.`subcounty` AS `subcounty`,`user_base`.`facility` AS `facility` from (`m_facility` join `user_base` on((`m_facility`.`id` = `user_base`.`facility`)));
 
 -- --------------------------------------------------------
 
@@ -15077,7 +15526,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `m_wastage`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `m_wastage`  AS  select `v`.`BCG` AS `BCG`,`v`.`DPT1` AS `DPT1`,`v`.`DPT2` AS `DPT2`,`v`.`Measles` AS `Measles`,`v`.`OPV` AS `OPV`,`v`.`OPV1` AS `OPV1`,`v`.`OPV2` AS `OPV2`,`v`.`OPV3` AS `OPV3`,`v`.`PCV1` AS `PCV1`,`v`.`PCV2` AS `PCV2`,`v`.`PCV3` AS `PCV3`,`v`.`ROTA` AS `ROTA`,`v`.`ROTA2` AS `ROTA2`,`s`.`population` AS `TotalPopulation`,`s`.`population_one` AS `PopulationOne`,`s`.`population_women` AS `PopulationWomen` from (`total_doses_adm` `v` join `m_county` `s`) where (`s`.`id` = 12) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `m_wastage` AS select `v`.`BCG` AS `BCG`,`v`.`DPT1` AS `DPT1`,`v`.`DPT2` AS `DPT2`,`v`.`Measles` AS `Measles`,`v`.`OPV` AS `OPV`,`v`.`OPV1` AS `OPV1`,`v`.`OPV2` AS `OPV2`,`v`.`OPV3` AS `OPV3`,`v`.`PCV1` AS `PCV1`,`v`.`PCV2` AS `PCV2`,`v`.`PCV3` AS `PCV3`,`v`.`ROTA` AS `ROTA`,`v`.`ROTA2` AS `ROTA2`,`s`.`population` AS `TotalPopulation`,`s`.`population_one` AS `PopulationOne`,`s`.`population_women` AS `PopulationWomen` from (`total_doses_adm` `v` join `m_county` `s`) where (`s`.`id` = 12);
 
 -- --------------------------------------------------------
 
@@ -15086,7 +15535,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `new_wastage`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `new_wastage`  AS  select `v`.`UnitId` AS `UnitID`,`v`.`bcgwastage` AS `BCG`,`v`.`dptwastage` AS `DPT`,`v`.`measleswastage` AS `MEASLES`,`v`.`opvwastage` AS `OPV`,`v`.`pcvwastage` AS `PCV`,`v`.`yellowfevwastage` AS `YELLOWFEVER`,`s`.`id` AS `facility`,`s`.`region_id` AS `region`,`s`.`county_id` AS `county`,`s`.`subcounty_id` AS `subcounty` from (`new_wastage_unitdid` `v` join `m_facility` `s`) where (convert(`v`.`UnitId` using utf8) = convert(`s`.`dhis_id` using utf8)) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `new_wastage` AS select `v`.`UnitId` AS `UnitID`,`v`.`bcgwastage` AS `BCG`,`v`.`dptwastage` AS `DPT`,`v`.`measleswastage` AS `MEASLES`,`v`.`opvwastage` AS `OPV`,`v`.`pcvwastage` AS `PCV`,`v`.`yellowfevwastage` AS `YELLOWFEVER`,`s`.`id` AS `facility`,`s`.`region_id` AS `region`,`s`.`county_id` AS `county`,`s`.`subcounty_id` AS `subcounty` from (`new_wastage_unitdid` `v` join `m_facility` `s`) where (`v`.`UnitId` = convert(`s`.`dhis_id` using utf8));
 
 -- --------------------------------------------------------
 
@@ -15095,7 +15544,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `new_wastage_unitdid`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `new_wastage_unitdid`  AS  select `view_wastage_unitid`.`UnitId` AS `UnitId`,((`view_wastage_unitid`.`bcgwastage` - `view_wastage_unitid`.`bcgdosesadm`) / `view_wastage_unitid`.`bcgwastage`) AS `bcgwastage`,((`view_wastage_unitid`.`dptwastage` - `view_wastage_unitid`.`dpt1dosesadm`) / `view_wastage_unitid`.`dptwastage`) AS `dptwastage`,((`view_wastage_unitid`.`measleswastage` - `view_wastage_unitid`.`bcgdosesadm`) / `view_wastage_unitid`.`measleswastage`) AS `measleswastage`,((`view_wastage_unitid`.`opvwastage` - `view_wastage_unitid`.`opv1dosesadm`) / `view_wastage_unitid`.`opvwastage`) AS `opvwastage`,((`view_wastage_unitid`.`pcvwastage` - `view_wastage_unitid`.`pneumococal1adm`) / `view_wastage_unitid`.`pcvwastage`) AS `pcvwastage`,((`view_wastage_unitid`.`yellowfevwastage` - `view_wastage_unitid`.`yellowfeveradm`) / `view_wastage_unitid`.`yellowfevwastage`) AS `yellowfevwastage` from `view_wastage_unitid` ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `new_wastage_unitdid` AS select `view_wastage_unitid`.`UnitId` AS `UnitId`,((`view_wastage_unitid`.`bcgwastage` - `view_wastage_unitid`.`bcgdosesadm`) / `view_wastage_unitid`.`bcgwastage`) AS `bcgwastage`,((`view_wastage_unitid`.`dptwastage` - `view_wastage_unitid`.`dpt1dosesadm`) / `view_wastage_unitid`.`dptwastage`) AS `dptwastage`,((`view_wastage_unitid`.`measleswastage` - `view_wastage_unitid`.`bcgdosesadm`) / `view_wastage_unitid`.`measleswastage`) AS `measleswastage`,((`view_wastage_unitid`.`opvwastage` - `view_wastage_unitid`.`opv1dosesadm`) / `view_wastage_unitid`.`opvwastage`) AS `opvwastage`,((`view_wastage_unitid`.`pcvwastage` - `view_wastage_unitid`.`pneumococal1adm`) / `view_wastage_unitid`.`pcvwastage`) AS `pcvwastage`,((`view_wastage_unitid`.`yellowfevwastage` - `view_wastage_unitid`.`yellowfeveradm`) / `view_wastage_unitid`.`yellowfevwastage`) AS `yellowfevwastage` from `view_wastage_unitid`;
 
 -- --------------------------------------------------------
 
@@ -15104,7 +15553,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `region_userbase_view`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `region_userbase_view`  AS  select `m_region`.`id` AS `id`,`m_region`.`region_name` AS `region_name`,`user_base`.`user_id` AS `user_id`,`user_base`.`national` AS `national`,`user_base`.`region` AS `region` from (`m_region` join `user_base` on((`user_base`.`region` = `m_region`.`id`))) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `region_userbase_view` AS select `m_region`.`id` AS `id`,`m_region`.`region_name` AS `region_name`,`user_base`.`user_id` AS `user_id`,`user_base`.`national` AS `national`,`user_base`.`region` AS `region` from (`m_region` join `user_base` on((`user_base`.`region` = `m_region`.`id`)));
 
 -- --------------------------------------------------------
 
@@ -15113,7 +15562,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `subcounty_userbase`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `subcounty_userbase`  AS  select `m_subcounty`.`id` AS `id`,`m_subcounty`.`subcounty_name` AS `subcounty_name`,`user_base`.`user_id` AS `user_id`,`user_base`.`national` AS `national`,`user_base`.`region` AS `region`,`user_base`.`county` AS `county`,`user_base`.`subcounty` AS `subcounty` from (`m_subcounty` join `user_base` on((`m_subcounty`.`id` = `user_base`.`subcounty`))) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `subcounty_userbase` AS select `m_subcounty`.`id` AS `id`,`m_subcounty`.`subcounty_name` AS `subcounty_name`,`user_base`.`user_id` AS `user_id`,`user_base`.`national` AS `national`,`user_base`.`region` AS `region`,`user_base`.`county` AS `county`,`user_base`.`subcounty` AS `subcounty` from (`m_subcounty` join `user_base` on((`m_subcounty`.`id` = `user_base`.`subcounty`)));
 
 -- --------------------------------------------------------
 
@@ -15122,7 +15571,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `total_doses_adm`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `total_doses_adm`  AS  select distinct `dhis_usage`.`periodid` AS `periodid`,`dhis_usage`.`periodname` AS `periodname`,sum(`dhis_usage`.`bcgdoseadm`) AS `BCG`,sum(`dhis_usage`.`dpt1dosesadm`) AS `DPT1`,sum(`dhis_usage`.`dpt3dosesadm`) AS `DPT2`,sum(`dhis_usage`.`measlesdosesadm`) AS `Measles`,sum(`dhis_usage`.`opvbirthdosesadm`) AS `OPV`,sum(`dhis_usage`.`opv1dosesadm`) AS `OPV1`,sum(`dhis_usage`.`opv2dosesadm`) AS `OPV2`,sum(`dhis_usage`.`opv3dosesadm`) AS `OPV3`,sum(`dhis_usage`.`pneumococal1adm`) AS `PCV1`,sum(`dhis_usage`.`pneumococal2adm`) AS `PCV2`,sum(`dhis_usage`.`pneumococal3administered`) AS `PCV3`,sum(`dhis_usage`.`rotavirus1dosesadministered`) AS `ROTA`,sum(`dhis_usage`.`rotavirus2dosesadministered`) AS `ROTA2` from `dhis_usage` group by `dhis_usage`.`periodid` ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `total_doses_adm` AS select distinct `dhis_usage`.`periodid` AS `periodid`,`dhis_usage`.`periodname` AS `periodname`,sum(`dhis_usage`.`bcgdoseadm`) AS `BCG`,sum(`dhis_usage`.`dpt1dosesadm`) AS `DPT1`,sum(`dhis_usage`.`dpt3dosesadm`) AS `DPT2`,sum(`dhis_usage`.`measlesdosesadm`) AS `Measles`,sum(`dhis_usage`.`opvbirthdosesadm`) AS `OPV`,sum(`dhis_usage`.`opv1dosesadm`) AS `OPV1`,sum(`dhis_usage`.`opv2dosesadm`) AS `OPV2`,sum(`dhis_usage`.`opv3dosesadm`) AS `OPV3`,sum(`dhis_usage`.`pneumococal1adm`) AS `PCV1`,sum(`dhis_usage`.`pneumococal2adm`) AS `PCV2`,sum(`dhis_usage`.`pneumococal3administered`) AS `PCV3`,sum(`dhis_usage`.`rotavirus1dosesadministered`) AS `ROTA`,sum(`dhis_usage`.`rotavirus2dosesadministered`) AS `ROTA2` from `dhis_usage` group by `dhis_usage`.`periodid`;
 
 -- --------------------------------------------------------
 
@@ -15131,7 +15580,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `total_wastage`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `total_wastage`  AS  select distinct `dvi_dump`.`periodid` AS `periodid`,`dvi_dump`.`periodname` AS `periodname`,sum(((`dvi_dump`.`bcgdosesinstock` + `dvi_dump`.`bcgdosesreceived`) - `dvi_dump`.`bcgdosesremaining`)) AS `bcgwastage`,sum(((`dvi_dump`.`dpt+hib+hepbinstock` + `dvi_dump`.`dpt+hib+hepbreceived`) - `dvi_dump`.`dpt+hib+hepbremaining`)) AS `dptwastage`,sum(((`dvi_dump`.`measlesinstock` + `dvi_dump`.`measlesreceived`) - `dvi_dump`.`measlesremaining`)) AS `measleswastage`,sum((`dvi_dump`.`opvdosesinstock` - `dvi_dump`.`opvdosesremaining`)) AS `opvwastage`,sum(((`dvi_dump`.`pneumococalinstock` + `dvi_dump`.`pneumococalreceived`) - `dvi_dump`.`pneumococalremainin`)) AS `pcvwastage`,sum((`dvi_dump`.`ttdoseinstock` - `dvi_dump`.`ttdoseremaining`)) AS `ttwastage`,sum((`dvi_dump`.`vitamina100stock` - `dvi_dump`.`vitamina100remain`)) AS `vita1wastage`,sum((`dvi_dump`.`vitamina200stock` - `dvi_dump`.`vitamina200remain`)) AS `vita2wastage`,sum((`dvi_dump`.`vitamina50stock` - `dvi_dump`.`vitamina50remaini`)) AS `vita5wastage`,sum(((`dvi_dump`.`yellowfeverinstoc` + `dvi_dump`.`yellowfeverreceive`) - `dvi_dump`.`yellowfeverremaini`)) AS `yellowfevwastage` from `dvi_dump` group by `dvi_dump`.`periodname` ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `total_wastage` AS select distinct `dvi_dump`.`periodid` AS `periodid`,`dvi_dump`.`periodname` AS `periodname`,sum(((`dvi_dump`.`bcgdosesinstock` + `dvi_dump`.`bcgdosesreceived`) - `dvi_dump`.`bcgdosesremaining`)) AS `bcgwastage`,sum(((`dvi_dump`.`dpt+hib+hepbinstock` + `dvi_dump`.`dpt+hib+hepbreceived`) - `dvi_dump`.`dpt+hib+hepbremaining`)) AS `dptwastage`,sum(((`dvi_dump`.`measlesinstock` + `dvi_dump`.`measlesreceived`) - `dvi_dump`.`measlesremaining`)) AS `measleswastage`,sum((`dvi_dump`.`opvdosesinstock` - `dvi_dump`.`opvdosesremaining`)) AS `opvwastage`,sum(((`dvi_dump`.`pneumococalinstock` + `dvi_dump`.`pneumococalreceived`) - `dvi_dump`.`pneumococalremainin`)) AS `pcvwastage`,sum((`dvi_dump`.`ttdoseinstock` - `dvi_dump`.`ttdoseremaining`)) AS `ttwastage`,sum((`dvi_dump`.`vitamina100stock` - `dvi_dump`.`vitamina100remain`)) AS `vita1wastage`,sum((`dvi_dump`.`vitamina200stock` - `dvi_dump`.`vitamina200remain`)) AS `vita2wastage`,sum((`dvi_dump`.`vitamina50stock` - `dvi_dump`.`vitamina50remaini`)) AS `vita5wastage`,sum(((`dvi_dump`.`yellowfeverinstoc` + `dvi_dump`.`yellowfeverreceive`) - `dvi_dump`.`yellowfeverremaini`)) AS `yellowfevwastage` from `dvi_dump` group by `dvi_dump`.`periodname`;
 
 -- --------------------------------------------------------
 
@@ -15140,7 +15589,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `vaccine_movement`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vaccine_movement`  AS  select distinct `m_stock_movement`.`vaccine_id` AS `id`,`m_vaccines`.`Vaccine_name` AS `name`,`m_stock_movement`.`batch_number` AS `batch_number`,`m_stock_movement`.`transaction_date` AS `transaction_date`,`m_transaction_type`.`transaction_type` AS `transaction_type`,`m_stock_movement`.`destination` AS `destination`,`m_stock_movement`.`source` AS `source`,`m_stock_movement`.`expiry_date` AS `expiry_date`,`m_stock_movement`.`quantity_in` AS `quantity_in`,`m_stock_movement`.`quantity_out` AS `quantity_out`,`m_stock_movement`.`user_id` AS `user_id` from (((`m_vaccines` join `m_stock_movement` on((`m_stock_movement`.`vaccine_id` = `m_vaccines`.`ID`))) join `m_transaction_type` on((`m_stock_movement`.`transaction_type` = `m_transaction_type`.`id`))) join `m_stock_balance` on(((`m_stock_balance`.`vaccine_id` = `m_stock_movement`.`vaccine_id`) and (`m_stock_balance`.`batch_number` = `m_stock_movement`.`batch_number`)))) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vaccine_movement` AS select distinct `m_stock_movement`.`vaccine_id` AS `id`,`m_vaccines`.`Vaccine_name` AS `name`,`m_stock_movement`.`batch_number` AS `batch_number`,`m_stock_movement`.`transaction_date` AS `transaction_date`,`m_transaction_type`.`transaction_type` AS `transaction_type`,`m_stock_movement`.`destination` AS `destination`,`m_stock_movement`.`source` AS `source`,`m_stock_movement`.`expiry_date` AS `expiry_date`,`m_stock_movement`.`quantity_in` AS `quantity_in`,`m_stock_movement`.`quantity_out` AS `quantity_out`,`m_stock_movement`.`user_id` AS `user_id` from (((`m_vaccines` join `m_stock_movement` on((`m_stock_movement`.`vaccine_id` = `m_vaccines`.`ID`))) join `m_transaction_type` on((`m_stock_movement`.`transaction_type` = `m_transaction_type`.`id`))) join `m_stock_balance` on(((`m_stock_balance`.`vaccine_id` = `m_stock_movement`.`vaccine_id`) and (`m_stock_balance`.`batch_number` = `m_stock_movement`.`batch_number`))));
 
 -- --------------------------------------------------------
 
@@ -15149,7 +15598,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `vaccine_stockbalance`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vaccine_stockbalance`  AS  select `v`.`ID` AS `id`,`v`.`Vaccine_name` AS `Vaccine`,`s`.`stock_balance` AS `Stock_Balance`,`s`.`user_id` AS `user_id` from (`m_vaccines` `v` join `m_stock_balance` `s`) where (`v`.`ID` = `s`.`vaccine_id`) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vaccine_stockbalance` AS select `m_stock_balance`.`vaccine_id` AS `id`,`m_vaccines`.`Vaccine_name` AS `Vaccine`,sum(`m_stock_balance`.`stock_balance`) AS `Stock_Balance`,`m_stock_balance`.`user_id` AS `user_id`,`m_stock_balance`.`station_id` AS `station_id` from (`m_stock_balance` join `m_vaccines` on((`m_stock_balance`.`vaccine_id` = `m_vaccines`.`ID`))) group by `m_stock_balance`.`vaccine_id`;
 
 -- --------------------------------------------------------
 
@@ -15158,7 +15607,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `view_county_orders`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_county_orders`  AS  select `m`.`order_by` AS `order_by`,`m`.`order_id` AS `order_id`,`m`.`date_created` AS `date_created`,`m`.`station_id` AS `station_id`,`cbv`.`county` AS `county`,`cbv`.`county_name` AS `county_name`,`cbv`.`region` AS `region`,`mr`.`region_name` AS `region_name` from ((`m_order` `m` left join `county_userbase_view` `cbv` on((`cbv`.`user_id` = `m`.`order_by`))) left join `m_region` `mr` on((`mr`.`id` = `cbv`.`region`))) where (`m`.`station_level` = 3) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_county_orders` AS select `m`.`order_by` AS `order_by`,`m`.`order_id` AS `order_id`,`m`.`status_name` AS `status_name`,`m`.`date_created` AS `date_created`,`m`.`station_id` AS `station_id`,`cbv`.`county` AS `county`,`cbv`.`county_name` AS `county_name`,`cbv`.`region` AS `region`,`mr`.`region_name` AS `region_name` from ((`m_order` `m` left join `county_userbase_view` `cbv` on((`cbv`.`user_id` = `m`.`order_by`))) left join `m_region` `mr` on((`mr`.`id` = `cbv`.`region`))) where (`m`.`station_level` = 3);
 
 -- --------------------------------------------------------
 
@@ -15167,7 +15616,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `view_coverage_county`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_coverage_county`  AS  select `dvi_dump`.`periodname` AS `periodname`,`dvi_dump`.`bcgdosesadm` AS `bcgdosesadm`,`dvi_dump`.`dpt2dosesadministered` AS `dpt2dosesadministered`,`dvi_dump`.`dpt3dosesadm` AS `dpt3dosesadm`,`dvi_dump`.`measlesdosesadm` AS `measlesdosesadm`,`dvi_dump`.`opvbirthdosesadm` AS `opvbirthdosesadm`,`dvi_dump`.`opv1dosesadm` AS `opv1dosesadm`,`dvi_dump`.`opv2dosesadm` AS `opv2dosesadm`,`dvi_dump`.`opv3dosesadm` AS `opv3dosesadm`,`dvi_dump`.`pneumococal1adm` AS `pneumococal1adm`,`dvi_dump`.`pneumococal2adm` AS `pneumococal2adm`,`dvi_dump`.`pneumococal3administered` AS `pneumococal3administered`,`dvi_dump`.`rotavirus1dosesadministered` AS `rotavirus1dosesadministered`,`dvi_dump`.`rotavirus2dosesadministered` AS `rotavirus2dosesadministered`,`m_facility`.`county_id` AS `county_id`,`m_county`.`population_one` AS `population_one` from ((`dvi_dump` join `m_facility` on((`dvi_dump`.`organisationunitid` = convert(`m_facility`.`dhis_id` using utf8)))) join `m_county` on((`m_county`.`id` = `m_facility`.`county_id`))) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_coverage_county` AS select `dvi_dump`.`periodname` AS `periodname`,`dvi_dump`.`bcgdosesadm` AS `bcgdosesadm`,`dvi_dump`.`dpt2dosesadministered` AS `dpt2dosesadministered`,`dvi_dump`.`dpt3dosesadm` AS `dpt3dosesadm`,`dvi_dump`.`measlesdosesadm` AS `measlesdosesadm`,`dvi_dump`.`opvbirthdosesadm` AS `opvbirthdosesadm`,`dvi_dump`.`opv1dosesadm` AS `opv1dosesadm`,`dvi_dump`.`opv2dosesadm` AS `opv2dosesadm`,`dvi_dump`.`opv3dosesadm` AS `opv3dosesadm`,`dvi_dump`.`pneumococal1adm` AS `pneumococal1adm`,`dvi_dump`.`pneumococal2adm` AS `pneumococal2adm`,`dvi_dump`.`pneumococal3administered` AS `pneumococal3administered`,`dvi_dump`.`rotavirus1dosesadministered` AS `rotavirus1dosesadministered`,`dvi_dump`.`rotavirus2dosesadministered` AS `rotavirus2dosesadministered`,`m_facility`.`county_id` AS `county_id`,`m_county`.`population_one` AS `population_one` from ((`dvi_dump` join `m_facility` on((`dvi_dump`.`organisationunitid` = convert(`m_facility`.`dhis_id` using utf8)))) join `m_county` on((`m_county`.`id` = `m_facility`.`county_id`)));
 
 -- --------------------------------------------------------
 
@@ -15176,7 +15625,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `view_coverage_subcounty`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_coverage_subcounty`  AS  select `dvi_dump`.`periodname` AS `periodname`,`dvi_dump`.`bcgdosesadm` AS `bcgdosesadm`,`dvi_dump`.`dpt2dosesadministered` AS `dpt2dosesadministered`,`dvi_dump`.`dpt3dosesadm` AS `dpt3dosesadm`,`dvi_dump`.`measlesdosesadm` AS `measlesdosesadm`,`dvi_dump`.`opvbirthdosesadm` AS `opvbirthdosesadm`,`dvi_dump`.`opv1dosesadm` AS `opv1dosesadm`,`dvi_dump`.`opv2dosesadm` AS `opv2dosesadm`,`dvi_dump`.`opv3dosesadm` AS `opv3dosesadm`,`dvi_dump`.`pneumococal1adm` AS `pneumococal1adm`,`dvi_dump`.`pneumococal2adm` AS `pneumococal2adm`,`dvi_dump`.`pneumococal3administered` AS `pneumococal3administered`,`dvi_dump`.`rotavirus1dosesadministered` AS `rotavirus1dosesadministered`,`dvi_dump`.`rotavirus2dosesadministered` AS `rotavirus2dosesadministered`,`m_facility`.`county_id` AS `county_id`,`m_facility`.`subcounty_id` AS `subcounty_id`,`m_subcounty`.`population_one` AS `population_one` from ((`dvi_dump` join `m_facility` on((`dvi_dump`.`organisationunitid` = convert(`m_facility`.`dhis_id` using utf8)))) join `m_subcounty` on((`m_subcounty`.`id` = `m_facility`.`subcounty_id`))) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_coverage_subcounty` AS select `dvi_dump`.`periodname` AS `periodname`,`dvi_dump`.`bcgdosesadm` AS `bcgdosesadm`,`dvi_dump`.`dpt2dosesadministered` AS `dpt2dosesadministered`,`dvi_dump`.`dpt3dosesadm` AS `dpt3dosesadm`,`dvi_dump`.`measlesdosesadm` AS `measlesdosesadm`,`dvi_dump`.`opvbirthdosesadm` AS `opvbirthdosesadm`,`dvi_dump`.`opv1dosesadm` AS `opv1dosesadm`,`dvi_dump`.`opv2dosesadm` AS `opv2dosesadm`,`dvi_dump`.`opv3dosesadm` AS `opv3dosesadm`,`dvi_dump`.`pneumococal1adm` AS `pneumococal1adm`,`dvi_dump`.`pneumococal2adm` AS `pneumococal2adm`,`dvi_dump`.`pneumococal3administered` AS `pneumococal3administered`,`dvi_dump`.`rotavirus1dosesadministered` AS `rotavirus1dosesadministered`,`dvi_dump`.`rotavirus2dosesadministered` AS `rotavirus2dosesadministered`,`m_facility`.`county_id` AS `county_id`,`m_facility`.`subcounty_id` AS `subcounty_id`,`m_subcounty`.`population_one` AS `population_one` from ((`dvi_dump` join `m_facility` on((`dvi_dump`.`organisationunitid` = convert(`m_facility`.`dhis_id` using utf8)))) join `m_subcounty` on((`m_subcounty`.`id` = `m_facility`.`subcounty_id`)));
 
 -- --------------------------------------------------------
 
@@ -15185,7 +15634,25 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `view_facility_orders`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_facility_orders`  AS  select `m`.`order_by` AS `order_by`,`m`.`order_id` AS `order_id`,`m`.`date_created` AS `date_created`,`m`.`station_id` AS `station_id`,`fv`.`facility_name` AS `facility_name`,`fv`.`facility` AS `facility`,`fv`.`subcounty` AS `subcounty`,`ms`.`subcounty_name` AS `subcounty_name` from ((`m_order` `m` left join `facility_userbase_view` `fv` on((`fv`.`user_id` = `m`.`order_by`))) left join `m_subcounty` `ms` on((`ms`.`id` = `fv`.`subcounty`))) where (`m`.`station_level` = 5) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_facility_orders` AS select `m`.`order_by` AS `order_by`,`m`.`order_id` AS `order_id`,`m`.`status_name` AS `status_name`,`m`.`date_created` AS `date_created`,`m`.`station_id` AS `station_id`,`fv`.`facility_name` AS `facility_name`,`fv`.`facility` AS `facility`,`fv`.`subcounty` AS `subcounty`,`ms`.`subcounty_name` AS `subcounty_name` from ((`m_order` `m` left join `facility_userbase_view` `fv` on((`fv`.`user_id` = `m`.`order_by`))) left join `m_subcounty` `ms` on((`ms`.`id` = `fv`.`subcounty`))) where (`m`.`station_level` = 5);
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `view_orders_issued`
+--
+DROP TABLE IF EXISTS `view_orders_issued`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_orders_issued` AS select `m_order`.`order_id` AS `order_id`,`m_order`.`station_id` AS `station_id`,`m_order`.`date_created` AS `date_created`,`m_issue_stock`.`date_issued` AS `date_issued`,`m_order`.`order_by` AS `order_by`,`m_issue_stock`.`issued_by_station_id` AS `issuing_station`,`m_issue_stock_item`.`vaccine_id` AS `vaccine_id`,`m_vaccines`.`Vaccine_name` AS `vaccine_name`,`m_issue_stock_item`.`batch_no` AS `batch_no`,`m_issue_stock_item`.`expiry_date` AS `expiry_date`,`m_issue_stock_item`.`vvm_status` AS `vvm_status`,`m_issue_stock_item`.`amount_ordered` AS `amount_ordered`,`m_issue_stock_item`.`amount_issued` AS `amount_issued` from (((`m_order` join `m_issue_stock` on((`m_issue_stock`.`order_id` = `m_order`.`order_id`))) join `m_issue_stock_item` on((`m_issue_stock_item`.`issue_id` = `m_issue_stock`.`issue_id`))) join `m_vaccines` on((`m_issue_stock_item`.`vaccine_id` = `m_vaccines`.`ID`)));
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `view_orders_received`
+--
+DROP TABLE IF EXISTS `view_orders_received`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_orders_received` AS select `m_order`.`order_id` AS `order_id`,`m_order`.`station_id` AS `station_id`,`m_order`.`date_created` AS `date_created`,`m_receive_stock`.`date_received` AS `date_received`,`m_order`.`order_by` AS `order_by`,`m_order`.`order_destination` AS `order_destination`,`m_receive_stock_item`.`vaccine_id` AS `vaccine_id`,`m_vaccines`.`Vaccine_name` AS `vaccine_name`,`m_receive_stock_item`.`batch_no` AS `batch_no`,`m_receive_stock_item`.`expiry_date` AS `expiry_date`,`m_receive_stock_item`.`vvm_status` AS `vvm_status`,`m_receive_stock_item`.`amount_ordered` AS `amount_ordered`,`m_receive_stock_item`.`amount_received` AS `amount_received` from (((`m_order` join `m_receive_stock` on((`m_receive_stock`.`order_id` = `m_order`.`order_id`))) join `m_receive_stock_item` on((`m_receive_stock_item`.`receive_id` = `m_receive_stock`.`receive_id`))) join `m_vaccines` on((`m_receive_stock_item`.`vaccine_id` = `m_vaccines`.`ID`)));
 
 -- --------------------------------------------------------
 
@@ -15194,7 +15661,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `view_region_orders`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_region_orders`  AS  select `m`.`order_by` AS `order_by`,`m`.`order_id` AS `order_id`,`m`.`date_created` AS `date_created`,`m`.`station_id` AS `station_id`,`ruv`.`region` AS `region`,`mr`.`region_name` AS `region_name` from ((`m_order` `m` left join `region_userbase_view` `ruv` on((`ruv`.`user_id` = `m`.`order_by`))) left join `m_region` `mr` on((`mr`.`id` = `ruv`.`region`))) where (`m`.`station_level` = 2) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_region_orders` AS select `m`.`order_by` AS `order_by`,`m`.`order_id` AS `order_id`,`m`.`status_name` AS `status_name`,`m`.`date_created` AS `date_created`,`m`.`station_id` AS `station_id`,`ruv`.`region` AS `region`,`mr`.`region_name` AS `region_name` from ((`m_order` `m` left join `region_userbase_view` `ruv` on((`ruv`.`user_id` = `m`.`order_by`))) left join `m_region` `mr` on((`mr`.`id` = `ruv`.`region`))) where (`m`.`station_level` = 2);
 
 -- --------------------------------------------------------
 
@@ -15203,7 +15670,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `view_subcountycov_calculated`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_subcountycov_calculated`  AS  select `view_coverage_subcounty`.`periodname` AS `periodname`,`view_coverage_subcounty`.`county_id` AS `county_id`,`view_coverage_subcounty`.`subcounty_id` AS `subcounty_id`,((`view_coverage_subcounty`.`bcgdosesadm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalbcg`,((`view_coverage_subcounty`.`dpt2dosesadministered` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totaldpt2`,((`view_coverage_subcounty`.`dpt3dosesadm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totaldpt3`,((`view_coverage_subcounty`.`measlesdosesadm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalmeasles`,((`view_coverage_subcounty`.`opvbirthdosesadm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalopv`,((`view_coverage_subcounty`.`opv1dosesadm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalopv1`,((`view_coverage_subcounty`.`opv2dosesadm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalopv2`,((`view_coverage_subcounty`.`opv3dosesadm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalopv3`,((`view_coverage_subcounty`.`pneumococal1adm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalpcv1`,((`view_coverage_subcounty`.`pneumococal2adm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalpcv2`,((`view_coverage_subcounty`.`pneumococal3administered` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalpcv3`,((`view_coverage_subcounty`.`rotavirus1dosesadministered` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalrota1`,((`view_coverage_subcounty`.`rotavirus2dosesadministered` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalrota2` from `view_coverage_subcounty` ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_subcountycov_calculated` AS select `view_coverage_subcounty`.`periodname` AS `periodname`,`view_coverage_subcounty`.`county_id` AS `county_id`,`view_coverage_subcounty`.`subcounty_id` AS `subcounty_id`,((`view_coverage_subcounty`.`bcgdosesadm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalbcg`,((`view_coverage_subcounty`.`dpt2dosesadministered` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totaldpt2`,((`view_coverage_subcounty`.`dpt3dosesadm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totaldpt3`,((`view_coverage_subcounty`.`measlesdosesadm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalmeasles`,((`view_coverage_subcounty`.`opvbirthdosesadm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalopv`,((`view_coverage_subcounty`.`opv1dosesadm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalopv1`,((`view_coverage_subcounty`.`opv2dosesadm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalopv2`,((`view_coverage_subcounty`.`opv3dosesadm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalopv3`,((`view_coverage_subcounty`.`pneumococal1adm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalpcv1`,((`view_coverage_subcounty`.`pneumococal2adm` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalpcv2`,((`view_coverage_subcounty`.`pneumococal3administered` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalpcv3`,((`view_coverage_subcounty`.`rotavirus1dosesadministered` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalrota1`,((`view_coverage_subcounty`.`rotavirus2dosesadministered` / (`view_coverage_subcounty`.`population_one` / 12)) * 100) AS `totalrota2` from `view_coverage_subcounty`;
 
 -- --------------------------------------------------------
 
@@ -15212,7 +15679,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `view_subcounty_orders`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_subcounty_orders`  AS  select `m`.`order_by` AS `order_by`,`m`.`order_id` AS `order_id`,`m`.`date_created` AS `date_created`,`m`.`station_id` AS `station_id`,`sb`.`subcounty_name` AS `subcounty_name`,`sb`.`county` AS `county`,`mc`.`county_name` AS `county_name` from ((`m_order` `m` left join `subcounty_userbase` `sb` on((`sb`.`user_id` = `m`.`order_by`))) left join `m_county` `mc` on((`mc`.`id` = `sb`.`county`))) where (`m`.`station_level` = 4) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_subcounty_orders` AS select `m`.`order_by` AS `order_by`,`m`.`order_id` AS `order_id`,`m`.`status_name` AS `status_name`,`m`.`date_created` AS `date_created`,`m`.`station_id` AS `station_id`,`sb`.`subcounty_name` AS `subcounty_name`,`sb`.`county` AS `county`,`mc`.`county_name` AS `county_name` from ((`m_order` `m` left join `subcounty_userbase` `sb` on((`sb`.`user_id` = `m`.`order_by`))) left join `m_county` `mc` on((`mc`.`id` = `sb`.`county`))) where (`m`.`station_level` = 4);
 
 -- --------------------------------------------------------
 
@@ -15221,7 +15688,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `view_wastage_unitid`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_wastage_unitid`  AS  select `dvi_dump`.`organisationunitid` AS `UnitId`,((`dvi_dump`.`bcgdosesinstock` + `dvi_dump`.`bcgdosesreceived`) - `dvi_dump`.`bcgdosesremaining`) AS `bcgwastage`,((`dvi_dump`.`dpt+hib+hepbinstock` + `dvi_dump`.`dpt+hib+hepbreceived`) - `dvi_dump`.`dpt+hib+hepbremaining`) AS `dptwastage`,((`dvi_dump`.`measlesinstock` + `dvi_dump`.`measlesreceived`) - `dvi_dump`.`measlesremaining`) AS `measleswastage`,(`dvi_dump`.`opvdosesinstock` - `dvi_dump`.`opvdosesremaining`) AS `opvwastage`,((`dvi_dump`.`pneumococalinstock` + `dvi_dump`.`pneumococalreceived`) - `dvi_dump`.`pneumococalremainin`) AS `pcvwastage`,(`dvi_dump`.`ttdoseinstock` - `dvi_dump`.`ttdoseremaining`) AS `ttwastage`,(`dvi_dump`.`vitamina100stock` - `dvi_dump`.`vitamina100remain`) AS `vita1wastage`,(`dvi_dump`.`vitamina200stock` - `dvi_dump`.`vitamina200remain`) AS `vita2wastage`,(`dvi_dump`.`vitamina50stock` - `dvi_dump`.`vitamina50remaini`) AS `vita5wastage`,((`dvi_dump`.`yellowfeverinstoc` + `dvi_dump`.`yellowfeverreceive`) - `dvi_dump`.`yellowfeverremaini`) AS `yellowfevwastage`,`dvi_dump`.`bcgdosesadm` AS `bcgdosesadm`,`dvi_dump`.`dpt1dosesadm` AS `dpt1dosesadm`,`dvi_dump`.`measlesdosesadm` AS `measlesdosesadm`,`dvi_dump`.`opv1dosesadm` AS `opv1dosesadm`,`dvi_dump`.`pneumococal1adm` AS `pneumococal1adm`,`dvi_dump`.`yellowfeveradm` AS `yellowfeveradm` from `dvi_dump` ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_wastage_unitid` AS select `dvi_dump`.`organisationunitid` AS `UnitId`,((`dvi_dump`.`bcgdosesinstock` + `dvi_dump`.`bcgdosesreceived`) - `dvi_dump`.`bcgdosesremaining`) AS `bcgwastage`,((`dvi_dump`.`dpt+hib+hepbinstock` + `dvi_dump`.`dpt+hib+hepbreceived`) - `dvi_dump`.`dpt+hib+hepbremaining`) AS `dptwastage`,((`dvi_dump`.`measlesinstock` + `dvi_dump`.`measlesreceived`) - `dvi_dump`.`measlesremaining`) AS `measleswastage`,(`dvi_dump`.`opvdosesinstock` - `dvi_dump`.`opvdosesremaining`) AS `opvwastage`,((`dvi_dump`.`pneumococalinstock` + `dvi_dump`.`pneumococalreceived`) - `dvi_dump`.`pneumococalremainin`) AS `pcvwastage`,(`dvi_dump`.`ttdoseinstock` - `dvi_dump`.`ttdoseremaining`) AS `ttwastage`,(`dvi_dump`.`vitamina100stock` - `dvi_dump`.`vitamina100remain`) AS `vita1wastage`,(`dvi_dump`.`vitamina200stock` - `dvi_dump`.`vitamina200remain`) AS `vita2wastage`,(`dvi_dump`.`vitamina50stock` - `dvi_dump`.`vitamina50remaini`) AS `vita5wastage`,((`dvi_dump`.`yellowfeverinstoc` + `dvi_dump`.`yellowfeverreceive`) - `dvi_dump`.`yellowfeverremaini`) AS `yellowfevwastage`,`dvi_dump`.`bcgdosesadm` AS `bcgdosesadm`,`dvi_dump`.`dpt1dosesadm` AS `dpt1dosesadm`,`dvi_dump`.`measlesdosesadm` AS `measlesdosesadm`,`dvi_dump`.`opv1dosesadm` AS `opv1dosesadm`,`dvi_dump`.`pneumococal1adm` AS `pneumococal1adm`,`dvi_dump`.`yellowfeveradm` AS `yellowfeveradm` from `dvi_dump`;
 
 -- --------------------------------------------------------
 
@@ -15230,7 +15697,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `wastage_view_userlevel`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `wastage_view_userlevel`  AS  select `view_wastage_unitid`.`UnitId` AS `UnitId`,`view_wastage_unitid`.`bcgwastage` AS `bcgwastage`,`view_wastage_unitid`.`dptwastage` AS `dptwastage`,`view_wastage_unitid`.`measleswastage` AS `measleswastage`,`view_wastage_unitid`.`opvwastage` AS `opvwastage`,`view_wastage_unitid`.`pcvwastage` AS `pcvwastage`,`view_wastage_unitid`.`ttwastage` AS `ttwastage`,`view_wastage_unitid`.`vita1wastage` AS `vita1wastage`,`view_wastage_unitid`.`vita2wastage` AS `vita2wastage`,`view_wastage_unitid`.`vita5wastage` AS `vita5wastage`,`view_wastage_unitid`.`yellowfevwastage` AS `yellowfevwastage`,`m_facility`.`id` AS `facility`,`m_facility`.`region_id` AS `region`,`m_facility`.`county_id` AS `county`,`m_facility`.`subcounty_id` AS `subcounty` from (`view_wastage_unitid` join `m_facility` on((`view_wastage_unitid`.`UnitId` = convert(`m_facility`.`dhis_id` using utf8)))) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `wastage_view_userlevel` AS select `view_wastage_unitid`.`UnitId` AS `UnitId`,`view_wastage_unitid`.`bcgwastage` AS `bcgwastage`,`view_wastage_unitid`.`dptwastage` AS `dptwastage`,`view_wastage_unitid`.`measleswastage` AS `measleswastage`,`view_wastage_unitid`.`opvwastage` AS `opvwastage`,`view_wastage_unitid`.`pcvwastage` AS `pcvwastage`,`view_wastage_unitid`.`ttwastage` AS `ttwastage`,`view_wastage_unitid`.`vita1wastage` AS `vita1wastage`,`view_wastage_unitid`.`vita2wastage` AS `vita2wastage`,`view_wastage_unitid`.`vita5wastage` AS `vita5wastage`,`view_wastage_unitid`.`yellowfevwastage` AS `yellowfevwastage`,`m_facility`.`id` AS `facility`,`m_facility`.`region_id` AS `region`,`m_facility`.`county_id` AS `county`,`m_facility`.`subcounty_id` AS `subcounty` from (`view_wastage_unitid` join `m_facility` on((`view_wastage_unitid`.`UnitId` = convert(`m_facility`.`dhis_id` using utf8))));
 
 --
 -- Indexes for dumped tables
@@ -15256,6 +15723,12 @@ ALTER TABLE `dvi_dump`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `m_cold_chain_equip`
+--
+ALTER TABLE `m_cold_chain_equip`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `m_county`
 --
 ALTER TABLE `m_county`
@@ -15271,6 +15744,18 @@ ALTER TABLE `m_depot`
 -- Indexes for table `m_depot_fridges`
 --
 ALTER TABLE `m_depot_fridges`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `m_equipment_options`
+--
+ALTER TABLE `m_equipment_options`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `m_equipment_type`
+--
+ALTER TABLE `m_equipment_type`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -15298,10 +15783,23 @@ ALTER TABLE `m_inventory`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `m_issue_stock`
+--
+ALTER TABLE `m_issue_stock`
+  ADD PRIMARY KEY (`issue_id`);
+
+--
+-- Indexes for table `m_issue_stock_item`
+--
+ALTER TABLE `m_issue_stock_item`
+  ADD KEY `issue_id` (`issue_id`);
+
+--
 -- Indexes for table `m_order`
 --
 ALTER TABLE `m_order`
-  ADD PRIMARY KEY (`order_id`);
+  ADD PRIMARY KEY (`order_id`),
+  ADD KEY `status` (`status`);
 
 --
 -- Indexes for table `m_physical_count`
@@ -15310,10 +15808,28 @@ ALTER TABLE `m_physical_count`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `m_receive_stock`
+--
+ALTER TABLE `m_receive_stock`
+  ADD PRIMARY KEY (`receive_id`);
+
+--
+-- Indexes for table `m_receive_stock_item`
+--
+ALTER TABLE `m_receive_stock_item`
+  ADD KEY `receive_id` (`receive_id`);
+
+--
 -- Indexes for table `m_region`
 --
 ALTER TABLE `m_region`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `m_status`
+--
+ALTER TABLE `m_status`
+  ADD PRIMARY KEY (`status_id`);
 
 --
 -- Indexes for table `m_stock_balance`
@@ -15390,100 +15906,153 @@ ALTER TABLE `user_levels`
 -- AUTO_INCREMENT for table `dhis_usage`
 --
 ALTER TABLE `dhis_usage`
-  MODIFY `id` int(14) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=637;
+  MODIFY `id` int(14) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=637;
 --
 -- AUTO_INCREMENT for table `dvi_dump`
 --
 ALTER TABLE `dvi_dump`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2569;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2569;
+--
+-- AUTO_INCREMENT for table `m_cold_chain_equip`
+--
+ALTER TABLE `m_cold_chain_equip`
+  MODIFY `id` int(14) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `m_depot`
 --
 ALTER TABLE `m_depot`
-  MODIFY `id` int(14) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(14) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
 --
 -- AUTO_INCREMENT for table `m_depot_fridges`
 --
 ALTER TABLE `m_depot_fridges`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=55;
+--
+-- AUTO_INCREMENT for table `m_equipment_options`
+--
+ALTER TABLE `m_equipment_options`
+  MODIFY `id` int(14) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
+--
+-- AUTO_INCREMENT for table `m_equipment_type`
+--
+ALTER TABLE `m_equipment_type`
+  MODIFY `id` int(14) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `m_facility`
 --
 ALTER TABLE `m_facility`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9758;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=9759;
 --
 -- AUTO_INCREMENT for table `m_facility_fridges`
 --
 ALTER TABLE `m_facility_fridges`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=12;
 --
 -- AUTO_INCREMENT for table `m_group`
 --
 ALTER TABLE `m_group`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
 --
 -- AUTO_INCREMENT for table `m_inventory`
 --
 ALTER TABLE `m_inventory`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
+-- AUTO_INCREMENT for table `m_issue_stock`
+--
+ALTER TABLE `m_issue_stock`
+  MODIFY `issue_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
+--
 -- AUTO_INCREMENT for table `m_order`
 --
 ALTER TABLE `m_order`
-  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
+--
+-- AUTO_INCREMENT for table `m_physical_count`
+--
+ALTER TABLE `m_physical_count`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `m_receive_stock`
+--
+ALTER TABLE `m_receive_stock`
+  MODIFY `receive_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `m_region`
 --
 ALTER TABLE `m_region`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=10;
+--
+-- AUTO_INCREMENT for table `m_status`
+--
+ALTER TABLE `m_status`
+  MODIFY `status_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `m_stock_balance`
 --
 ALTER TABLE `m_stock_balance`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=14;
 --
 -- AUTO_INCREMENT for table `m_stock_movement`
 --
 ALTER TABLE `m_stock_movement`
-  MODIFY `stock_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `stock_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT for table `m_transaction_type`
 --
 ALTER TABLE `m_transaction_type`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `m_uploads`
 --
 ALTER TABLE `m_uploads`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `m_users`
 --
 ALTER TABLE `m_users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=24;
 --
 -- AUTO_INCREMENT for table `m_vaccines`
 --
 ALTER TABLE `m_vaccines`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=15;
 --
 -- AUTO_INCREMENT for table `m_vvm_status`
 --
 ALTER TABLE `m_vvm_status`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT for table `user_base`
 --
 ALTER TABLE `user_base`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=24;
 --
 -- AUTO_INCREMENT for table `user_levels`
 --
 ALTER TABLE `user_levels`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `m_equipment_type`
+--
+ALTER TABLE `m_equipment_type`
+  ADD CONSTRAINT `equip_equiptyp_fk` FOREIGN KEY (`id`) REFERENCES `m_equipment_options` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Constraints for table `m_issue_stock_item`
+--
+ALTER TABLE `m_issue_stock_item`
+  ADD CONSTRAINT `m_issue_stock_item_ibfk_1` FOREIGN KEY (`issue_id`) REFERENCES `m_issue_stock` (`issue_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `m_receive_stock_item`
+--
+ALTER TABLE `m_receive_stock_item`
+  ADD CONSTRAINT `m_receive_stock_item_ibfk_1` FOREIGN KEY (`receive_id`) REFERENCES `m_receive_stock` (`receive_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `order_item`

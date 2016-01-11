@@ -18,6 +18,7 @@ function home() {
   $data['coverage'] = $this->get_coverage();
   $data['section'] = "DVI Kenya";
   $data['subtitle'] = "Dashboard";
+  // $this->output->enable_profiler(true);
   $user_level=$this->session->userdata['logged_in']['user_level'];
   //$data['page_title'] = "Baringo County";
    if($user_level!=='1'){
@@ -59,15 +60,13 @@ function get_chart() {
     $this->load->model('mdl_dashboard');
     $user_id = $this->session->userdata['logged_in']['user_id'];
     $user_level=$this->session->userdata['logged_in']['user_level'];
-     if($user_level=='3'){
+     if($user_level=='3' || $user_level=='2'){
     $query = $this->mdl_dashboard->get_county_coverage($user_id);
-     }else if($user_level=='4'){
+     } else if($user_level=='4'){
     $query = $this->mdl_dashboard->get_subcounty_coverage($user_id);
      }else if($user_level=='5'){
     $query = $this->mdl_dashboard->get_subcounty_coverage($user_id);
      }else if($user_level=='1'){
-   $query = $this->mdl_dashboard->get_national_coverage($user_id);
-     }else if($user_level=='2'){
    $query = $this->mdl_dashboard->get_national_coverage($user_id);
      }
     foreach ($query as $row) {
@@ -98,15 +97,13 @@ function get_wastage() {
     $user_id = $this->session->userdata['logged_in']['user_id'];
     $user_level=$this->session->userdata['logged_in']['user_level'];
     
-    if($user_level=='3'){
+    if($user_level=='3' || $user_level=='2'){
     $query = $this->mdl_dashboard->get_county_wastage($user_id);
     } else if($user_level=='4'){
     $query = $this->mdl_dashboard->get_subcounty_wastage($user_id);
     }else if($user_level=='5'){
     $query = $this->mdl_dashboard->get_facility_wastage($user_id);
     }else if($user_level=='1'){
-    $query = $this->mdl_dashboard->get_national_wastage($user_id);
-    }else if($user_level=='2'){
     $query = $this->mdl_dashboard->get_national_wastage($user_id);
     }
    

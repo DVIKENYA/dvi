@@ -16,11 +16,12 @@ class Users extends MY_Controller
         }else{
           redirect('dashboard/home'); 
         }
+      
     }
     
     function list_users(){
 
-      Modules::run('secure_tings/is_logged_in');
+      Modules::run('secure_tings/ni_admin');
        $this->load->model('mdl_users');
        $this->load->library('pagination');
        $this->load->library('table');
@@ -63,8 +64,8 @@ class Users extends MY_Controller
 
 
 function create_user(){
-    	//Modules::run('secure_tings/ni_admin');
-  Modules::run('secure_tings/is_logged_in');
+    
+   Modules::run('secure_tings/ni_admin');
    $data= $this->get_register_data_from_post();
    $data['magroups']  = $this->mdl_users->get_user_groups();
    $data['malevels']  = $this->mdl_users->get_user_levels();
@@ -132,7 +133,9 @@ Modules::run('secure_tings/is_logged_in');
 
     if ($this->form_validation->run() == FALSE)
     {   
-        $this->create_user();         
+        
+        redirect('users/create_user');         
+
     }
     else
     {       
@@ -166,7 +169,8 @@ Modules::run('secure_tings/is_logged_in');
         if(isset($this->session->userdata['logged_in'])){
             redirect('dashboard/home');
         }else{
-           redirect('users'); 
+          $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-danger text-center">Both Username and Password Required</div>');
+            redirect('users'); 
         }
     } else {
          $data['username']=$this->input->post('username', TRUE);
