@@ -12,10 +12,10 @@ Modules::run('secure_tings/is_logged_in');
 
 function home() {
   Modules::run('secure_tings/is_logged_in');
-  $data['chart'] = $this->get_chart();
+  //$data['chart'] = $this->get_chart();
   $data['wastage'] = $this->get_wastage();
   $data['mavaccine'] = $this->vaccines();
-  $data['coverage'] = $this->get_coverage();
+  //$data['coverage'] = $this->get_coverage();
   $data['section'] = "DVI Kenya";
   $data['subtitle'] = "Dashboard";
   $user_level=$this->session->userdata['logged_in']['user_level'];
@@ -38,20 +38,32 @@ function home() {
 }
 
 
+function get_init(){
+  $this->load->model('mdl_dashboard');
+  $query = $this->mdl_dashboard->initWastage();
+  $json_array = array();
+  foreach ($query->result() as $row) {
+    $data['name'] = $row->Vaccine_name;
+    $data['y'] = (int)$row->Wastage_factor;
+
+    array_push($json_array, $data);
+  }
+
+  echo json_encode($json_array);
+}
+
 function get_chart() {
     $user_id = ($this->session->userdata['logged_in']['user_id']);
     $this->load->model('mdl_dashboard');
     $query = $this->mdl_dashboard->getChart($user_id);
     $json_array=array(); 
     foreach ($query->result() as $row) {
-       $data['value'] = (int)$row->Stock_balance;
-       $data['label'] = $row->Vaccine;
-
+       $data['name'] = $row->Vaccine;
+       $data['y'] = (float)$row->Stock_balance;
+       
        array_push($json_array,$data);
-
-    }
-        
-    return $json_array;
+    }    
+   echo json_encode($json_array);
   }
 
 
@@ -66,28 +78,27 @@ function get_chart() {
      }else if($user_level=='5'){
     $query = $this->mdl_dashboard->get_subcounty_coverage($user_id);
      }else if($user_level=='1'){
-   $query = $this->mdl_dashboard->get_national_coverage($user_id);
+    $query = $this->mdl_dashboard->get_national_coverage($user_id);
      }
-    foreach ($query as $row) {
-      $json_array[]= array(
-      "label"=>$row->Months,
-      "BCG"=>(float)$row->totalbcg,
-      "DPT2"=>(float)$row->totaldpt2,
-      "DPT3"=>(float)$row->totaldpt3,
-      "Measles"=>(float)$row->totalmeasles,
-      "OPV"=>(float)$row->totalopv,
-      "OPV1"=>(float)$row->totalopv1,
-      "OPV2"=>(float)$row->totalopv2,
-      "OPV3"=>(float)$row->totalopv3,
-      "PCV1"=>(float)$row->totalpcv1,
-      "PCV2"=>(float)$row->totalpcv2,
-      "PCV3"=>(float)$row->totalpcv3,
-      "ROTA1"=>(float)$row->totalrota1,
-      "ROTA2"=>(float)$row->totalrota2 
-       );    
+     $json_array=array();
+    foreach ($query->result() as $row) {
+      $data['name'] = $row->Months;
+      $data['y'] = (int)$row->BCG;
+
+     // $json= array(
+     /* "name"=>$row->Months,
+      "data"=>array(["BCG"=>(int)$row->BCG,"DPT2"=>(int)$row->DPT2,"DPT3"=>(int)$row->DPT3,
+                     "MEASLES"=>(int)$row->MEASLES,"OPV"=>(int)$row->OPV,"OPV1"=>(int)$row->OPV1,
+                     "OPV2"=>(int)$row->OPV2,"OPV3"=>(int)$row->OPV3,"PCV1"=>(int)$row->PCV1,
+                     "PCV2"=>(int)$row->PCV2,"PCV3"=>(int)$row->PCV3,"ROTA1"=>(int)$row->ROTA1,
+                     "ROTA2"=>(int)$row->ROTA2]));    */
+    //"data"=>array("$row->Months"=>(int)$row->BCG));
+
+    array_push($json_array,$data);
+
     }
-    //echo json_encode($json_array);
-    return $json_array;
+    echo json_encode($json_array);
+    //return $json_array;
 
   }
 
@@ -108,46 +119,36 @@ function get_wastage() {
    
     foreach ($query as $row) {
       $json_array= array(
-      array( 'value'=>(int)$row->totalbcg, 'label'=>'BCG'),
-      array( 'value'=>(int)$row->totalopv,'label'=>'OPV'),
-      array( 'value'=>(int)$row->totalpcv, 'label'=>'PCV'),
-      array( 'value'=>(int)$row->totalmeasles, 'label'=>'MEASLES'),
-      array( 'value'=>(int)$row->totalyellowfev, 'label'=>'YELLOWFEV')
+      (int)$row->BCG,
+      (int)$row->DPT,
+      (int)$row->MEASLES,
+      (int)$row->OPV,
+      (int)$row->PCV,
+      '',
+      '',
+      (int)$row->YELLOWFEVER
        );
-
       }
    //echo json_encode($json_array);
    return $json_array;
   }
 
 
-  function get_linechart() {
-    $vaccine = $this->input->post("vaccine");
-    $user_id = $this->input->post("id");
-
-
-    if (!empty($vaccine)){
-     if(!empty($user_id))
-       echo json_encode ($this->getLineChart($vaccine, $user_id));
-    } else{
-      echo json_encode ($this->get_chart());
-    }
-    
-  }
-
-function getLineChart($vaccine, $user_id){
+ 
+function get_linechart(){
     $this->load->model('mdl_dashboard');
-    $query = $this->mdl_dashboard->getLineChart($vaccine, $user_id);
+    $query = $this->mdl_dashboard->get_linechart();
     $json_array=array(); 
     foreach ($query as $row) {
-       $data['value'] = (int)$row->Stock_balance;
-       $data['label'] = $row->Vaccine;
+
+       $data['name'] = $row->Vaccine;
+       $data['y'] = (int)$row->Stock_balance;
 
        $json_array[] = $data;
 
     }
-    return $json_array;
-    //echo json_encode($json_array);
+    //return $json_array;
+    echo json_encode($json_array);
 }
 
 

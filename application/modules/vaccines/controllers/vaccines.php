@@ -131,11 +131,11 @@ function create(){
         $this->form_validation->set_rules('Doses_required', 'Doses Required', 'required|integer|xss_clean');
         $this->form_validation->set_rules('Wastage_factor', 'Wastage Factor', 'required|decimal|xss_clean');
         $this->form_validation->set_rules('Tray_color', 'Tray Color', 'required|alpha|xss_clean');
-	      $this->form_validation->set_rules('Vaccine_designation','Vaccine Designation','required|alpha|xss_clean');
-	      $this->form_validation->set_rules('Vaccine_formulation','Vaccine Formulation','required|alpha|xss_clean');
-	      $this->form_validation->set_rules('Mode_administration','Mode of Administration','required|alpha|xss_clean');
-	      $this->form_validation->set_rules('Vaccine_presentation','Vaccine Presentation','required|alpha|xss_clean');
-	      $this->form_validation->set_rules('Fridge_compart','Fridge Compartment','required|alpha|xss_clean');
+	      $this->form_validation->set_rules('Vaccine_designation','Vaccine Designation','required|xss_clean');
+	      $this->form_validation->set_rules('Vaccine_formulation','Vaccine Formulation','required|xss_clean');
+	      $this->form_validation->set_rules('Mode_administration','Mode of Administration','required|xss_clean');
+	      $this->form_validation->set_rules('Vaccine_presentation','Vaccine Presentation','required|xss_clean');
+	      $this->form_validation->set_rules('Fridge_compart','Fridge Compartment','required|xss_clean');
 	      $this->form_validation->set_rules('Vaccine_pck_vol','Vaccine Packed Volume(cm3/dose)','required|numeric|xss_clean');
 	      $this->form_validation->set_rules('Diluents_pck_vol','Diluents Packed Volume(cm3/dose)','required|numeric|xss_clean');
 	      $this->form_validation->set_rules('Vaccine_price_vial','Vaccine Price($USD/Vial)','required|numeric|xss_clean');

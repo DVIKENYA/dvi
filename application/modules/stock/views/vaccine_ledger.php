@@ -18,7 +18,7 @@ echo form_open('',$form_attributes);?>
               <div class="information_inner">
               	<div class="info green_symbols"><i class="fa fa-users icon"></i></div>
                 <span>TOTAL STOCK BALANCE</span>
-                <h1 class="bolded"><?php echo json_encode($total);?> </h1>
+                <h1 class="bolded">30 </h1>
                 <div class="infoprogress_green">
                   <div class="greenprogress"></div>
                 </div>
@@ -30,8 +30,8 @@ echo form_open('',$form_attributes);?>
             </div>
           </div>
 
-            <div class="col-sm-3 col-sm-6">
-			<div id="container-speed"></div>
+
+            <div id="solid" class="col-sm-3 col-sm-6">
           </div>
         </div>	
 
@@ -332,7 +332,7 @@ echo form_open('',$form_attributes);?>
     };
 
     // The speed gauge
-    $('#container-speed').highcharts(Highcharts.merge(gaugeOptions, {
+    $('#solid').highcharts(Highcharts.merge(gaugeOptions, {
         yAxis: {
             min: 0,
             max: 200,
@@ -351,11 +351,11 @@ echo form_open('',$form_attributes);?>
         }]
 
     }));
-
+/*
     // Bring life to the dials
     setTimeout(function () {
         // Speed
-        var chart = $('#container-speed').highcharts(),
+        var chart = $('#solid').highcharts(),
             point,
             newVal,
             inc;
@@ -372,7 +372,7 @@ echo form_open('',$form_attributes);?>
             point.update(newVal);
         }
 
-    }, 2000);
+    }, 2000);*/
 
 
 });
