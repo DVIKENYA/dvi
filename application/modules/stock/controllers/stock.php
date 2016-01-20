@@ -37,7 +37,7 @@ class Stock extends MY_Controller
       $user_level = $this->session->userdata['logged_in']['user_level'];
       $user_id = $this->session->userdata['logged_in']['user_id'];
       $info['user_object'] = $this->get_user_object();
-      $station_id=$info['user_object']['user_statiton'];
+      $station_id=$info['user_object']['statiton_above'];
           if($user_level==1){
             /* 
             user_level = national
@@ -510,7 +510,7 @@ class Stock extends MY_Controller
        $receive_array['station_id']=$station_name;
       
        $this->db->insert('m_receive_stock', $receive_array);
-       $receive_id = $this -> db -> insert_id(); 
+       $receive_id = $this->db->insert_id(); 
 
        // Receive Stock Item Information
        $vaccine=$this->input->post('vaccine');
@@ -560,5 +560,63 @@ class Stock extends MY_Controller
       redirect('order/list_orders');
     }
 
-  
+    function test(){
+
+        $data2['user_object2'] = $this->get_user_object();
+                
+        $S11=$this->input->post('s11');
+        $date_received=$this->input->post('date_received');
+        $date_recorded=$this->input->post('date_recorded');
+        $user_id= $data2['user_object2']['user_id'];
+        $user_level= $data2['user_object2']['user_level'];
+        $station_name=$data2['user_object2']['user_statiton'];
+
+
+        $receive_array['S11']=$S11;
+        $receive_array['date_received']=$date_received;
+        $receive_array['date_recorded']=$date_recorded;
+        $receive_array['received_by_user']=$user_id;
+        $receive_array['station_level']=$user_level;
+        $receive_array['station_id']=$station_name;
+
+        $this->db->insert('m_receive_stock', $receive_array);
+        $receive_id = $this->db->insert_id(); 
+
+        $batch = stripcslashes($_POST['batch']);
+        $batch = json_decode($batch,TRUE);
+       
+        $receive_array=array();
+        $receive_counter=0;
+
+           foreach ($batch as $item) {
+            $receive_array[$receive_counter]['vaccine_id']     = $item['vaccine_id'];
+            $receive_array[$receive_counter]['batch_no']       = $item['batch_no'];
+            $receive_array[$receive_counter]['expiry_date']    = $item['expiry_date'];
+            $receive_array[$receive_counter]['vvm_status']     = $item['vvm_status'];
+            $receive_array[$receive_counter]['amount_received']= $item['amount_received'];
+            $receive_array[$receive_counter]['receive_id']     = $receive_id[$receive_counter];
+            
+             $receive_counter++;
+         }
+        
+        $main_array[]=$receive_array;
+       // Add assigned receive id to received items
+        foreach ($main_array as $key => $value) {
+          foreach ($value as $keyvac => $valuevac) {
+            foreach ($valuevac as $keys => $values) {
+                if ($keys == "receive_id") {
+                  $temp[$keyvac]['receive_id'] = $receive_id;
+                }  else{
+                  $temp[$keyvac][$keys] = $values;
+                }
+            }
+          
+        } 
+        // $this->db->insert_batch('m_receive_stock_item',$temp);
+        echo json_encode($temp);
+      }
+      
+      $this->session->set_flashdata('receipt_message','Stock Saved Successfully'); 
+  }
+
 }

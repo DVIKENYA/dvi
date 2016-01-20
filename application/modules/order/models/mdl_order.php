@@ -7,33 +7,39 @@ function __construct() {
 parent::__construct();
 }
 
-function get_table() {
-    $table = "tablename";
-    return $table;
-}
-// Get a list of orders placed to your station
+    function get_table() {
+        $table = "tablename";
+        return $table;
+    }
+    // Get a list of orders placed to your station
 
-function get_placed_orders($station,$station_id){
+    function get_placed_orders($station,$station_id){
         $call_procedure="CALL get_placed_orders($station,'$station_id')";
         $query=$this->db->query($call_procedure);
         $query->next_result();
         return $query->result_array();
-}
+    }
 
-// Get listof orders you have submitted 
-function get_submitted_orders($station,$station_id){
-    $call_procedure="CALL get_submitted_orders($station,'$station_id')";
+    // Get listof orders you have submitted 
+    function get_submitted_orders($station,$station_id){
+        $call_procedure="CALL get_submitted_orders($station,'$station_id')";
         $query=$this->db->query($call_procedure);
         $query->next_result();
         return $query->result_array();
-}
-// This function calculates the values of maxstock, minstock
-function calc_orders($station_id,$station_level){
+    }
+    //  This function calculates the values of maxstock, minstock
+    function calc_orders($station_id,$station_level){
         $call_procedure="CALL calc_orders('$station_id',$station_level)";
         $query=$this->db->query($call_procedure);
         $query->next_result();
         return $query->result_array();
 
+    }
+
+    function forward_orders($station_level,$order_id){
+        $call_procedure="CALL forward_order('$station_level',$order_id)";
+        $query=$this->db->query($call_procedure);
+        return $query;
     }
 // Get a list of items in an order 
 function get_orderitems($order_by,$date_created){

@@ -1,6 +1,4 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');?>
-<script src="<?php echo base_url() ?>assets/plugins/highcharts/highcharts.js" type="text/javascript"></script>
-<script src="<?php echo base_url() ?>assets/js/xepOnline.jqPlugin.js"></script> 
 
 <div class="row">
 <div class="block-web">
@@ -8,10 +6,7 @@
 
 <div class="col-md-6">
       <h5 class="content-header text-info">Stock Available</h5>
-      <button id="print">Export As PDF</button>
-</br>
-    
- 
+   
 <div id="morris-bar-chart" name="morris-bar-chart"></div>
 </div>
 <div class="col-md-6">
@@ -37,22 +32,13 @@
 <div class="row">
     <div class="block-web">
         <div class="col-lg-12">
-          <div class="col-md-6">
+
             <h5 class="content-header text-info">Wastage</h5>
             </br>
             <div id="morris-donut-chart" ></div>
-          </div>
-          
-          <div class="col-md-6">
-            <h5 class="content-header text-info">Coverage</h5>
-            </br>
-            <input type="checkbox" id="activate1" checked="checked"/> BCG
-            <input type="checkbox" id="activate2" checked="checked"/>  OPV
-            <input type="checkbox" id="activate3" checked="checked"/> PCV1
-            <input type="checkbox" id="activate4" checked="checked"/> ROTA
 
-            <div id="line-example"></div>
-          </div>
+          
+
 
         </div>
        </div>
@@ -74,163 +60,144 @@
 </div>
 
 
-
 <script type="text/javascript">
-$(document).ready(function(){
- 
- Morris.Bar({
-        element: 'morris-bar-chart',
-        data: <?php echo json_encode($chart)?>,
-
-        xkey: ['label'],
-        ykeys: ['value'],
-        labels: ['Series A'],
-        hideHover: 'auto',
-        resize: false,
-        barColors: ['#54cdb4', '#FF0000'],
+$.getJSON( "<?php echo base_url();?>dashboard/get_chart", function(ty) {
+ $.each(ty, function(name, value) {
+        nam =   name;
+        val = value;
     });
- $('#print').click(function() {
-  printMe();
- });
+//console.log(ty);
+//console.log(val);
 
- function printMe(){
-  xepOnline.Formatter.Format('morris-bar-chart' , {render :'download', srctype: 'svg'});
- }
- 
- });
+  $('#morris-bar-chart').highcharts({
+    chart: {
+      type: 'column'
+    },
+    title: {
+      text: "Stock balance of various vaccines"
+    },
+    series : [{data : ty, name: "stock level"}
+             ],
+    xAxis: {
+            categories : nam
+    }
+  });
+});
+
 </script>
 
 <script type="text/javascript">
 
-$.get( "<?php echo base_url();?>dashboard/get_linechart", function(json) {
-console.log(json);
-Morris.Line({
-        element: 'morris-line-chart',
-        data: $.parseJSON(json) ,
+// $.get( "<?php echo base_url();?>dashboard/get_linechart", function(json) {
+// //console.log(json);
+// Morris.Line({
+//         element: 'morris-line-chart',
+//         data: $.parseJSON(json) ,
 
-        xkey: ['label'],
-        ykeys: ['value'],
-        parseTime:false,
-        labels: ['Series A'],
-        hideHover: 'auto',
-        resize: false,
-        lineColors: ['#54cdb4','#1ab394'],
-    });
-});
+//         xkey: ['label'],
+//         ykeys: ['value'],
+//         parseTime:false,
+//         labels: ['Series A'],
+//         hideHover: 'auto',
+//         resize: false,
+//         lineColors: ['#54cdb4','#1ab394'],
+//     });
+// });
 
-$('.vaccine').change(function () {
-    var vaccine = $(this).val();
-    console.log(vaccine);
-  $('#morris-line-chart').empty();
-   load_linechart(vaccine);
-});
+// $('.vaccine').change(function () {
+//     var vaccine = $(this).val();
+//     //console.log(vaccine);
+//   $('#morris-line-chart').empty();
+//    load_linechart(vaccine);
+// });
 
-function load_linechart(vaccine){
+// function load_linechart(vaccine){
     
-        var _url="dashboard/get_linechart";
+//         var _url="dashboard/get_linechart";
             
-        var request=$.ajax({
-           url: _url,
-           type: 'post',
-           data: {"vaccine":vaccine, "id":<?php echo $id?>},
+//         var request=$.ajax({
+//            url: _url,
+//            type: 'post',
+//            data: {"vaccine":vaccine, "id":<?php echo $id?>},
 
-          });
-          request.done(function(data){
-      console.log(data);
-        Morris.Line({
-          element: 'morris-line-chart',
-          data: $.parseJSON(data) ,
+//           });
+//           request.done(function(data){
+//       console.log(data);
+//         Morris.Line({
+//           element: 'morris-line-chart',
+//           data: $.parseJSON(data) ,
           
-          xkey: ['label'],
-          ykeys: ['value'],
-          parseTime:false,
-          labels: ['Series A'],
-          hideHover: 'auto',
-          resize: false,
-          lineColors: ['#54cdb4','#1ab394'],
-          });
-        });                 
+//           xkey: ['label'],
+//           ykeys: ['value'],
+//           parseTime:false,
+//           labels: ['Series A'],
+//           hideHover: 'auto',
+//           resize: false,
+//           lineColors: ['#54cdb4','#1ab394'],
+//           });
+//         });                 
            
-          request.fail(function(jqXHR, textStatus) {
+//           request.fail(function(jqXHR, textStatus) {
           
-        });
-}
+//         });
+// }
     
 
 </script>
 
 
 <script type="text/javascript">
-$(document).ready(function(){
-  Morris.Donut({
-  element: 'morris-donut-chart',
-  data: <?php echo json_encode($wastage)?>,
-  colors:['#54cdb4'],
-  labelColor: '#333300',
- formatter: function (value, data) { return (value/100) + '%'; }
+$.getJSON( "<?php echo base_url();?>dashboard/get_init", function(dol) {
+ $.each(dol, function(name, value) {
+        nam = name;
+        val = value;
     });
-});
-</script>
-
-<script type="text/javascript">
-$(document).ready(function(){
-
-
-var morris = Morris.Line({
-  element: 'line-example',
-  data: <?php echo json_encode($coverage)?>,
-  xkey: ['label'],
-  parseTime:false,
-  ykeys: ['BCG','OPV','PCV1','ROTA'],
-  labels: ['BCG', 'OPV','PCV1','ROTA'],
-  colors: ['red',"blue","green","yellow"]
-});
-
-
-    $('#activate1').on('change', function() {
-      var isChecked1 = $('#activate1').is(':checked');
-      var isChecked2 = $('#activate2').is(':checked');
-      var isChecked3 = $('#activate3').is(':checked'); 
-      var isChecked4 = $('#activate4').is(':checked');  
-      var isChecked5 = $('#activate5').is(':checked');  
  
-      morris.setData(data(isChecked1,isChecked2,isChecked3,isChecked4));
-      
-    });
-    $('#activate2').on('change', function() {
-      var isChecked1 = $('#activate1').is(':checked');
-      var isChecked2 = $('#activate2').is(':checked');
-      var isChecked3 = $('#activate3').is(':checked');  
-      var isChecked4 = $('#activate4').is(':checked');  
-      var isChecked5 = $('#activate5').is(':checked'); 
+//console.log(dol);
+//console.log(val);
 
-      morris.setData(data(isChecked1,isChecked2,isChecked3,isChecked4));
+    $('#morris-donut-chart').highcharts({
+        chart: {
+            type: 'bar'
+        },
+        title: {
+            text: 'Stacked bar chart'
+        },
+        xAxis: {
+            categories:nam
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Initial vs Current Wastage Factor'
+            }
+        },
+        legend: {
+            reversed: true
+        },
+        plotOptions: {
+            series: {
+                stacking: 'normal'
+            }
+        },
+        series: [{data: <?php echo json_encode($wastage) ?>, name: "Current"}, 
+                 {data: dol, name: "Initial"}
+        ]
     });
-    $('#activate3').on('change', function() {
-      var isChecked1 = $('#activate1').is(':checked');
-      var isChecked2 = $('#activate2').is(':checked');
-      var isChecked3 = $('#activate3').is(':checked');
-      var isChecked4 = $('#activate4').is(':checked');  
-      var isChecked5 = $('#activate5').is(':checked');
-
-      morris.setData(data(isChecked1,isChecked2,isChecked3,isChecked4));
-    });
-     $('#activate4').on('change', function() {
-      var isChecked1 = $('#activate1').is(':checked');
-      var isChecked2 = $('#activate2').is(':checked');
-      var isChecked3 = $('#activate3').is(':checked');  
-      var isChecked4 = $('#activate4').is(':checked');  
-      var isChecked5 = $('#activate5').is(':checked'); 
-
-      morris.setData(data(isChecked1,isChecked2,isChecked3,isChecked4));
-      
-    });
- });    
+});
 </script>
 
 <script type="text/javascript">
-$(function () {
+$.getJSON( "<?php echo base_url();?>dashboard/get_coverage", function(mim) {
+ /*$.each(mim, function(name, value) {
+        nam = name;*/ 
+   
+  console.log(mim);
+       
     $('#container').highcharts({
+        chart: {
+        type: 'line'
+        },
         title: {
             text: 'Coverage of Vaccines',
             x: -20 //center
@@ -239,7 +206,9 @@ $(function () {
             text: 'Source: DHIS',
             x: -20
         },
-       
+        xAxis: {
+           //categories: nam
+        },
         yAxis: {
             title: {
                 text: 'Coverage (%)'
@@ -250,12 +219,10 @@ $(function () {
                 color: '#808080'
             }]
         },
-        
-        series: [{
-         data: [<?php echo json_encode($coverage)?>]
-      }]
+        series: [ {data:mim,name:"BCG"}
+      ]
+
+    //});
     });
-});
+    });
     </script>
-
-

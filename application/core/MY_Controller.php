@@ -95,6 +95,7 @@ class MY_Controller extends MX_Controller
 			    $path = $nation." / ". $region;
 			    $user_statiton = $region;
 			    $user_statiton_id = $region_id;
+			    $statiton_above = $nation;
 			} else if ($user_level=='3'){
 			    $nation = "KENYA";
 			    $region = $this->getUserRegion();
@@ -103,7 +104,7 @@ class MY_Controller extends MX_Controller
 			    $path = $region." / ". $county;
 				$user_statiton = $county;
 				$user_statiton_id = $county_id;
-
+				$statiton_above = $region;
 			}else if ($user_level=='4'){
 			    $nation = "KENYA";
 			    $region = $this->getUserRegion();
@@ -113,6 +114,7 @@ class MY_Controller extends MX_Controller
 			    $path = $county." / ". $subcounty;
 				$user_statiton = $subcounty;
 				$user_statiton_id = $subcounty_id;
+				$statiton_above = $county;
 			}
 			else {
 			    $nation = "KENYA";
@@ -123,7 +125,8 @@ class MY_Controller extends MX_Controller
 			    $facility_id = $this->getUserFacilityid();
 			    $path = $subcounty." / ". $facility;
 				$user_statiton = $facility;
-				$user_statiton_id = $facility_id;    
+				$user_statiton_id = $facility_id;
+				$statiton_above = $subcounty;    
 			}
 			$data = array('user_fname' =>$user_fname ,
 						'user_group' =>$user_group ,
@@ -131,7 +134,9 @@ class MY_Controller extends MX_Controller
 						'user_id' =>$user_id ,
 						'user_statiton' =>$user_statiton ,
 						'user_statiton_id' =>$user_statiton_id ,
-						'path' =>$path  );
+						'statiton_above' =>$statiton_above ,
+						'path' =>$path  
+						);
 			return $data;
 
 		} else {

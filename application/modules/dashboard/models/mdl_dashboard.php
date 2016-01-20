@@ -72,16 +72,22 @@ function getChart($user_id)
     $this->db->where("user_id", $user_id);
     $query = $this->db->get('vaccine_stockbalance');
     return $query;
-
 }
-function getLineChart($vaccine, $user_id)
+
+function initWastage(){
+    $this->db->select('Vaccine_name,Wastage_factor');
+    $this->db->group_by('Vaccine_name');
+    $query = $this->db->get('initial_wastage');
+    return $query;
+}
+function get_linechart()
 {
 
  $this->db->select('`Vaccine` AS Vaccine, `Stock_Balance` AS Stock_balance');
- $v = array('Vaccine' => $vaccine);
- $u = array('user_id' => $user_id);
- $this->db->where($v);
- $this->db->where($u);
+ //$v = array('Vaccine' => $vaccine);
+ // $u = array('user_id' => $user_id);
+ //$this->db->where($v);
+ // $this->db->where($u);
  $query = $this->db->get('vaccine_stockbalance');
  return $query->result();
 
@@ -117,43 +123,37 @@ function get_region_base(){
     }
 
 function get_facility_wastage($id){
-        $this->db->select('sum( BCG ) AS totalbcg, sum( DPT ) AS totaldpt, sum( MEASLES ) AS totalmeasles,
-         sum( OPV ) AS totalopv, sum( PCV ) AS totalpcv, sum( YELLOWFEVER ) AS totalyellowfev, m_facility.id, facility_name');
-        $this->db->from('new_wastage');
-        $this->db->join('m_facility', 'm_facility.id = new_wastage.facility');
-        $this->db->join('user_base',' user_base.facility=new_wastage.facility');
+        $this->db->select('BCG,DPT,MEASLES,OPV,PCV,YELLOWFEVER, m_facility.id, facility_name');
+        $this->db->from('final_wastage');
+        $this->db->join('m_facility', 'm_facility.id = final_wastage.facility');
+        $this->db->join('user_base',' user_base.facility=final_wastage.facility');
         $this->db->where('user_id',$id);
         $query = $this->db->get();
         return $query->result();
     }
 function get_county_wastage($id){
-        $this->db->select('sum( BCG ) AS totalbcg, sum( DPT ) AS totaldpt, sum( MEASLES ) AS totalmeasles,
-         sum( OPV ) AS totalopv, sum( PCV ) AS totalpcv,sum( YELLOWFEVER ) AS totalyellowfev, m_county.id, county_name');
-        $this->db->from('new_wastage');
-        $this->db->join('m_county', 'm_county.id = new_wastage.county');
-        $this->db->join('user_base',' user_base.county=new_wastage.county');
+        $this->db->select('BCG,DPT,MEASLES,OPV,PCV,YELLOWFEVER, m_county.id, county_name');
+        $this->db->from('final_wastage');
+        $this->db->join('m_county', 'm_county.id = final_wastage.county');
+        $this->db->join('user_base',' user_base.county=final_wastage.county');
         $this->db->where('user_id',$id);
         $query = $this->db->get();
         return $query->result();
     }
 
 function get_subcounty_wastage($id){
-        $this->db->select('sum(BCG) AS totalbcg, sum(DPT) AS totaldpt, sum(MEASLES) AS totalmeasles,
-                           sum(OPV) AS totalopv, sum(PCV) AS totalpcv,
-                           sum(YELLOWFEVER) AS totalyellowfev, m_subcounty.id, subcounty_name');
-        $this->db->from('new_wastage');
-        $this->db->join('m_subcounty', 'm_subcounty.id = new_wastage.subcounty');
-        $this->db->join('user_base',' user_base.subcounty=new_wastage.subcounty');
+        $this->db->select('BCG,DPT,MEASLES,OPV,PCV,YELLOWFEVER, m_subcounty.id, subcounty_name');
+        $this->db->from('final_wastage');
+        $this->db->join('m_subcounty', 'm_subcounty.id = final_wastage.subcounty');
+        $this->db->join('user_base',' user_base.subcounty=final_wastage.subcounty');
         $this->db->where('user_id',$id);
         $query = $this->db->get();
         return $query->result();
     }
 
  function get_national_wastage($id){
-        $this->db->select('sum(BCG) AS totalbcg, sum(DPT) AS totaldpt, sum(MEASLES) AS totalmeasles,
-                           sum(OPV) AS totalopv, sum(PCV) AS totalpcv,
-                           sum(YELLOWFEVER) AS totalyellowfev');
-        $this->db->from('new_wastage');
+        $this->db->select('BCG,DPT,MEASLES,OPV,PCV,YELLOWFEVER');
+        $this->db->from('final_wastage');
         $query = $this->db->get();
         return $query->result();
     }   
@@ -169,46 +169,41 @@ function get_subcounty_coverage($id){
         $this->db->where('user_id',$id);
         $this->db->group_by('periodname');
         $query = $this->db->get();
-        return $query->result();
+        
+        return $query;
     }
 
 function get_county_coverage($id){
-        $this->db->distinct();
-        $this->db->select('`periodname` AS Months, sum(totalbcg) as totalbcg, sum(totaldpt2) as totaldpt2, sum(totaldpt3) as totaldpt3, 
-                           sum(totalmeasles) as totalmeasles, sum(totalopv) as totalopv, sum(totalopv1) as totalopv1, 
-                           sum(totalopv2) as totalopv2,  sum(totalopv3) as totalopv3,  sum(totalpcv1) as totalpcv1,
-                           sum(totalpcv2) as totalpcv2,  sum(totalpcv3) as totalpcv3,  sum(totalrota1) as totalrota1,
-                           sum(totalrota2) as totalrota2, m_county.id, county_name');
-        $this->db->from('view_subcountycov_calculated');
-        $this->db->join('m_county', 'm_county.id = view_subcountycov_calculated.county_id');
-        $this->db->join('user_base',' view_subcountycov_calculated.county_id');
+        $this->db->select('`periodname` AS Months, BCG,DPT2,DPT3,MEASLES,OPV,OPV1,OPV2,OPV3,PCV1,PCV2,PCV3,ROTA1,ROTA2, m_county.id, county_name');
+        $this->db->from('view_countycov_calculated');
+        $this->db->join('m_county', 'm_county.id = view_countycov_calculated.county_id');
+        $this->db->join('user_base',' view_countycov_calculated.county_id');
         $this->db->where('user_id',$id);
-        $this->db->group_by('periodname');
         $query = $this->db->get();
-        return $query->result();
+        
+        return $query;
         
     }
+
 function get_national_coverage($id){
         $this->db->distinct();
-        $this->db->select('`periodname` AS Months, sum(totalbcg) as totalbcg, sum(totaldpt2) as totaldpt2, sum(totaldpt3) as totaldpt3, 
-                           sum(totalmeasles) as totalmeasles, sum(totalopv) as totalopv, sum(totalopv1) as totalopv1, 
-                           sum(totalopv2) as totalopv2,  sum(totalopv3) as totalopv3,  sum(totalpcv1) as totalpcv1,
-                           sum(totalpcv2) as totalpcv2,  sum(totalpcv3) as totalpcv3,  sum(totalrota1) as totalrota1,
-                           sum(totalrota2) as totalrota2');
+        $this->db->select('`periodname` AS Months, BCG,DPT2,DPT3,MEASLES,OPV,OPV1,OPV2,OPV3,PCV1,PCV2,PCV3,ROTA1,ROTA2');
         $this->db->from('view_subcountycov_calculated');
-        $this->db->group_by('periodname');
         $query = $this->db->get();
-        return $query->result();
+        
+        return $query;
         
     }
 
 function get_facility_base($user_id){
+        
         $this->db->select('m_facility.id, m_facility.facility_name as location');
         $this->db->from('m_subcounty');
         $this->db->join('subcounty_userbase', 'm_subcounty.id = subcounty_userbase.subcounty');
         $this->db->join('m_facility', 'm_subcounty.id =  m_facility.subcounty_id ');
         $this->db->where('user_id',$user_id);
         $query = $this->db->get();
+        
         return $query->result();
     }
 

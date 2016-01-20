@@ -185,6 +185,36 @@ Modules::run('secure_tings/is_logged_in');
     
 }
 
+  function forward_order($order_by,$date_created,$option,$order_id){
+    Modules::run('secure_tings/is_logged_in');
+    $this->load->model('order/mdl_order');
+    $data['section'] = "Stock";
+    $data['subtitle'] = "View Orders";
+    $data['page_title'] = " Orders";
+    $data['orderitems']= $this->mdl_order->get_orderitems($order_by,$date_created);
+    $data['option']=$option;
+    $data['order_id']=$order_id;
+    $data['module'] = "order";
+    $data['view_file'] = "forward_order_view";
+    $data['user_object'] = $this->get_user_object();
+    $data['main_title'] = $this->get_title();
+    echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
+  
+  }
+
+  function save_forwarded_order($order_id){
+    Modules::run('secure_tings/is_logged_in');
+    $this->load->model('order/mdl_order');
+    $data['user_object'] = $this->get_user_object();
+    $statiton_above = $data['user_object']['statiton_above'];
+    $level= $data['user_object']['user_level'];
+    $station_level = $level++; 
+    $query = $this->mdl_order->forward_orders($station_level,$order_id);
+    $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">Order forwarded successfully to <strong>'.$statiton_above.'</strong>!</div>');
+          
+    redirect('order/list_orders');
+  }
+
 
 function get_with_limit($limit, $offset, $order_by) {
 $this->load->model('mdl_vaccines');

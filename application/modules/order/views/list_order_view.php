@@ -58,13 +58,14 @@
 
     <table class="table table-bordered table-striped" id="list_orders_tbl">
         <thead>
-                <tr><th>Order # </th><th>Order from</th><th>Date Created</th><th>Action</th></tr>
+                <tr><th>Order # </th><th>Order from</th><th>Date Created</th><th align="center">Action</th></tr>
         </thead>
 
         <tbody>
         <?php $option=2 ; ?>
         <?php foreach ($orders as $order) { 
          $ledger_url = base_url().'order/view_orders/'.$order['order_by'].'/'.$order['date_created'].'/'.$option.'/'.$order['order_id'];
+         $forward_url = base_url().'order/forward_order/'.$order['order_by'].'/'.$order['date_created'].'/'.$option.'/'.$order['order_id'];
         
          ?>
         
@@ -73,8 +74,9 @@
               <td><?php echo $order['station_id']?></td>
               <td><?php echo $order['date_created']?></td>
               
-              <td><a href="<?php  echo $ledger_url ?>" class="btn btn-danger btn-xs">View <i class="fa fa-eye"></i></a></td>
-<!--              <td><a href="<?php  echo $ledger_url ?>">View</a><span class="divider"> | </span><a href="#">Download</a></td>-->
+              <td><a href="<?php  echo $ledger_url ?>" class="btn btn-danger btn-xs">View <i class="fa fa-eye"></i></a>
+              <a href="<?php  echo $forward_url ?>" class="btn btn-danger btn-xs">Forward Order <i class="fa fa-share"></i></a></td>
+                   
         <?php }?>
               </tr>
 
@@ -90,3 +92,11 @@
                </div>
                </div>
 
+ <script type="text/javascript">
+
+               window.setTimeout(function() {
+                  $("#alert-message").fadeTo(500, 0).slideUp(500, function(){
+                      $(this).remove(); 
+                  });
+              }, 5000);
+        </script> 

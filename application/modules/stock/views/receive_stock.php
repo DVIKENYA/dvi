@@ -70,7 +70,7 @@ echo form_open('',$form_attributes);?>
         
                 <td><?php $data=array('name' => 'batch_no','id'=>'batch_no','class'=>'batch_no form-control','required'=>'','type'=>'text'); echo form_input($data);?></td>
                 <td><?php $data=array('name' => 'expiry_date','id'=> 'expiry_date','class'=>'form-control expiry_date', 'type'=>'date','required'=>'','type'=>'date'); echo form_input($data);?></td>
-                <td><?php $data=array('name' => 'quantity_received','id'=> 'quantity_received','class'=>'quantity_received form-control','required'=>'','type'=>'number'); echo form_input($data);?></td>
+                <td><?php $data=array('name' => 'amount_received','id'=> 'amount_received','class'=>'amount_received form-control','required'=>'','type'=>'number'); echo form_input($data);?></td>
                 
                 <td>
                 <select name="vvm_status" class=" form-control vvm_status " id="vvm_status" name="vvm_status">
@@ -86,10 +86,10 @@ echo form_open('',$form_attributes);?>
     </tbody>
   </table>
 
-
+  <?php  echo form_hidden('date_recorded',date('Y-m-d',strtotime(date('Y-m-d'))));?>
 </div>
 
-<button type="submit" name="stock_receivedstock_received" id="stock_received" class="btn btn-sm btn-danger">Receive Stock</button>
+<button type="submit" name="stock_received" id="stock_received" class="btn btn-sm btn-danger">Receive Stock</button>
 
 <?php
    echo form_close();?>
@@ -120,9 +120,9 @@ echo form_open('',$form_attributes);?>
                       expiry.removeClass("hasDatepicker").attr('id',expiry_id).datepicker({dateFormat: "yy-mm-dd",  minDate: 0,  setDate: null});
                       
 
-                      var quantity_received_id = "quantity_received" + next_receive_row;
-                      var quantity_received = cloned_object.find(".quantity_received");
-                      quantity_received.attr('id',quantity_received_id);
+                      var amount_received_id = "amount_received" + next_receive_row;
+                      var amount_received = cloned_object.find(".amount_received");
+                      amount_received.attr('id',amount_received_id);
 
                       var vvm_status_id = "vvm_status" + next_receive_row;
                       var vvm_status = cloned_object.find(".vvm_status");
@@ -147,40 +147,51 @@ echo form_open('',$form_attributes);?>
           });
 
        
-       var formURL="<?php echo base_url();?>stock/save_received_stock";
+       var formURL="<?php echo base_url();?>stock/test";
 
        var vaccines = retrieveFormValues_Array('vaccine');
        var s11 = retrieveFormValues('s11');
        var batch_no = retrieveFormValues_Array('batch_no');
        var expiry_date = retrieveFormValues_Array('expiry_date');
-       var quantity_received = retrieveFormValues_Array('quantity_received');
+       var amount_received = retrieveFormValues_Array('amount_received');
        var vvm_status = retrieveFormValues_Array('vvm_status');
        var date_received = retrieveFormValues('date_received');
+       var date_recorded = retrieveFormValues('date_recorded');
        var received_from= retrieveFormValues('received_from');
        var transaction_type= retrieveFormValues('transaction_type');
+
+       var data  = new Array();
+       var get_date_received=date_received;
+       var get_date_recorded=date_recorded;
+       var get_received_from=received_from;
+       var get_transaction_type=transaction_type;
+       var get_s11 = s11;
 
         for(var i = 0; i < vaccine_count; i++) {
           var get_vaccine=vaccines[i];
           var get_batch=batch_no[i];
           var get_expiry=expiry_date[i];
-          var get_quantity_received=quantity_received[i];
+          var get_amount_received=amount_received[i];
           var get_vvm_status=vvm_status[i];
-          var get_date_received=date_received;
-          var get_received_from=received_from;
-          var get_transaction_type=transaction_type;
-          var get_s11 = s11;
+          
+          data = {"vaccine_id":get_vaccine,"batch_no":get_batch,"expiry_date":get_expiry,"amount_received":get_amount_received,"vvm_status":get_vvm_status};
+
+          }
+          console.log(data);
+          batch = JSON.stringify(data);
           $.ajax(
           {
+              //
               url : formURL,
               type: "POST",
-              data : {"transaction_type":get_transaction_type,"date_received":get_date_received,"received_from":get_received_from, "s11":get_s11, "vaccine":get_vaccine,"batch_no":get_batch,"expiry_date":get_expiry,"quantity_received":get_quantity_received,"vvm_status":get_vvm_status},
+              //data : {"transaction_type":get_transaction_type,"date_received":get_date_received,"date_recorded":get_date_recorded,"received_from":get_received_from, "s11":get_s11, "batch":batch },
              /* dataType : json,*/
             // url : "<?php echo site_url("stock/list_inventory"); ?>";
               success:function(data, textStatus, jqXHR) 
               {
                   //data: return data from server
-                  //console.log(data);
-                  window.location.replace('<?php echo base_url().'stock/list_inventory'?>');
+                  console.log(data);
+                  //window.location.replace('<?php echo base_url().'stock/list_inventory'?>');
 
 
 
@@ -190,7 +201,7 @@ echo form_open('',$form_attributes);?>
                   //if fails      
               }
           });
-     }
+     
        // e.unbind(); //unbind. to stop multiple form submit.
            });
 
