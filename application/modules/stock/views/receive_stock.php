@@ -160,7 +160,7 @@ echo form_open('',$form_attributes);?>
        var received_from= retrieveFormValues('received_from');
        var transaction_type= retrieveFormValues('transaction_type');
 
-       var data  = new Array();
+       var dat  = new Array();
        var get_date_received=date_received;
        var get_date_recorded=date_recorded;
        var get_received_from=received_from;
@@ -168,25 +168,25 @@ echo form_open('',$form_attributes);?>
        var get_s11 = s11;
 
         for(var i = 0; i < vaccine_count; i++) {
+          var data  = new Array();
           var get_vaccine=vaccines[i];
           var get_batch=batch_no[i];
           var get_expiry=expiry_date[i];
           var get_amount_received=amount_received[i];
           var get_vvm_status=vvm_status[i];
           
+          
           data = {"vaccine_id":get_vaccine,"batch_no":get_batch,"expiry_date":get_expiry,"amount_received":get_amount_received,"vvm_status":get_vvm_status};
-
+          dat.push(data);
           }
-          console.log(data);
-          batch = JSON.stringify(data);
+          console.log(dat);
+          batch = JSON.stringify(dat);
           $.ajax(
           {
               //
               url : formURL,
               type: "POST",
-              //data : {"transaction_type":get_transaction_type,"date_received":get_date_received,"date_recorded":get_date_recorded,"received_from":get_received_from, "s11":get_s11, "batch":batch },
-             /* dataType : json,*/
-            // url : "<?php echo site_url("stock/list_inventory"); ?>";
+              data : {"transaction_type":get_transaction_type,"date_received":get_date_received,"date_recorded":get_date_recorded,"received_from":get_received_from, "s11":get_s11, "batch":batch },
               success:function(data, textStatus, jqXHR) 
               {
                   //data: return data from server
