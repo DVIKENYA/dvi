@@ -191,7 +191,7 @@ echo form_open('',$form_attributes);?>
               {
                   //data: return data from server
                   console.log(data);
-                  //window.location.replace('<?php echo base_url().'stock/list_inventory'?>');
+                  window.location.replace('<?php echo base_url().'stock/list_inventory'?>');
 
 
 

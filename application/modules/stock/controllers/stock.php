@@ -227,8 +227,8 @@ class Stock extends MY_Controller
       }
       $output = array(
               "draw" => $_POST['draw'],
-              // "recordsTotal" => $this->mdl_stock->count_received_filtered($id, $station_id),
-              // "recordsFiltered" => $this->mdl_stock->count_received_filtered($id, $station_id),
+              "recordsTotal" => $this->mdl_stock->count_received_filtered($id, $station_id),
+              "recordsFiltered" => $this->mdl_stock->count_received_filtered($id, $station_id),
               "data" => $data,
             );
             
@@ -261,8 +261,8 @@ class Stock extends MY_Controller
       }
       $output = array(
               "draw" => $_POST['draw'],
-              // "recordsTotal" => $this->mdl_stock->count_issued_filtered($id, $station_id),
-              // "recordsFiltered" => $this->mdl_stock->count_issued_filtered($id, $station_id),
+              "recordsTotal" => $this->mdl_stock->count_issued_filtered($id, $station_id),
+              "recordsFiltered" => $this->mdl_stock->count_issued_filtered($id, $station_id),
               "data" => $data,
             );
             
@@ -570,8 +570,15 @@ class Stock extends MY_Controller
         $user_id= $data2['user_object2']['user_id'];
         $user_level= $data2['user_object2']['user_level'];
         $station_name=$data2['user_object2']['user_statiton'];
+        
+        $order_array['date_created']=$date_recorded;
+        $order_array['station_level']=$user_level;
+        $order_array['station_id']=$station_name;
 
+        $this->db->insert('m_order', $order_array);
+        $order_id=$this->db->insert_id();
 
+        $receive_array['order_id']=$order_id;
         $receive_array['S11']=$S11;
         $receive_array['date_received']=$date_received;
         $receive_array['date_recorded']=$date_recorded;
@@ -612,11 +619,11 @@ class Stock extends MY_Controller
             }
           
         } 
-        // $this->db->insert_batch('m_receive_stock_item',$temp);
+        $this->db->insert_batch('m_receive_stock_item',$temp);
         echo json_encode($temp);
       }
       
-      $this->session->set_flashdata('receipt_message','Stock Saved Successfully'); 
+      $this->session->set_flashdata('msg','<div id="alert-message" class="alert alert-success text-center">Received stocks have been saved successfully</div>');
   }
 
 }

@@ -88,6 +88,7 @@ class MY_Controller extends MX_Controller
 			    $path = $nation;
 			    $user_statiton = $nation;
 			    $user_statiton_id = 'KENYA';
+			    $statiton_above = "";
 			} else if ($user_level=='2') {
 			    $nation = "KENYA";
 			    $region = $this->getUserRegion();

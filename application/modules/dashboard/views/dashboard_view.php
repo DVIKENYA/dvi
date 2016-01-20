@@ -189,10 +189,10 @@ $.getJSON( "<?php echo base_url();?>dashboard/get_init", function(dol) {
 
 <script type="text/javascript">
 $.getJSON( "<?php echo base_url();?>dashboard/get_coverage", function(mim) {
- /*$.each(mim, function(name, value) {
-        nam = name;*/ 
-   
-  console.log(mim);
+/* $.each(mim, function(name, value) {
+        nam = name;
+   });*/
+  //console.log(mim);
        
     $('#container').highcharts({
         chart: {

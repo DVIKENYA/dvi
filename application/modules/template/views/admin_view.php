@@ -196,9 +196,6 @@ if ( $user_object['user_level']=='1') {?>
 <script src="<?php echo base_url() ?>assets/plugins/sparkline/jquery.sparkline.js" type="text/javascript"></script>
 <script src="<?php echo base_url() ?>assets/plugins/sparkline/jquery.customSelect.min.js" ></script> 
 <script src="<?php echo base_url() ?>assets/plugins/sparkline/sparkline-chart.js"></script> 
-<script src="<?php echo base_url() ?>assets/plugins/morris/morris.min.js" type="text/javascript"></script> 
-<script src="<?php echo base_url() ?>assets/plugins/morris/raphael-min.js" type="text/javascript"></script>  
-<script src="<?php echo base_url() ?>assets/plugins/morris/morris-script.js"></script> 
 <script src="<?php echo base_url() ?>assets/plugins/highcharts/highcharts.js" type="text/javascript"></script>
 <script src="<?php echo base_url() ?>assets/plugins/data-tables/jquery.dataTables.min.js"></script>
 <script src="<?php echo base_url() ?>assets/plugins/data-tables/DT_bootstrap.js"></script>

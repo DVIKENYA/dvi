@@ -1,3 +1,45 @@
+<?php
+$station_id = $user_object['user_statiton'];
+$sql="SELECT DISTINCT mv.Vaccine_name,batch_number as batch,expiry_date as mydate ,stock_balance as stock FROM m_stock_balance mb
+LEFT JOIN m_vaccines mv ON mv.ID= mb.vaccine_id WHERE station_id= '".$station_id."'";
+ $res2 = $this->db->query($sql)->result_array();
+    $arrayResults2 = $res2;
+    
+//    print_r($res2);
+
+    $mystring1 = ""; $mystring2="";
+    
+    $vacc_name = array();
+    $batch = array(); 
+    $date = array(); 
+    $stock = array(); 
+    
+      foreach ($res2 as  $row2) {
+      //array_push($array1, $row['']);
+      $mystring1 = $row2['Vaccine_name'];
+      $mystring2 = $row2['batch'];
+      $mystring3 = $row2['mydate'];
+      $mystring4 = $row2['stock'];
+
+      $mystring4 = intval($mystring4);
+      $mystring3 = intval($mystring3);
+           
+      array_push($vacc_name, $mystring1);
+      array_push($batch, $mystring2);
+      array_push($date, $mystring3);
+      array_push($stock, $mystring4);
+
+    }
+  
+   $urls_name_enc = json_encode($vacc_name);
+   $urls_batch_enc = json_encode($batch);
+   $urls_date_enc = json_encode($date);
+   $urls_stock_enc = json_encode($stock);
+
+ 
+?>
+
+        <div id="table-container"></div>
 <div class="row">
     
 <?php
@@ -12,29 +54,7 @@ echo form_open('',$form_attributes);?>
 	<div class="table-responsive">
 		<div class="well well-sm"><b>Vaccine Ledger</b></div>
 
- <div class="row">
-          <div id="total "class="col-sm-3 col-sm-6">
-            <div class="information green_info">   
-              <div class="information_inner">
-              	<div class="info green_symbols"><i class="fa fa-users icon"></i></div>
-                <span>TOTAL STOCK BALANCE</span>
-                <h1 class="bolded"><?php echo json_encode($total);?> </h1>
-                <div class="infoprogress_green">
-                  <div class="greenprogress"></div>
-                </div>
-                <b class=""><small>For:<?php echo $user_object['user_statiton']; ?></small></b>
-                <div class="pull-right" id="work-progress1">
-                  <canvas style="display: inline-block; width: 47px; height: 25px; vertical-align: top;" width="47" height="25"></canvas>
-                </div>
-              </div>
-            </div>
-          </div>
-
-            <div class="col-sm-3 col-sm-6">
-			<div id="container-speed"></div>
-          </div>
-        </div>	
-
+<!--
 <div class="row">
 	<div class="col-lg-3">
 		  <div class="panel-body">
@@ -54,7 +74,7 @@ echo form_open('',$form_attributes);?>
 		    </div>
 		</div> 
 </div>
-	
+-->	
 <div class="margin-top-10"></div>
 
      <div class="col-lg-12 col-sm-12">
@@ -146,10 +166,18 @@ echo form_open('',$form_attributes);?>
     </div>
     </div>
     </div>
+    </div>
 
 	
 
 <?php echo form_close();?>
+ <br/>
+ <div class="row"></div>
+ <br/>
+ <div id="container" style="width:100%; height:300px; " >
+    Graph here
+ </div>
+
 
 <script type="text/javascript">
 
@@ -224,143 +252,103 @@ echo form_open('',$form_attributes);?>
     });
 
 
-	$(document).on( 'change','#v_list', function () {
-		var selected_vaccine=$(this).val();
-        console.log(selected_vaccine);
-		get_ledger(selected_vaccine);
-		});
+	// $(document).on( 'change','#v_list', function () {
+	// 	var selected_vaccine=$(this).val();
+ //        console.log(selected_vaccine);
+	// 	get_ledger(selected_vaccine);
+	// 	});
 
-			function get_ledger(selected_vaccine){
-				var _url="<?php echo base_url();?>stock/store_balance/"+ selected_vaccine;
-				   var request=$.ajax({
-						     url: _url,
-						     type: 'post',
-						    });
-				   request.done(function(data){
-			    	data=JSON.parse(data);
-			    	$(".balance").val("");
-			    	  	$.each(data,function(key,value){
-			    		$(".balance").val(value.balance);
-			    	});
-			    });
-			    request.fail(function(jqXHR, textStatus) {
+	// 		function get_ledger(selected_vaccine){
+	// 			var _url="<?php echo base_url();?>stock/store_balance/"+ selected_vaccine;
+	// 			   var request=$.ajax({
+	// 					     url: _url,
+	// 					     type: 'post',
+	// 					    });
+	// 			   request.done(function(data){
+	// 		    	data=JSON.parse(data);
+	// 		    	$(".balance").val("");
+	// 		    	  	$.each(data,function(key,value){
+	// 		    		$(".balance").val(value.balance);
+	// 		    	});
+	// 		    });
+	// 		    request.fail(function(jqXHR, textStatus) {
 				  
-				});
+	// 			});
 			   
-			}		
+	// 		}		
 
-	$(document).on( 'change','#v_list', function () {
-		var selected_vaccine=$(this).val();	
-        var _url1="<?php echo site_url('stock/ledger_in/')?>/"+ selected_vaccine;
-		var _url2="<?php echo site_url('stock/ledger_out/')?>/"+ selected_vaccine;
-		table1.ajax.url( _url1).load();
-		table2.ajax.url( _url2).load();
-		});	
+	// $(document).on( 'change','#v_list', function () {
+	// 	var selected_vaccine=$(this).val();	
+ //        var _url1="<?php echo site_url('stock/ledger_in/')?>/"+ selected_vaccine;
+	// 	var _url2="<?php echo site_url('stock/ledger_out/')?>/"+ selected_vaccine;
+	// 	table1.ajax.url( _url1).load();
+	// 	table2.ajax.url( _url2).load();
+	// 	});	
 </script>
-	
-<script type="text/javascript">
-	$(document).ready(function() {
 
-    var gaugeOptions = {
+<script type="text/javascript">	
+$(function () {
+            
+    $('#container').highcharts({
 
         chart: {
-            type: 'solidgauge'
+            type: 'column'
         },
 
-        title: null,
-
-        pane: {
-            center: ['50%', '85%'],
-            size: '140%',
-            startAngle: -90,
-            endAngle: 90,
-            background: {
-                backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || '#EEE',
-                innerRadius: '60%',
-                outerRadius: '100%',
-                shape: 'arc'
+        title: {
+            text: 'STOCK BALANCE'
+        },
+         plotOptions: {
+            column: {
+//                stacking: 'normal'
             }
         },
 
-        tooltip: {
-            enabled: false
-        },
-
-        // the value axis
-        yAxis: {
-            stops: [
-                [0.1, '#55BF3B'], // green
-                [0.5, '#DDDF0D'], // yellow
-                [0.9, '#DF5353'] // red
-            ],
-            lineWidth: 0,
-            minorTickInterval: null,
-            tickPixelInterval: 400,
-            tickWidth: 0,
-            title: {
-                y: -70
-            },
-            labels: {
-                y: 16
-            }
-        },
-
-        plotOptions: {
-            solidgauge: {
-                dataLabels: {
-                    y: 5,
-                    borderWidth: 0,
-                    useHTML: true
-                }
-            }
+        xAxis: [{
+            categories:  <?php echo $urls_name_enc; ?>,
+//           text: 'Vaccine'
+            
+        },{
+           linkedTo: 0,
+           categories: <?php echo $urls_batch_enc; ?>,
+           opposite: true
         }
-    };
+],
 
-    // The speed gauge
-    $('#container-speed').highcharts(Highcharts.merge(gaugeOptions, {
-        yAxis: {
+        yAxis: [{
+            allowDecimals: false,
             min: 0,
-            max: 200,
             title: {
-                text: 'Speed'
+                text: 'Number of Stock'
             }
-        },
-
-        credits: {
-            enabled: false
-        },
-
-        series: [{
-            name: 'Speed',
-            data: [80],
-        }]
-
-    }));
-
-    // Bring life to the dials
-    setTimeout(function () {
-        // Speed
-        var chart = $('#container-speed').highcharts(),
-            point,
-            newVal,
-            inc;
-
-        if (chart) {
-            point = chart.series[0].points[0];
-            inc = Math.round((Math.random() - 0.5) * 100);
-            newVal = point.y + inc;
-
-            if (newVal < 0 || newVal > 200) {
-                newVal = point.y - inc;
-            }
-
-            point.update(newVal);
         }
-
-    }, 2000);
-
-
+        ],
+             
+        series: [{
+            name: 'No of Stock',
+    animation: {
+                    duration: 5000
+                },
+                tooltip: {
+                  
+            crosshairs: true,
+            headerFormat: '<b>{point.x}</b>',
+            //pointFormat: '<br /><b>Amount : {point.y}</b><br/>Expiry_Date :'+'mydate'+'\n\''
+            pointFormat: '<br /><b>Amount : {point.y}</b><br/>\n\''
+        },
+                
+            data: <?php echo $urls_stock_enc;?>
+            
+        } ]
+    });
 });
-			
 </script>
 
+<script type="text/javascript">
+
+       window.setTimeout(function() {
+          $("#alert-message").fadeTo(500, 0).slideUp(500, function(){
+              $(this).remove(); 
+          });
+      }, 5000);
+</script> 
