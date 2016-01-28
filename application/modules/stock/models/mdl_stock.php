@@ -34,18 +34,28 @@ class Mdl_Stock extends CI_Model
 	parent::__construct();	
 	}
 
-function getTotalStockBal($selected_vaccine)
-{
-	$this->db->select_sum('stock_balance');  
-	$v = array('vaccine_id' => $selected_vaccine); 
-	//$u = array('user_id' => $user_id);
-    $this->db->where($v);
-    //$this->db->where($u);
-    $query = $this->db->get('m_stock_balance');
-    return $query->result_array();
+	function getTotalStockBal($selected_vaccine){
+		$this->db->distinct();
+		$this->db->select('vaccine_id, Vaccine_name, batch_number, expiry_date ,sum(stock_balance)as stock_balance');
+		$this->db->join('m_vaccines ', ' m_vaccines.ID = m_stock_balance.vaccine_id');
+		$s = array('vaccine_id' => $selected_vaccine);
+		$this->db->where($s);
+		$this->db->group_by('station_id');
+		$query = $this->db->get('m_stock_balance');
+	    return $query->result();
 
-}
+	}
 
+	function count_records($selected_vaccine){
+		$this->db->distinct();
+		$this->db->select('vaccine_id, Vaccine_name, batch_number, expiry_date ,stock_balance');
+		$this->db->join('m_vaccines ', ' m_vaccines.ID = m_stock_balance.vaccine_id');
+		$s = array('vaccine_id' => $selected_vaccine);
+		$this->db->where($s);
+		$query = $this->db->get('m_stock_balance');
+	    return $query->num_rows();
+
+	}
 	function get_transaction_type(){
 		$this->db->select('id,transaction_type');
         $query = $this->db->get('m_transaction_type');
@@ -57,7 +67,7 @@ function getTotalStockBal($selected_vaccine)
 		$u = array('station_id' => $station_id);
         $this->db->where($s);
         $this->db->where($u);
-		$query = $this->db->get('m_stock_movement');
+		$query = $this->db->get('m_stock_balance');
 		return $query->result_array();
 	}
 
@@ -73,7 +83,7 @@ function getTotalStockBal($selected_vaccine)
 
 	function set_physical_count($data,$count){
 		$this->db->where($data);
-        $this->db->update('m_stock_movement', $count);
+        $this->db->update('m_stock_balance', $count);
         if($this->db->affected_rows() > 0)
 		{
 		   echo json_encode(array("status" => TRUE));
@@ -191,6 +201,20 @@ function getTotalStockBal($selected_vaccine)
 			$order = $this->ledger_order_value;
 			$this->db->order_by(key($order), $order[key($order)]);
 		}
+	}
+
+	function get_order_batch($order_id ,$vaccine_id){
+		$this->db->distinct();
+		$this->db->select('m.order_id,o.vaccine_id,ms.batch_number,ms.expiry_date,mvs.name');
+		$this->db->from('m_order m');
+		$this->db->join('order_item o ', 'o.order_id=m.order_id', 'inner');
+		$this->db->join('m_vaccines mv ', 'mv.ID=o.vaccine_id', 'left');
+		$this->db->join('m_stock_balance ms ', ' ms.vaccine_id=mv.ID', 'left');
+		$this->db->join('m_vvm_status mvs ', ' mvs.id=ms.vvm_status', 'left');
+		$array = array('o.vaccine_id' => $vaccine_id, 'm.order_id' => $order_id);
+        $this->db->where($array);
+		$query = $this->db->get();
+		return $query->result();
 	}
 
 	

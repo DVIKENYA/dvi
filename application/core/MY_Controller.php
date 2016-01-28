@@ -176,4 +176,13 @@ class MY_Controller extends MX_Controller
 		return $title;
 	}
 
+	function get_notification_count(){
+		$this->load->model('notifications/mdl_notifications');
+		$user_id = ($this->session->userdata['logged_in']['user_id']);
+		$result=$this->mdl_notifications->getNotificationCount();
+		echo $result;
+
+
+	}
+
 }

@@ -36,7 +36,7 @@ LEFT JOIN m_vaccines mv ON mv.ID= mb.vaccine_id WHERE station_id= '".$station_id
    $urls_date_enc = json_encode($date);
    $urls_stock_enc = json_encode($stock);
 
- 
+ //var_dump($total);
 ?>
 
         <div id="table-container"></div>
@@ -51,30 +51,30 @@ echo form_open('',$form_attributes);?>
   </br>
   </br>
 <div class="col-lg-12">    
-	<div class="table-responsive">
-		<div class="well well-sm"><b>Vaccine Ledger</b></div>
+  <div class="table-responsive">
+    <div class="well well-sm"><b>Vaccine Ledger</b></div>
 
 <!--
 <div class="row">
-	<div class="col-lg-3">
-		  <div class="panel-body">
-		   <b>Vaccine/Diluents</b><br>
-			   <select name="v_list" class="form-control v_list" id="v_list">
-			                 <option value="0">--Select One--</option>
-			                 <?php foreach ($vaccines as $vaccine) { 
-			                     echo "<option value='".$vaccine['ID']."'>".$vaccine['Vaccine_name']."</option>";
-			                     }?>
-			                </select>
-		    </div>
-		</div> 
-	<div class="col-lg-3">
-		<div class="panel-body">
-		   <b>Store Balance</b><br>
-			   <input type="text" class="form-control balance" id="balance" name="balance" readonly="true">
-		    </div>
-		</div> 
+  <div class="col-lg-3">
+      <div class="panel-body">
+       <b>Vaccine/Diluents</b><br>
+         <select name="v_list" class="form-control v_list" id="v_list">
+                       <option value="0">--Select One--</option>
+                       <?php foreach ($vaccines as $vaccine) { 
+                           echo "<option value='".$vaccine['ID']."'>".$vaccine['Vaccine_name']."</option>";
+                           }?>
+                      </select>
+        </div>
+    </div> 
+  <div class="col-lg-3">
+    <div class="panel-body">
+       <b>Store Balance</b><br>
+         <input type="text" class="form-control balance" id="balance" name="balance" readonly="true">
+        </div>
+    </div> 
 </div>
--->	
+--> 
 <div class="margin-top-10"></div>
 
      <div class="col-lg-12 col-sm-12">
@@ -84,6 +84,7 @@ echo form_open('',$form_attributes);?>
 
         <li class="active"><a data-toggle="tab" href="#tab1"><b>Stock In</b></a></li>
         <li><a data-toggle="tab" href="#tab2"><b>Stock Out</b></a></li>
+        <li><a data-toggle="tab" href="#tab3"><b>Physical Count</b></a></li>
         </ul>
         <div class="tab-content">
         <div id="tab1" class="tab-pane fade in active">
@@ -95,14 +96,13 @@ echo form_open('',$form_attributes);?>
                   <tr class="button"></tr>
 
                     <tr>
+                        <th >Transaction <br>Date</th>
                         <th >Vaccine/Diluent</th>
+                        
+                        <th >Amount <br>Received</th>
                         <th >Batch <br>Number</th>
                         <th >Expiry <br>Date</th>
-                        <th >Transaction <br>Date</th>
-                        <th >Origin/Destination</th>
-                        <th >Amount <br>Ordered</th>
-                        <th >Amount <br>Received</th>
-                      
+                        
                     </tr>
                   </thead>
                   <tbody>
@@ -110,13 +110,12 @@ echo form_open('',$form_attributes);?>
 
                   <tfoot>
                     <tr>
+                        <th >Transaction <br>Date</th>
                         <th >Vaccine/Diluent</th>
+                        
+                        <th >Amount <br>Received</th>
                         <th >Batch <br>Number</th>
                         <th >Expiry <br>Date</th>
-                        <th >Transaction <br>Date</th>
-                        <th >Origin/Destination</th>
-                        <th >Amount <br>Ordered</th>
-                        <th >Amount <br>Received</th>
                     </tr>
                   </tfoot>
               </table>
@@ -132,13 +131,48 @@ echo form_open('',$form_attributes);?>
                   <tr class="button"></tr>
 
                     <tr>
+                        <th >Transaction <br>Date</th>
                         <th >Vaccine/Diluent</th>
+                        <th >Origin/Destination</th>
+                        <th >Amount <br>Issued</th>
                         <th >Batch <br>Number</th>
                         <th >Expiry <br>Date</th>
+                        
+                      
+                    </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+
+                  <tfoot>
+                    <tr>
                         <th >Transaction <br>Date</th>
+                        <th >Vaccine/Diluent</th>
                         <th >Origin/Destination</th>
-                        <th >Amount <br>Ordered</th>
                         <th >Amount <br>Issued</th>
+                        <th >Batch <br>Number</th>
+                        <th >Expiry <br>Date</th>
+                        
+                                          </tr>
+          </table>
+         </div>
+
+        </form>
+    </div>
+
+    <div id="tab3" class="tab-pane fade">
+        <form id="">
+        <div class="table-responsive">
+          <table id="table3" class="table table-bordered table-hover table-striped" cellspacing="0" width="100%">
+            <thead>
+                  <tr class="button"></tr>
+
+                    <tr>
+                        <th >Vaccine/Diluent</th>
+                        <th >Batch <br>Number</th>
+                        <th >Expiry <br>Date</th>>
+                        <th >Stock<br>Quantity</th>
+                        
                       
                     </tr>
                   </thead>
@@ -149,11 +183,9 @@ echo form_open('',$form_attributes);?>
                     <tr>
                         <th >Vaccine/Diluent</th>
                         <th >Batch <br>Number</th>
-                        <th >Expiry <br>Date</th>
-                        <th >Transaction <br>Date</th>
-                        <th >Origin/Destination</th>
-                        <th >Amount <br>Ordered</th>
-                        <th >Amount <br>Issued</th>
+                        <th >Expiry <br>Date</th>>
+                        <th >Stock<br>Quantity</th>
+                        
                     </tr>
           </table>
          </div>
@@ -168,181 +200,127 @@ echo form_open('',$form_attributes);?>
     </div>
     </div>
 
-	
+  
 
 <?php echo form_close();?>
  <br/>
  <div class="row"></div>
  <br/>
  <div id="container" style="width:100%; height:300px; " >
-    Graph here
+    
  </div>
 
 
 <script type="text/javascript">
 
- 	$(document).ready(function() {
- 		
-		table1 = $('#table1').DataTable({ 
-		"processing": true, //Feature control the processing indicator.
-		"serverSide": true, //Feature control DataTables' server-side processing mode.
+  $(document).ready(function() {
+    
+    table1 = $('#table1').DataTable({ 
+    "processing": true, //Feature control the processing indicator.
+    "serverSide": true, //Feature control DataTables' server-side processing mode.
 
-		// Load data for the table's content from an Ajax source
-		"ajax": {
-		    "url": "<?php echo site_url('stock/ledger_in/')."/".$id?>",
-		    "type": "POST"
-		},
-		"dom": 'Bfrtip',
+    // Load data for the table's content from an Ajax source
+    "ajax": {
+        "url": "<?php echo site_url('stock/ledger_in/')."/".$id?>",
+        "type": "POST"
+    },
+    "dom": 'Bfrtip',
         "buttons": [
             'excelHtml5',
             'csvHtml5',
             'pdfHtml5',
-			],	
-		"responsive": {
-		    "details": {
-		        "type": 'column'
-		    }
-		},
-		//Set column definition initialisation properties.
-		"columnDefs": [
-		{ 
-		  "targets": [ -1 ], //last column
-		  "orderable": false, //set not orderable
-		},
-		],
+      ],  
+    "responsive": {
+        "details": {
+            "type": 'column'
+        }
+    },
+    //Set column definition initialisation properties.
+    "columnDefs": [
+    { 
+      "targets": [ -1 ], //last column
+      "orderable": false, //set not orderable
+    },
+    ],
 
-		});
+    });
 
-		
+    
     });
 
     $(document).ready(function() {
- 		
-		table2 = $('#table2').DataTable({ 
-		"processing": true, //Feature control the processing indicator.
-		"serverSide": true, //Feature control DataTables' server-side processing mode.
+    
+    table2 = $('#table2').DataTable({ 
+    "processing": true, //Feature control the processing indicator.
+    "serverSide": true, //Feature control DataTables' server-side processing mode.
 
-		// Load data for the table's content from an Ajax source
-		"ajax": {
-		    "url": "<?php echo site_url('stock/ledger_out/')."/".$id?>",
-		    "type": "POST"
-		},
-		"dom": 'Bfrtip',
+    // Load data for the table's content from an Ajax source
+    "ajax": {
+        "url": "<?php echo site_url('stock/ledger_out/')."/".$id?>",
+        "type": "POST"
+    },
+    "dom": 'Bfrtip',
         "buttons": [
             'excelHtml5',
             'csvHtml5',
             'pdfHtml5',
-			],	
-		"responsive": {
-		    "details": {
-		        "type": 'column'
-		    }
-		},
-		//Set column definition initialisation properties.
-		"columnDefs": [
-		{ 
-		  "targets": [ -1 ], //last column
-		  "orderable": false, //set not orderable
-		},
-		],
+      ],  
+    "responsive": {
+        "details": {
+            "type": 'column'
+        }
+    },
+    //Set column definition initialisation properties.
+    "columnDefs": [
+    { 
+      "targets": [ -1 ], //last column
+      "orderable": false, //set not orderable
+    },
+    ],
 
-		});
+    });
 
-		
+    
     });
 
 
-	// $(document).on( 'change','#v_list', function () {
-	// 	var selected_vaccine=$(this).val();
- //        console.log(selected_vaccine);
-	// 	get_ledger(selected_vaccine);
-	// 	});
+  $(document).ready(function() {
+    
+    table3 = $('#table3').DataTable({ 
+    "processing": true, //Feature control the processing indicator.
+    "serverSide": true, //Feature control DataTables' server-side processing mode.
 
-	// 		function get_ledger(selected_vaccine){
-	// 			var _url="<?php echo base_url();?>stock/store_balance/"+ selected_vaccine;
-	// 			   var request=$.ajax({
-	// 					     url: _url,
-	// 					     type: 'post',
-	// 					    });
-	// 			   request.done(function(data){
-	// 		    	data=JSON.parse(data);
-	// 		    	$(".balance").val("");
-	// 		    	  	$.each(data,function(key,value){
-	// 		    		$(".balance").val(value.balance);
-	// 		    	});
-	// 		    });
-	// 		    request.fail(function(jqXHR, textStatus) {
-				  
-	// 			});
-			   
-	// 		}		
-
-	// $(document).on( 'change','#v_list', function () {
-	// 	var selected_vaccine=$(this).val();	
- //        var _url1="<?php echo site_url('stock/ledger_in/')?>/"+ selected_vaccine;
-	// 	var _url2="<?php echo site_url('stock/ledger_out/')?>/"+ selected_vaccine;
-	// 	table1.ajax.url( _url1).load();
-	// 	table2.ajax.url( _url2).load();
-	// 	});	
-</script>
-
-<script type="text/javascript">	
-$(function () {
-            
-    $('#container').highcharts({
-
-        chart: {
-            type: 'column'
-        },
-
-        title: {
-            text: 'STOCK BALANCE'
-        },
-         plotOptions: {
-            column: {
-//                stacking: 'normal'
-            }
-        },
-
-        xAxis: [{
-            categories:  <?php echo $urls_name_enc; ?>,
-//           text: 'Vaccine'
-            
-        },{
-           linkedTo: 0,
-           categories: <?php echo $urls_batch_enc; ?>,
-           opposite: true
+    // Load data for the table's content from an Ajax source
+    "ajax": {
+        "url": "<?php echo site_url('stock/vaccine_count/')."/".$id?>",
+        "type": "POST"
+    },
+    "dom": 'Bfrtip',
+        "buttons": [
+            'excelHtml5',
+            'csvHtml5',
+            'pdfHtml5',
+      ],  
+    "responsive": {
+        "details": {
+            "type": 'column'
         }
-],
+    },
+    //Set column definition initialisation properties.
+    "columnDefs": [
+    { 
+      "targets": [ -1 ], //last column
+      "orderable": false, //set not orderable
+    },
+    ],
 
-        yAxis: [{
-            allowDecimals: false,
-            min: 0,
-            title: {
-                text: 'Number of Stock'
-            }
-        }
-        ],
-             
-        series: [{
-            name: 'No of Stock',
-    animation: {
-                    duration: 5000
-                },
-                tooltip: {
-                  
-            crosshairs: true,
-            headerFormat: '<b>{point.x}</b>',
-            //pointFormat: '<br /><b>Amount : {point.y}</b><br/>Expiry_Date :'+'mydate'+'\n\''
-            pointFormat: '<br /><b>Amount : {point.y}</b><br/>\n\''
-        },
-                
-            data: <?php echo $urls_stock_enc;?>
-            
-        } ]
     });
-});
+
+    
+    });
 </script>
+
+
 
 <script type="text/javascript">
 

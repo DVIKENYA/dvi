@@ -56,6 +56,7 @@ public function list_orders(){
   $station= $data2['user_object2']['user_level'];
   $station_id=$data3['user_object3']['user_statiton'];
   $data['orders']= $this->mdl_order->get_placed_orders($station,$station_id);
+  $data['all_orders']= $this->mdl_order->get_all_placed_orders($station,$station_id);
   $data['submitted_orders']= $this->mdl_order->get_submitted_orders($station,$station_id);
   $data['section'] = "Vaccines";
   $data['subtitle'] = "Orders";
@@ -80,7 +81,7 @@ public function view_orders($order_by,$date_created,$option,$order_id){
   $data['section'] = "Stock";
   $data['subtitle'] = "View Orders";
   $data['page_title'] = " Orders";
-  $data['orderitems']= $this->mdl_order->get_orderitems($order_by,$date_created);
+  $data['orderitems']= $this->mdl_order->get_orderitems($order_id,$order_by,$date_created);
   $data['option']=$option;
   $data['order_id']=$order_id;
   $data['module'] = "order";

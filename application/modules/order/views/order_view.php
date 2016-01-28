@@ -29,7 +29,8 @@ echo form_open('',$form_attributes);?>
         </tr>
       </thead>
           <tbody>
-   <?php foreach ($orderitems as $orderitems) { 
+   <?php 
+      foreach ($orderitems as $orderitems) { 
      $stock_on_hand=$orderitems['stock_on_hand'];
      $min_stock=$orderitems['min_stock'];
      $max_stock=$orderitems['max_stock'];

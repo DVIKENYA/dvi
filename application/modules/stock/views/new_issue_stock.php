@@ -48,7 +48,7 @@ echo form_open('stock/new_save_issued_stock',$form_attributes);?>
 
 
 	 
-	<table class="table table-bordered table-hover table-striped">
+	<table class="table table-bordered table-hover table-striped" id="rows">
 		<thead>
 
 			                <th style="width:9%;" class="small">Vaccine/Diluents</th>
@@ -62,19 +62,24 @@ echo form_open('stock/new_save_issued_stock',$form_attributes);?>
 		</thead>
 <tbody>
 		<?php foreach ($issues as $vaccine) {?>
-				<tr align="center" issue_row="<?php echo $vaccine['vaccine_id'] ?>">
+				<tr align="center" issue_row="<?php echo $vaccine['vaccine_id'] ?>" id="issue_row<?php echo $vaccine['vaccine_id'] ?>">
 					<td><?php echo $vaccine['Vaccine_name']?></td>
-					<?php echo form_hidden('vaccine[]',$vaccine['vaccine_id']);?>
+					<input type="hidden" value="<?php echo $vaccine['vaccine_id']?>" name="vaccine[]" id="vaccine">
 					<style type="text/css">
 					input[id="available_quantity"]{
 						background-color: #E0F2F7 !important
 					}</style>
-					<td><?php $data=array('name' => 'batch_no[]','id'=> 'batch_no'.$vaccine['vaccine_id'],'class'=>'form-control batch_no','readonly'=>'','value'=>$vaccine['batch_number']); echo form_input($data);?></td>
-					<td><?php $data=array('name' => 'expiry_date[]','id'=> 'expiry_date'.$vaccine['vaccine_id'],'class'=>'form-control expiry_date','readonly'=>'','value'=>$vaccine['expiry_date']); echo form_input($data);?></td>
-					<td><?php $data=array('name' => 'amt_ordered[]','id'=> 'amt_ordered','class'=>'form-control amt_ordered','value'=>$vaccine['qty_order_doses']); echo form_input($data);?></td>
+					<td>
+						<select name="batch_no[]" class="form-control batch_no" id="batch_no">
+						         <option value="">--Select One--</option>
+						         
+						</select>
+				    </td>
+					<td><?php $data=array('name' => 'expiry_date[]','id'=> 'expiry_date'.$vaccine['vaccine_id'],'class'=>'form-control expiry_date','readonly'=>'','value'=>''); echo form_input($data);?></td>
+					<td><?php $data=array('name' => 'amt_ordered[]','id'=> 'amt_ordered'.$vaccine['vaccine_id'],'class'=>'form-control amt_ordered','value'=>$vaccine['qty_order_doses']); echo form_input($data);?></td>
 					<td><?php $data=array('name' => 'available_quantity[]','id'=> 'available_quantity'.$vaccine['vaccine_id'],'class'=>'form-control available_quantity','value'=>$vaccine['stock_balance'],'readonly'=>''); echo form_input($data);?></td>
 					<td><?php $data=array('name' => 'amt_issued[]','id'=> 'amt_issued'.$vaccine['vaccine_id'],'class'=>'form-control amt_issued','value'=>$vaccine['qty_order_doses']); echo form_input($data);?></td>
-					<td><?php $data=array('name' => 'vvm_status[]','id'=> 'vvm_status'.$vaccine['vaccine_id'],'class'=>'form-control  vvm_s','value'=>$vaccine['name']); echo form_input($data);?></td>
+					<td><?php $data=array('name' => 'vvm_status[]','id'=> 'vvm_status'.$vaccine['vaccine_id'],'class'=>'form-control  vvm_s','value'=>''); echo form_input($data);?></td>
 					<td><textarea name="comment[]" id="comment"></textarea></td>
 	
 
@@ -96,4 +101,55 @@ echo form_open('stock/new_save_issued_stock',$form_attributes);?>
 <script type="text/javascript">
 
  	$('#datepicker').datepicker({dateFormat: "yy-mm-dd",  maxDate: 0}).datepicker('setDate', null);
+
+ 	$(document).on('ready',function () {
+    var issue_row=$('#issue_row');
+    var rows = document.getElementById("rows").rows.length;
+    var vaccine_rows = rows--;
+    var TableData = new Array();
+    $('#rows tr').each(function(row, tr){
+        TableData[row]={
+            "selected_batch" : $(tr).find('#vaccine').val()
+            }    
+    }); 
+    console.log(TableData);
+    
+               
+    batch_details(TableData);
+    });
+
+    function batch_details(TableData){
+      var _url="<?php echo base_url();?>stock/get_order_batch/";
+            
+        var request=$.ajax({
+               url: _url,
+               type: 'post',
+               data: {"selected_batch":TableData, "order_id":<?php echo $order_infor[0]['order_id'];?>},
+
+          });
+          request.done(function(data){
+            data=JSON.parse(data);
+            console.log(data);
+            var row=$('#issue_row<?php echo $vaccine['vaccine_id'] ?>');
+            row.closest("tr").find(".expiry_date").val("");
+            $.each(data,function(data){
+            	 console.log(data);
+            	$.each(data,function(key,value){
+	            	console.log(value.vaccine_id);
+	           		row.closest("tr").find(".batch_no").append("<option value='"+value.batch_no+"'>"+value.batch_no+"</option> ");
+	            	$(document).on( 'change','.batch_no', function () {
+	        		row.closest("tr").find(".expiry_date ").val("");
+			    	row.closest("tr").find(".vvm_s").val("");
+					row.closest("tr").find(".expiry_date").val(value.expiry_date);
+	           		row.closest("tr").find(".vvm_s").val(value.vvm_status);
+					});	
+            	});	
+            	
+                          
+            });
+          });
+          request.fail(function(jqXHR, textStatus) {
+          
+        });
+    }
 </script>

@@ -19,11 +19,13 @@
 <!--
   <script type="text/javascript" src="http://code.jquery.com/jquery.js"></script>
   <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
-  <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script> -->
+  <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script> 
+  <script src="<?php //echo base_url();?>assets/js/notifications.js"></script>-->
   <script src="<?php echo base_url();?>assets/js/bootbox.min.js"></script>
   
   <script src="<?php echo base_url() ?>assets/js/jquery-2.1.0.js"></script>
   <script src="<?php echo base_url();?>assets/js/jquery-ui.min.js"></script>
+  
   <!--<script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>-->
 
  
@@ -51,7 +53,7 @@
             <div class="top_right_menu">
              
               <ul>              
-                <li class="dropdown"> <a href="javascript:void(0);" data-toggle="dropdown"> notification <span class="badge badge color_2">2</span> </a>
+                <li class="dropdown"> <a href="javascript:void(0);" data-toggle="dropdown"> notification <span id="notification_count" class="badge badge color_2"></span> </a>
                   <div class="notification_drop_down dropdown-menu">
                     <div class="top_pointer"></div>
                     <div class="box"> <a href="#"> <span class="block primery_6"> <i class="fa fa-envelope-o"></i> </span> <span class="block_text">Alerts</span> </a> </div>
