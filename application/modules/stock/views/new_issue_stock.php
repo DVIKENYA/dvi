@@ -103,9 +103,6 @@ echo form_open('stock/new_save_issued_stock',$form_attributes);?>
  	$('#datepicker').datepicker({dateFormat: "yy-mm-dd",  maxDate: 0}).datepicker('setDate', null);
 
  	$(document).on('ready',function () {
-    var issue_row=$('#issue_row');
-    var rows = document.getElementById("rows").rows.length;
-    var vaccine_rows = rows--;
     var TableData = new Array();
     $('#rows tr').each(function(row, tr){
         TableData[row]={
@@ -129,23 +126,20 @@ echo form_open('stock/new_save_issued_stock',$form_attributes);?>
           });
           request.done(function(data){
             data=JSON.parse(data);
-            console.log(data);
+           
             var row=$('#issue_row<?php echo $vaccine['vaccine_id'] ?>');
-            row.closest("tr").find(".expiry_date").val("");
-            $.each(data,function(data){
-            	 console.log(data);
-            	$.each(data,function(key,value){
-	            	console.log(value.vaccine_id);
-	           		row.closest("tr").find(".batch_no").append("<option value='"+value.batch_no+"'>"+value.batch_no+"</option> ");
+         
+            $.each(data.issue_row<?php echo $vaccine['vaccine_id'] ?>,function(key,value){
+         
+            	row.closest("tr").find(".batch_no").append("<option value='"+value.batch_no+"'>"+value.batch_no+"</option> ");
+	            	
 	            	$(document).on( 'change','.batch_no', function () {
-	        		row.closest("tr").find(".expiry_date ").val("");
-			    	row.closest("tr").find(".vvm_s").val("");
-					row.closest("tr").find(".expiry_date").val(value.expiry_date);
-	           		row.closest("tr").find(".vvm_s").val(value.vvm_status);
-					});	
-            	});	
-            	
-                          
+		        		row.closest("tr").find(".expiry_date ").val("");
+						row.closest("tr").find(".vvm_s").val("");
+						row.closest("tr").find(".expiry_date").val(value.expiry_date);
+		           		row.closest("tr").find(".vvm_s").val(value.vvm_status);
+					});
+                
             });
           });
           request.fail(function(jqXHR, textStatus) {

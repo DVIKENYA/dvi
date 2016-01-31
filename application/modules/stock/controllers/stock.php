@@ -28,7 +28,7 @@ class Stock extends MY_Controller
 
 
     function receive_stock(){
-    
+    Modules::run('secure_tings/is_logged_in');
       $this->load->model('vaccines/mdl_vaccines');
       $data['vaccines']= $this->mdl_vaccines->getVaccine();
       $this->load->model('stock/mdl_vvmstatus');
@@ -59,6 +59,7 @@ class Stock extends MY_Controller
     }
 
     function save_received_stock(){
+      Modules::run('secure_tings/is_logged_in');
   $data2['user_object2'] = $this->get_user_object();
   $data3['user_object3'] = $this->get_user_object();
   $data4['user_object4'] = $this->get_user_object();
@@ -87,7 +88,7 @@ class Stock extends MY_Controller
     }
 
     function issue_stock(){
-
+          Modules::run('secure_tings/is_logged_in');
           $this->load->model('vaccines/mdl_vaccines');
           $this->load->model('stock/mdl_stock');
           $data['vaccines']= $this->mdl_vaccines->getVaccine();
@@ -130,6 +131,7 @@ class Stock extends MY_Controller
          
     }
     function save_issued_stock(){
+          Modules::run('secure_tings/is_logged_in');
           $data2['user_object2'] = $this->get_user_object();
           $data3['user_object3'] = $this->get_user_object();
           $data4['user_object4'] = $this->get_user_object();
@@ -158,6 +160,7 @@ class Stock extends MY_Controller
     }
 
     function list_inventory(){
+          Modules::run('secure_tings/is_logged_in');
           $this->load->model('vaccines/mdl_vaccines');
           $data['vaccines']= $this->mdl_vaccines->get_vaccine_details();
           $data['module'] = "stock";
@@ -174,7 +177,7 @@ class Stock extends MY_Controller
     function get_vaccine_ledger($selected_vaccine){
   // This function gets the ledger of the selected vaccine
       /*alert ($selected_vaccine); */
-      
+          Modules::run('secure_tings/is_logged_in');
           $id= $this->uri->segment(3);
           $data['id'] = $id;
           $this->load->model('stock/mdl_stock');
@@ -233,7 +236,7 @@ class Stock extends MY_Controller
     }  
 
     function ledger_in(){
-      
+      Modules::run('secure_tings/is_logged_in');
       $id= $this->uri->segment(3);
       $this->load->model('stock/mdl_stock');
       $data['user_object'] = $this->get_user_object();
@@ -267,7 +270,7 @@ class Stock extends MY_Controller
     }
 
     function ledger_out(){
-      
+      Modules::run('secure_tings/is_logged_in');
       $id= $this->uri->segment(3);
       $this->load->model('stock/mdl_stock');
       $data['user_object'] = $this->get_user_object();
@@ -323,6 +326,7 @@ class Stock extends MY_Controller
     }
 
     function get_batches(){
+      Modules::run('secure_tings/is_logged_in');
       $data['user_object'] = $this->get_user_object();
       $station_id=$data['user_object']['user_statiton'];
       $selected_vaccine=$this->input->post('selected_vaccine');
@@ -371,6 +375,7 @@ class Stock extends MY_Controller
     }
 
     function physical_count(){
+        Modules::run('secure_tings/is_logged_in');
         $this->load->model('vaccines/mdl_vaccines');
         $data['vaccines']= $this->mdl_vaccines->getVaccine();
         $data['module'] = "stock";
@@ -384,6 +389,7 @@ class Stock extends MY_Controller
     }
 
     function save_physical_count(){
+      Modules::run('secure_tings/is_logged_in');
       $data['user_object'] = $this->get_user_object();
       $station_name=$data['user_object']['user_statiton'];
       $data = array( 
@@ -399,12 +405,12 @@ class Stock extends MY_Controller
     }
 
     function issue_stocks($order_id){
-      Modules::run('secure_tings/is_logged_in');
+
+      //Modules::run('secure_tings/is_logged_in');
       $order_id= $this->uri->segment(3);
       $data['order_id']= $order_id;
       $data2['user_object2'] = $this->get_user_object();
       $station_name=$data2['user_object2']['user_statiton'];
-
       $this->load->model('vaccines/mdl_vaccines');
       $data['vaccines']= $this->mdl_vaccines->getVaccine();
       $this->load->model('mdl_stock');
@@ -422,7 +428,7 @@ class Stock extends MY_Controller
     }
 
     function new_save_issued_stock(){
-      Modules::run('secure_tings/is_logged_in');
+      //Modules::run('secure_tings/is_logged_in');
       //Issue Stock Information
        $data2['user_object2'] = $this->get_user_object();
        $data3['user_object3'] = $this->get_user_object();
@@ -503,6 +509,7 @@ class Stock extends MY_Controller
 
     }
     function receive_stocks($order_id){
+      Modules::run('secure_tings/is_logged_in');
       $this->load->model('vaccines/mdl_vaccines');
       $data['vaccines']= $this->mdl_vaccines->getVaccine();
       $this->load->model('stock/mdl_vvmstatus');
@@ -520,28 +527,31 @@ class Stock extends MY_Controller
     }
 
     function get_order_batch(){
+      //Modules::run('secure_tings/is_logged_in');
       $this->load->model('mdl_stock');
       $order_id=$this->input->post('order_id');
       $selected_batch=$this->input->post('selected_batch');
+      
       $data_array=array();
       foreach ($selected_batch as $item) {
         $query = $this->mdl_stock->get_order_batch($order_id,$item['selected_batch']);
-        $json_array=array();
+       
         foreach ($query as $row) {
+          //var_dump($query);
           $data['vaccine_id'] = $row->vaccine_id;
           $data['batch_no'] = $row->batch_number;
           $data['expiry_date'] = $row->expiry_date;
           $data['vvm_status'] = $row->name;
-          $json_array[] = $data;
+          $data_array['issue_row'.$row->vaccine_id][] = $data;
 
           }
-        $data_array[] = $json_array;
-            
+                    
        }
        echo json_encode($data_array);
     }
 
     function new_save_received_stock(){
+      Modules::run('secure_tings/is_logged_in');
       //Receive Stock Information
        $data2['user_object2'] = $this->get_user_object();
                 
@@ -615,6 +625,7 @@ class Stock extends MY_Controller
     }
 
     function test(){
+        Modules::run('secure_tings/is_logged_in');
 
         $data2['user_object2'] = $this->get_user_object();
                 

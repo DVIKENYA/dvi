@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jan 22, 2016 at 08:11 PM
+-- Generation Time: Jan 31, 2016 at 02:19 PM
 -- Server version: 5.5.46-0+deb8u1
 -- PHP Version: 5.6.14-0+deb8u1
 
@@ -82,30 +82,28 @@ BEGIN
 SELECT Vaccine_name,ID FROM m_vaccines;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `GetStoreBalance`(IN `$selected_vaccine` VARCHAR(255), IN `$user_id` VARCHAR(10))
-BEGIN
-SELECT mv.Vaccine_name,SUM(sb.stock_balance) AS balance
-FROM m_stock_movement ms 
-INNER JOIN m_stock_balance sb ON sb.batch_number=ms.batch_number 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_placed_orders`(IN `$station` INT, IN `$station_id` INT)
+begin
+if ($station= '1') then
+SELECT DISTINCT(date_created),station_id,order_by,order_id,status_name FROM m_order m WHERE station_level= 2 ;
 
-LEFT JOIN m_vvm_status mvvm ON mvvm.id=ms.VVM_status 
-LEFT JOIN m_vaccines mv ON mv.ID=ms.vaccine_id 
-WHERE ms.vaccine_id= $selected_vaccine AND ms.user_id= $user_id
-ORDER BY ms.batch_number,ms.transaction_type;
+ELSE if($station= '2' )THEN
+SELECT DISTINCT(date_created),station_id,order_by,order_id,status_name FROM view_county_orders fv WHERE fv.region_name= $station_id ;
 
-END$$
+ELSE if($station= '3' )THEN
+SELECT DISTINCT(date_created),station_id,order_by,order_id,status_name FROM view_subcounty_orders fv WHERE fv.county_name= $station_id ;
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `GetVaccinesLedger`(IN `$selected_vaccine` VARCHAR(255))
-BEGIN
-SELECT mv.Vaccine_name, ms.transaction_date, ms.quantity_in,ms.quantity_out,sb.stock_balance, ms.batch_number,ms.expiry_date,mvvm.name 
-FROM m_stock_movement ms 
-INNER JOIN m_stock_balance sb ON sb.batch_number=ms.batch_number 
+ELSE if($station= '4' )THEN
+SELECT DISTINCT(date_created),station_id,order_by,order_id,status_name FROM view_facility_orders fv WHERE fv.subcounty_name= $station_id ;
 
-LEFT JOIN m_vvm_status mvvm ON mvvm.id=ms.VVM_status 
-LEFT JOIN m_vaccines mv ON mv.ID=ms.vaccine_id 
-WHERE ms.vaccine_id= $selected_vaccine
-ORDER BY ms.batch_number,ms.transaction_type;
+ELSE if($station= '5' )THEN
+SELECT DISTINCT(date_created),station_id,order_by,order_id,status_name FROM view_facility_orders fv WHERE fv.facility_name= $station_id ;
 
+END IF;
+END IF;
+END IF;
+END IF;
+END IF;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_orders`(
@@ -146,17 +144,15 @@ FROM m_order m
 WHERE m.order_id=$order_id;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_order_to_issue`(
-IN $order_id varchar(255),
-IN $station_id varchar(255))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_order_to_issue`(IN `$order_id` VARCHAR(255), IN `$station_name` VARCHAR(255))
 BEGIN
 SELECT m.order_id,m.order_by,m.station_id,o.vaccine_id,mv.Vaccine_name,ms.batch_number,ms.expiry_date,ms.stock_balance,o.qty_order_doses,mvm.name
 FROM m_order m
-LEFT JOIN order_item o ON o.order_id=m.order_id
-LEFT JOIN m_vaccines mv ON mv.ID=o.vaccine_id
-LEFT JOIN m_stock_balance ms on ms.vaccine_id=mv.ID
+INNER JOIN order_item o ON o.order_id=m.order_id
+INNER JOIN m_vaccines mv ON mv.ID=o.vaccine_id
+INNER JOIN m_stock_balance ms on ms.vaccine_id=mv.ID
 LEFT JOIN m_vvm_status mvm on mvm.id=ms.vvm_status
-WHERE m.order_id=$order_id AND ms.station_id=$station_id  ;
+WHERE m.order_id=$order_id AND ms.station_id=$station_name  ;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_order_to_receive`(
@@ -182,10 +178,7 @@ SELECT sum(msb.`stock_balance`) AS stock_balance,
        WHERE msb.vaccine_id=$selected_vaccine;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_placed_orders`(
-IN $station VARCHAR(255),
-IN $station_id VARCHAR(255)
-)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_placed_orders`(IN `$station` INT, IN `$station_id` INT)
 begin
 if ($station= '1') then
 SELECT DISTINCT(date_created),station_id,order_by,order_id,status_name FROM m_order m WHERE station_level= 2 AND status_name ="pending";
@@ -210,7 +203,6 @@ END IF;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_prepare_order_values`(
-IN $station VARCHAR(255),
 IN $selected_vaccine VARCHAR(255),
 IN $station_id VARCHAR(255)
 )
@@ -272,33 +264,6 @@ END IF;
 END IF;
 END IF;
 END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `julie`(input_number INT, out output_number float)
-BEGIN
-
-Set output_number = sqrt(input_number);
-
-END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `proc_add_inventory_1`(IN `equipment` INT(14), IN `etype` INT(14), INOUT `part_type` VARCHAR(50), INOUT `brand` VARCHAR(50), INOUT `model` VARCHAR(50), INOUT `serial` VARCHAR(50), INOUT `catalogue` VARCHAR(50), INOUT `unit_price` DECIMAL(16,2), INOUT `date_purchased` DATE, INOUT `quantity` INT(14), INOUT `decomisioned` BOOLEAN, INOUT `date_added` TIMESTAMP, INOUT `location` INT(14), INOUT `added_by` VARCHAR(50), OUT `equipment_o` VARCHAR(50), OUT `etype_o` INT, OUT `year_o` INT, OUT `catalogue_o` INT)
-    NO SQL
-BEGIN
-	SELECT "hello";
-END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `setphysicalcount`(
-IN p_vaccine_id  INT(11) ,
-IN p_batch_number VARCHAR(20) ,
-IN p_date_of_count DATE,
-IN p_available_quantity INT,
-IN p_physical_count INT,
-IN p_discrepancy INT
-)
-BEGIN
- SET p_discrepancy = p_available_quantity - p_physical_count;
-	INSERT INTO m_physical_count(vaccine_id,batch_number, date_of_count,available_quantity,physical_count,discrepancy)
-               VALUES(p_vaccine_id,p_batch_number,p_date_of_count,p_available_quantity,p_physical_count,p_discrepancy);
-               END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `test_orders`(
 IN $station_id VARCHAR(255),
@@ -449,7 +414,7 @@ CREATE TABLE IF NOT EXISTS `ci_sessions` (
 --
 
 INSERT INTO `ci_sessions` (`session_id`, `ip_address`, `user_agent`, `last_activity`, `user_data`) VALUES
-('7f41cb05ec9a8e5083e17d01eee85a78', '::1', 'Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101 Firefox/38.0 Iceweasel/38.5.0', 1451986473, 'a:2:{s:9:"user_data";s:0:"";s:9:"logged_in";a:6:{s:7:"user_id";s:2:"13";s:10:"user_fname";s:4:"Rift";s:10:"user_lname";s:6:"Valley";s:10:"user_group";s:1:"3";s:10:"user_level";s:1:"2";s:9:"logged_in";b:1;}}');
+('a56036d11eb3613e29551f2da1ee1d0e', '::1', 'Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101 Firefox/38.0 Iceweasel/38.5.0', 1454238955, 'a:2:{s:9:"user_data";s:0:"";s:9:"logged_in";a:6:{s:7:"user_id";s:2:"13";s:10:"user_fname";s:4:"Rift";s:10:"user_lname";s:6:"Valley";s:10:"user_group";s:1:"3";s:10:"user_level";s:1:"2";s:9:"logged_in";b:1;}}');
 
 -- --------------------------------------------------------
 
@@ -14214,7 +14179,7 @@ CREATE TABLE IF NOT EXISTS `m_order` (
   `order_destination` varchar(10) NOT NULL,
   `status` int(11) NOT NULL DEFAULT '1',
   `status_name` varchar(25) NOT NULL DEFAULT 'pending'
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_order`
@@ -14226,7 +14191,9 @@ INSERT INTO `m_order` (`order_id`, `order_by`, `date_created`, `station_level`, 
 (4, '13', '2015-12-16', 2, 'Rift Valley', '', 1, 'received'),
 (5, '13', '2015-12-16', 2, 'Rift Valley', '', 1, 'received'),
 (6, '13', '2015-12-17', 2, 'Rift Valley', '', 1, 'pending'),
-(7, '13', '2015-12-17', 2, 'Rift Valley', 'KENYA', 1, 'pending');
+(7, '13', '2015-12-17', 2, 'Rift Valley', 'KENYA', 1, 'pending'),
+(8, '14', '2016-01-30', 3, 'Baringo County', '0', 1, 'pending'),
+(9, '', '2016-01-30', 2, 'Rift Valley', '', 1, 'received');
 
 -- --------------------------------------------------------
 
@@ -14277,7 +14244,7 @@ CREATE TABLE IF NOT EXISTS `m_receive_stock` (
   `received_by_user` varchar(25) NOT NULL,
   `station_level` varchar(25) NOT NULL,
   `station_id` varchar(25) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_receive_stock`
@@ -14286,7 +14253,8 @@ CREATE TABLE IF NOT EXISTS `m_receive_stock` (
 INSERT INTO `m_receive_stock` (`receive_id`, `issue_id`, `order_id`, `S11`, `date_received`, `date_recorded`, `received_by_user`, `station_level`, `station_id`) VALUES
 (1, 3, 2, '987654321', '2015-12-16', '2015-12-15', '13', '2', 'Rift Valley'),
 (2, 4, 4, '987654322', '2015-12-16', '2015-12-16', '13', '2', 'Rift Valley'),
-(3, 5, 5, '', '0000-00-00', '2015-12-16', '13', '2', 'Rift Valley');
+(3, 5, 5, '', '0000-00-00', '2015-12-16', '13', '2', 'Rift Valley'),
+(4, 0, 9, 'SH4', '2016-01-30', '2016-01-30', '13', '2', 'Rift Valley');
 
 --
 -- Triggers `m_receive_stock`
@@ -14328,7 +14296,8 @@ INSERT INTO `m_receive_stock_item` (`vaccine_id`, `batch_no`, `expiry_date`, `vv
 ('11', '12356', '2017-09-08', '1', 100000, 100000, 0, '', 1),
 ('11', '12356', '2017-09-08', '1', 100000, 100000, 0, '', 2),
 ('11', '12356', '2017-09-08', '', 100000, 100000, 0, '', 3),
-('11', '1111', '2015-12-16', '', 100000, 100000, 0, '', 3);
+('11', '1111', '2015-12-16', '', 100000, 100000, 0, '', 3),
+('12', 'B01', '2016-01-30', '1', 0, 5000000, 0, '', 4);
 
 --
 -- Triggers `m_receive_stock_item`
@@ -14413,7 +14382,7 @@ CREATE TABLE IF NOT EXISTS `m_stock_balance` (
   `station_level` int(10) NOT NULL,
   `station_id` varchar(30) NOT NULL,
   `order_id` int(11) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_stock_balance`
@@ -14421,17 +14390,10 @@ CREATE TABLE IF NOT EXISTS `m_stock_balance` (
 
 INSERT INTO `m_stock_balance` (`id`, `vaccine_id`, `batch_number`, `expiry_date`, `stock_balance`, `last_update`, `vvm_status`, `user_id`, `station_level`, `station_id`, `order_id`) VALUES
 (1, 11, '12356', '2017-09-08', 700000, '2015-12-16', '1', '2', 1, 'KENYA', 0),
-(2, 11, '12356', '2017-09-08', 100000, '2015-12-15', '1', '13', 2, 'Rift Valley', 2),
-(3, 11, '12356', '2017-09-08', 100000, '2015-12-15', '1', '13', 2, 'Rift Valley', 2),
-(4, 11, '12356', '2017-09-08', 100000, '2015-12-16', '1', '13', 2, 'Rift Valley', 4),
 (6, 11, '1111', '2015-12-16', 900000, '2015-12-16', '0', '2', 1, 'KENYA', 0),
-(7, 11, '12356', '2017-09-08', 100000, '2015-12-15', '', '13', 2, 'Rift Valley', 2),
-(8, 11, '12356', '2017-09-08', 100000, '2015-12-16', '', '13', 2, 'Rift Valley', 4),
 (9, 11, '12356', '2017-09-08', 100000, '2015-12-16', '', '13', 2, 'Rift Valley', 5),
 (10, 11, '1111', '2015-12-16', 100000, '2015-12-15', '', '13', 2, 'Rift Valley', 2),
-(11, 11, '1111', '2015-12-16', 100000, '2015-12-16', '', '13', 2, 'Rift Valley', 4),
-(12, 11, '1111', '2015-12-16', 100000, '2015-12-16', '', '13', 2, 'Rift Valley', 5),
-(13, 11, '1111', '2015-12-16', 100000, '2015-12-16', '', '13', 2, 'Rift Valley', 5);
+(18, 12, 'B01', '2016-01-30', 5000000, '2016-01-30', '1', '13', 2, 'Rift Valley', 9);
 
 -- --------------------------------------------------------
 
@@ -15073,7 +15035,11 @@ INSERT INTO `order_item` (`vaccine_id`, `stock_on_hand`, `min_stock`, `max_stock
 (11, 1000000, 369994, 1849969, 0, '2015-12-16', 5000, 7),
 (12, 0, 0, 0, 0, '0000-00-00', 0, 7),
 (13, 0, 0, 0, 0, '0000-00-00', 0, 7),
-(14, 0, 0, 0, 0, '0000-00-00', 0, 7);
+(14, 0, 0, 0, 0, '0000-00-00', 0, 7),
+(11, 0, 0, 0, 0, '0000-00-00', 1000, 8),
+(12, 0, 0, 0, 0, '0000-00-00', 5000, 8),
+(13, 0, 0, 0, 0, '0000-00-00', 0, 8),
+(14, 0, 0, 0, 0, '0000-00-00', 0, 8);
 
 -- --------------------------------------------------------
 
@@ -15998,7 +15964,7 @@ MODIFY `issue_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
 -- AUTO_INCREMENT for table `m_order`
 --
 ALTER TABLE `m_order`
-MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
+MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=10;
 --
 -- AUTO_INCREMENT for table `m_physical_count`
 --
@@ -16008,7 +15974,7 @@ MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 -- AUTO_INCREMENT for table `m_receive_stock`
 --
 ALTER TABLE `m_receive_stock`
-MODIFY `receive_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
+MODIFY `receive_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT for table `m_region`
 --
@@ -16023,7 +15989,7 @@ MODIFY `status_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 -- AUTO_INCREMENT for table `m_stock_balance`
 --
 ALTER TABLE `m_stock_balance`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=14;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=19;
 --
 -- AUTO_INCREMENT for table `m_stock_movement`
 --
