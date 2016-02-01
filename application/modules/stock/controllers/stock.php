@@ -11,22 +11,6 @@ class Stock extends MY_Controller
   }
 
    
-    public function testing(){
-      /*echo "I WORK";exit;*/
-      $dat = array(
-      'vaccine' => $this->input->post('vaccine'),
-       'batch_no'=>$this->input->post('batch_no'),
-       'expiry_date'=>$this->input->post('expiry_date'),
-       'amt_ordered'=>$this->input->post('amt_ordered'),
-       'amt_issued'=>$this->input->post('amt_issued'),
-       'vvm_status'=>$this->input->post('vvm_status')
-      );
-      echo json_encode($dat);
-
-    } 
-
-
-
     function receive_stock(){
     Modules::run('secure_tings/is_logged_in');
       $this->load->model('vaccines/mdl_vaccines');
@@ -49,7 +33,7 @@ class Stock extends MY_Controller
           }
       $data['module'] = "stock";
       $data['view_file'] = "receive_stock";
-      $data['section'] = "stock";
+      $data['section'] = "manage stock";
       $data['subtitle'] = "Receive Stock";
       $data['page_title'] = "Receive Stock";
       $data['orders'] = $this->get_orders();
@@ -83,7 +67,7 @@ class Stock extends MY_Controller
       'station_id'=>$station_id
       );
      // echo json_encode($data);
-      $this->db->insert('m_stock_movement',$data);  
+      $this->db->insert('m_receive_stock',$data);  
       $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">Stock successfully received from <strong>'.$data['source'].'</strong>!</div>');
     }
 
@@ -121,7 +105,7 @@ class Stock extends MY_Controller
           }
           $data['module'] = "stock";
           $data['view_file'] = "issue_stock";
-          $data['section'] = "stock";
+          $data['section'] = "manage stock";
           $data['subtitle'] = "Issue Stock";
           $data['orders'] = $this->get_orders();
           $data['page_title'] = "Issue Stock";
@@ -154,7 +138,7 @@ class Stock extends MY_Controller
           'station_level'=>$station_level,
           'station_id'=>$station_id
           );
-           $this->db->insert('m_stock_movement',$data); 
+           $this->db->insert('m_issue_stock',$data); 
            $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">Stock successfully issued to <strong>'.$data['destination'].'</strong>!</div>');
           //var_dump($data);
     }
@@ -165,9 +149,9 @@ class Stock extends MY_Controller
           $data['vaccines']= $this->mdl_vaccines->get_vaccine_details();
           $data['module'] = "stock";
           $data['view_file'] = "inventory";
-          $data['section'] = "stock";
-          $data['subtitle'] = "Inventory";
-          $data['page_title'] = "Inventory";
+          $data['section'] = "manage stock";
+          $data['subtitle'] = "Stocks Legder";
+          $data['page_title'] = "Stocks Legder";
           $data['user_object'] = $this->get_user_object();
           $data['main_title'] = $this->get_title();
           echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
@@ -186,11 +170,12 @@ class Stock extends MY_Controller
           $data['total']= $this->get_total_stkbl($selected_vaccine);
           $data['module'] = "stock";
           $data['view_file'] = "vaccine_ledger";
-          $data['section'] = "stock";
-          $data['subtitle'] = "Vaccine Ledger";
-          $data['page_title'] = "Vaccine Ledger";
+          $data['section'] = "manage stock";
+          $data['subtitle'] = "Stocks Ledger";
+          $data['page_title'] = "Stocks Ledger";
           $data['user_object'] = $this->get_user_object();
           $data['main_title'] = $this->get_title();
+
           echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
          //echo Modules::run('template/admin', $data);
     
@@ -242,7 +227,7 @@ class Stock extends MY_Controller
       $data['user_object'] = $this->get_user_object();
       $station_id=$data['user_object']['user_statiton'];
       $query= $this->mdl_stock->get_vaccine_ledger_in($id, $station_id);
-      //var_dump($query);
+      // echo ($query);
       $data = array();
       $no = $_POST['start'];
       foreach ($query as $bal) {
@@ -316,7 +301,7 @@ class Stock extends MY_Controller
     function transfer_stock(){
          $data['module'] = "stock";
          $data['view_file'] = "transfer_stock";
-         $data['section'] = "stock";
+         $data['section'] = "manage stock";
          $data['subtitle'] = "Transfer Stock";
          $data['page_title'] = "Transfer Stock";
          $data['user_object'] = $this->get_user_object();
@@ -337,9 +322,11 @@ class Stock extends MY_Controller
     }
     function get_batch_details(){
   // Gets moore details of the batch selected
+      $data['user_object'] = $this->get_user_object();
+      $station_id=$data['user_object']['user_statiton'];
       $selected_batch=$this->input->post('selected_batch');
       $this->load->model('stock/mdl_stock');
-      $data= $this->mdl_stock->get_batchdetails($selected_batch);
+      $data= $this->mdl_stock->get_batchdetails($selected_batch, $station_id);
      /* echo json_encode($selected_vaccine);*/
        echo json_encode($data);
     }
@@ -380,9 +367,9 @@ class Stock extends MY_Controller
         $data['vaccines']= $this->mdl_vaccines->getVaccine();
         $data['module'] = "stock";
         $data['view_file'] = "physical_stock";
-        $data['section'] = "stock";
-        $data['subtitle'] = "Physical Stock Count";
-        $data['page_title'] = "Physical Stock Count";
+        $data['section'] = "manage stock";
+        $data['subtitle'] = "Stock Count";
+        $data['page_title'] = "Stock Count";
         $data['user_object'] = $this->get_user_object();
         $data['main_title'] = $this->get_title();
         echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
@@ -406,7 +393,7 @@ class Stock extends MY_Controller
 
     function issue_stocks($order_id){
 
-      //Modules::run('secure_tings/is_logged_in');
+      Modules::run('secure_tings/is_logged_in');
       $order_id= $this->uri->segment(3);
       $data['order_id']= $order_id;
       $data2['user_object2'] = $this->get_user_object();
@@ -418,7 +405,7 @@ class Stock extends MY_Controller
       $data['order_infor']=$this->mdl_stock->get_order_infor($order_id);
       $data['module'] = "stock";
       $data['view_file'] = "new_issue_stock";
-      $data['section'] = "stock";
+      $data['section'] = "manage stock";
       $data['subtitle'] = "Issue Stock";
       $data['page_title'] = "Issue Stock";
       $data['user_object'] = $this->get_user_object();
@@ -518,8 +505,8 @@ class Stock extends MY_Controller
       $data['receipts']=$this->mdl_stock->get_order_to_receive($order_id);
       $data['module'] = "stock";
       $data['view_file'] = "new_receive_stock";
-      $data['section'] = "stock";
-      $data['subtitle'] = "Receive Against Order";
+      $data['section'] = "manage stock";
+      $data['subtitle'] = "Receive Stock";
       $data['page_title'] = "Receive Stock";
       $data['user_object'] = $this->get_user_object();
       $data['main_title'] = $this->get_title();

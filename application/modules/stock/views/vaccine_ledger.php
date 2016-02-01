@@ -37,6 +37,7 @@ LEFT JOIN m_vaccines mv ON mv.ID= mb.vaccine_id WHERE station_id= '".$station_id
    $urls_stock_enc = json_encode($stock);
 
  //var_dump($total);
+  
 ?>
 
         <div id="table-container"></div>
@@ -48,8 +49,7 @@ echo form_open('',$form_attributes);?>
 
 
 <div class="row">
-  </br>
-  </br>
+
 <div class="col-lg-12">    
   <div class="table-responsive">
     <div class="well well-sm"><b>Vaccine Ledger</b></div>
@@ -82,8 +82,8 @@ echo form_open('',$form_attributes);?>
         <div class="panel-body">
         <ul class="nav nav-tabs">
 
-        <li class="active"><a data-toggle="tab" href="#tab1"><b>Stock In</b></a></li>
-        <li><a data-toggle="tab" href="#tab2"><b>Stock Out</b></a></li>
+        <li class="active"><a data-toggle="tab" href="#tab1"><b>Stocks Received</b></a></li>
+        <li><a data-toggle="tab" href="#tab2"><b>Stocks Issued</b></a></li>
         <li><a data-toggle="tab" href="#tab3"><b>Physical Count</b></a></li>
         </ul>
         <div class="tab-content">
@@ -153,7 +153,7 @@ echo form_open('',$form_attributes);?>
                         <th >Batch <br>Number</th>
                         <th >Expiry <br>Date</th>
                         
-                                          </tr>
+                    </tr>
           </table>
          </div>
 

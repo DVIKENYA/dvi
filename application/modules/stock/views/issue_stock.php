@@ -62,14 +62,14 @@ echo form_open('',$form_attributes);?>
 	<table class="table table-bordered table-hover table-striped">
 		<thead>
 
-			                <th style="width:12%;" class="small">Vaccine/Diluents</th>
-							<th style="width:12%;" class="small">Batch No.</th>
-							<th style="width:9%;" class="small">Expiry </br>Date</th>
-							<th style="width:12%;" class="small">Amount </br>Ordered</th>
-							<th style="width:9%;" class="small">Stock </br>Quantity</th>
-							<th style="width:15%;" class="small">Amount </br>Issued</th>
-							<th style="width:9%;" class="small">VVM Status</th>
-							<th style="width:9%;" class="small">Action</th>
+			                <th style="width:12%;" >Vaccine/Diluents</th>
+							<th style="width:12%;" >Batch No.</th>
+							<th style="width:9%;" >Expiry </br>Date</th>
+							<th style="width:12%;" >Amount </br>Ordered</th>
+							<th style="width:9%;" >Stock </br>Quantity</th>
+							<th style="width:15%;" >Amount </br>Issued</th>
+							<th style="width:9%;"  >VVM Status</th>
+							<th style="width:9%;"  >Action</th>
 		</thead>
 <tbody>
 		<tr issue_row="1">
@@ -88,7 +88,7 @@ echo form_open('',$form_attributes);?>
 	        <td class="small"><?php $data=array('name' => 'amt_ordered','id'=> 'amt_ordered', 'type' =>'number',' min' => '0', 'required'=>'true','class'=>'form-control amt_ordered'); echo form_input($data);?></td>
             <td><?php $data=array('name' => 'available_quantity','id'=> 'available_quantity','class'=>'form-control available_quantity','readonly'=>'', 'value'=>'' ); echo form_input($data);?></td>
             <td><?php $data=array('name' => 'amt_issued','id'=> 'amt_issued','class'=>'form-control amt_issued', 'type' =>'number',' min' => '0','required'=>'true'); echo form_input($data);?></td>
-            <td><?php $data=array('name' => 'vvm_status','id'=> 'vvm_status','class'=>'form-control vvm_s'); echo form_input($data);?></td>
+            <td><?php $data=array('name' => 'vvm_status','id'=> 'vvm_status','class'=>'form-control vvm_status'); echo form_input($data);?></td>
             <td class="small">
 		     			<a href="#" class="add btn"><span class="label label-success"><i class="fa fa-plus-square"></i> <b>ADD</b></span></a><br>
 		             	<a href="#" class="remove btn" ><span class="label label-danger"><i class="fa  fa-minus-square"></i> <b>REMOVE</b></span></a>
@@ -241,7 +241,7 @@ echo form_open('',$form_attributes);?>
 			    	stock_row.closest("tr").find(".batch_no option").remove();
 			    	stock_row.closest("tr").find(".expiry_date ").val("");
 			    	stock_row.closest("tr").find(".available_quantity").val("");
-			    	stock_row.closest("tr").find(".vvm_s").val("");
+			    	stock_row.closest("tr").find(".vvm_status").val("");
 			    	stock_row.closest("tr").find(".batch_no ").append("<option value='0'>Select batch </option> ");
 			    	$.each(data,function(key,value){
 			    	stock_row.closest("tr").find(".batch_no").append("<option value='"+value.batch_number+"'>"+value.batch_number+"</option> ");
@@ -277,11 +277,11 @@ echo form_open('',$form_attributes);?>
 			    	console.log(data);
 			    	stock_row.closest("tr").find(".expiry_date ").val("");
 			    	stock_row.closest("tr").find(".available_quantity").val("");
-			    	stock_row.closest("tr").find(".vvm_s").val("");
+			    	stock_row.closest("tr").find(".vvm_status").val("");
 			    	$.each(data,function(key,value){
 			    		stock_row.closest("tr").find(".expiry_date").val(value.expiry_date);
 			    		stock_row.closest("tr").find(".available_quantity").val(value.stock_balance);
-			    		stock_row.closest("tr").find(".vvm_s").val(value.name);
+			    		stock_row.closest("tr").find(".vvm_status").val(value.status);
 			    		stock_row.closest("tr").find(".amt_issued").attr('max', value.stock_balance);
 			    		
 			    	});

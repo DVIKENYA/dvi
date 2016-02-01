@@ -34,7 +34,7 @@
       <!--\\\\\\\ header Start \\\\\\--><!--\\\\\\\ brand end \\\\\\-->
       <div class="brand">
         <!--\\\\\\\ brand Start \\\\\\-->
-        <div class="logo" style="display:block"><img src="<?php echo base_url() ?>assets/images/coat_of_arms.png" width="30" height="30" /><span class="theme_color">&nbsp;&nbsp;DVI</span> Kenya</div>
+        <div class="logo" style="display:block"><img src="<?php echo base_url() ?>assets/images/coat_of_arms.png" width="30" height="30" /><span class="theme_color">&nbsp;&nbsp;NVIP</span> Chanjo</div>
         <div class="small_logo" style="display:none"><img src="<?php echo base_url() ?>assets/images/coat_of_arms.png" width="50" height="47" alt="s-logo" /></div>
       </div>
       <!--\\\\\\\ brand end \\\\\\-->
@@ -113,7 +113,7 @@
                 <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Forecasting</b> </a> </li>
               </ul>
             </li>
-            <li> <a href="javascript:void(0);"> <i class="fa fa-user-plus"></i>DOCUMENTS<span class="plus"><i class="fa fa-plus"></i></span> </a>
+            <li> <a href="javascript:void(0);"> <i class="fa fa-user-plus"></i>LIBRARY<span class="plus"><i class="fa fa-plus"></i></span> </a>
               <?php            
 if ($user_object['user_level']=='1') {?>
     <ul>

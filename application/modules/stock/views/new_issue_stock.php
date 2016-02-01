@@ -51,18 +51,18 @@ echo form_open('stock/new_save_issued_stock',$form_attributes);?>
 	<table class="table table-bordered table-hover table-striped" id="rows">
 		<thead>
 
-			                <th style="width:9%;" class="small">Vaccine/Diluents</th>
-							<th style="width:9%;" class="small">Batch No.</th>
-							<th style="width:12%;" class="small">Expiry </br>Date</th>
-							<th style="width:12%;" class="small">Amount </br>Ordered</th>
-							<th style="width:9%;" class="small">Stock </br>Quantity</th>
-							<th style="width:15%;" class="small">Amount </br>Issued</th>
-							<th style="width:9%;" class="small">VVM Status</th>
-							<th style="width:9%;" class="small">Comment</th>
+			                <th style="width:9%;" >Vaccine/Diluents</th>
+							<th style="width:9%;" >Batch No.</th>
+							<th style="width:12%;" >Expiry </br>Date</th>
+							<th style="width:12%;" >Amount </br>Ordered</th>
+							<th style="width:9%;" >Stock </br>Quantity</th>
+							<th style="width:15%;" >Amount </br>Issued</th>
+							<th style="width:9%;" >VVM Status</th>
+							<th style="width:9%;" >Comment</th>
 		</thead>
 <tbody>
 		<?php foreach ($issues as $vaccine) {?>
-				<tr align="center" issue_row="<?php echo $vaccine['vaccine_id'] ?>" id="issue_row<?php echo $vaccine['vaccine_id'] ?>">
+				<tr align="center" value="issue_row<?php echo $vaccine['vaccine_id'] ?>" id="issue_row<?php echo $vaccine['vaccine_id'] ?>" >
 					<td><?php echo $vaccine['Vaccine_name']?></td>
 					<input type="hidden" value="<?php echo $vaccine['vaccine_id']?>" name="vaccine[]" id="vaccine">
 					<style type="text/css">
@@ -70,7 +70,7 @@ echo form_open('stock/new_save_issued_stock',$form_attributes);?>
 						background-color: #E0F2F7 !important
 					}</style>
 					<td>
-						<select name="batch_no[]" class="form-control batch_no" id="batch_no">
+						<select name="batch_no" class="form-control batch_no" id="batch_no<?php echo $vaccine['vaccine_id']; ?>">
 						         <option value="">--Select One--</option>
 						         
 						</select>
@@ -126,21 +126,29 @@ echo form_open('stock/new_save_issued_stock',$form_attributes);?>
           });
           request.done(function(data){
             data=JSON.parse(data);
-           
-            var row=$('#issue_row<?php echo $vaccine['vaccine_id'] ?>');
-         
-            $.each(data.issue_row<?php echo $vaccine['vaccine_id'] ?>,function(key,value){
-         
-            	row.closest("tr").find(".batch_no").append("<option value='"+value.batch_no+"'>"+value.batch_no+"</option> ");
-	            	
-	            	$(document).on( 'change','.batch_no', function () {
-		        		row.closest("tr").find(".expiry_date ").val("");
-						row.closest("tr").find(".vvm_s").val("");
-						row.closest("tr").find(".expiry_date").val(value.expiry_date);
-		           		row.closest("tr").find(".vvm_s").val(value.vvm_status);
+
+ 		    	<?php foreach ($issues as $item) { ?>
+
+		        rows = $('#issue_row<?php echo $item['vaccine_id']; ?>');
+		       
+		    
+		 	console.log(rows);   
+             $.each(data.issue_row<?php echo $item['vaccine_id']; ?>,function(key,value){
+         		
+            	rows.closest("tr").find("#batch_no<?php echo $item['vaccine_id']; ?>").append("<option value='"+value.batch_no+"'>"+value.batch_no+"</option> ");
+	            rows.closest("tr").find("#expiry_date<?php echo $item['vaccine_id']; ?>").val("");
+				rows.closest("tr").find("#vvm_status<?php echo $item['vaccine_id']; ?>").val("");	
+	            	$(document).on( 'change','#batch_no<?php echo $item['vaccine_id']; ?>', function () {
+	            		var exp = $('#expiry_date<?php echo $item['vaccine_id']; ?>').val();
+	            		var vvm = $('#vvm_status<?php echo $item['vaccine_id']; ?>').val();
+	            		console.log(exp +" " +vvm)
+	            		//if () {};
+	 					rows.closest("tr").find("#expiry_date<?php echo $item['vaccine_id']; ?>").val(value.expiry_date);
+						rows.closest("tr").find("#vvm_status<?php echo $item['vaccine_id']; ?>").val(value.vvm_status);
 					});
                 
             });
+            <?php }?>
           });
           request.fail(function(jqXHR, textStatus) {
           

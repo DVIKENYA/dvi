@@ -19,10 +19,8 @@ if($region==$user_object['user_statiton']){
    <div id="order_infor">
 
       <table class="table table-bordered" id="store_infor_tbl">
-        <tr><td style="width:50%">Store Name  : <?php echo $user_object['user_statiton']; ?> </td>
-        <td>Last Update: <?php echo date('Y-m-d',strtotime(date('Y-m-d')));?> </td></tr>
-          <tr>
           <td>Order By : <?php echo $user_object['user_statiton']; ?> </td>
+          <td>Order To : <?php echo $user_object['statiton_above']; ?> </td>
           <td>Date: <?php echo date('Y-m-d',strtotime(date('Y-m-d')));?></td>
       </table>
     <div id="order">

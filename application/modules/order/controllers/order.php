@@ -58,9 +58,9 @@ public function list_orders(){
   $data['orders']= $this->mdl_order->get_placed_orders($station,$station_id);
   $data['all_orders']= $this->mdl_order->get_all_placed_orders($station,$station_id);
   $data['submitted_orders']= $this->mdl_order->get_submitted_orders($station,$station_id);
-  $data['section'] = "Vaccines";
-  $data['subtitle'] = "Orders";
-  $data['page_title'] = "Orders";
+  $data['section'] = "Manage Stock";
+  $data['subtitle'] = "Request Stocks";
+  $data['page_title'] = "Request Stocks";
   $data['module'] = "order";
   if($station=='1'){
     $data['view_file'] = "adm_list_order_view";

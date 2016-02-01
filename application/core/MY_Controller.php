@@ -172,7 +172,7 @@ class MY_Controller extends MX_Controller
 
 	function get_title() {
 
-		$title = 'DVI KENYA';
+		$title = 'NVIP Chanjo';
 		return $title;
 	}
 

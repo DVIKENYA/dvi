@@ -29,7 +29,7 @@
       <!--\\\\\\\ header Start \\\\\\--><!--\\\\\\\ brand end \\\\\\-->
       <div class="brand">
         <!--\\\\\\\ brand Start \\\\\\-->
-        <div class="logo" style="display:block"><img src="<?php echo base_url() ?>assets/images/coat_of_arms.png" width="30" height="30" /><span class="theme_color">&nbsp;&nbsp;DVI</span> Kenya</div>
+        <div class="logo" style="display:block"><img src="<?php echo base_url() ?>assets/images/coat_of_arms.png" width="30" height="30" /><span class="theme_color">&nbsp;&nbsp;NVIP</span> Chanjo</div>
         <div class="small_logo" style="display:none"><img src="<?php echo base_url() ?>assets/images/coat_of_arms.png" width="50" height="47" alt="s-logo" /></div>
       </div>
       <!--\\\\\\\ brand end \\\\\\-->
