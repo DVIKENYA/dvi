@@ -31,14 +31,13 @@ class Mdl_Stock extends CI_Model
 	parent::__construct();	
 	}
 
-	function getTotalStockBal($selected_vaccine){
-		$this->db->distinct();
-		$this->db->select('vaccine_id, Vaccine_name, batch_number, expiry_date ,sum(stock_balance)as stock_balance');
-		$this->db->join('m_vaccines ', ' m_vaccines.ID = m_stock_balance.vaccine_id');
-		$s = array('vaccine_id' => $selected_vaccine);
-		$this->db->where($s);
-		$this->db->group_by('station_id');
-		$query = $this->db->get('m_stock_balance');
+	function get_all_physical_counts($selected_vaccine, $station_id){
+		$this->db->select('vaccine_id, Vaccine_name, batch_number, expiry_date ,physical_count as stock_balance');
+		$this->db->join('m_vaccines ', ' m_vaccines.ID = m_physical_count.vaccine_id');
+		$array = array('vaccine_id' => $selected_vaccine,'station_id' => $station_id);
+		$this->db->where($array);
+//		$this->db->group_by('station_id');
+		$query = $this->db->get('m_physical_count');
 	    return $query->result();
 
 	}
@@ -69,7 +68,7 @@ class Mdl_Stock extends CI_Model
 	}
 
 	function get_batchdetails($selected_batch, $station_id){
-		$this->db->select('expiry_date,stock_balance,mv.name as status');
+		$this->db->select('order_id as id, expiry_date,stock_balance,mv.name as status');
 		$this->db->join('m_vvm_status mv', 'mv.id = vvm_status', 'left');
 		$array = array('batch_number' => $selected_batch, 'station_id' => $station_id);
         $this->db->where($array);
@@ -78,14 +77,15 @@ class Mdl_Stock extends CI_Model
 	
 	}
 
-	function set_physical_count($data,$count){
-		$this->db->where($data);
-        $this->db->update('m_stock_balance', $count);
-        if($this->db->affected_rows() > 0)
+
+	function save_physical_count($data){
+		$table = "m_physical_count";
+		$this->db->insert($table, $data);
+		if($this->db->affected_rows() > 0)
 		{
-		   echo json_encode(array("status" => TRUE));
+			echo json_encode(array("status" => TRUE));
 		}else{
-			echo json_encode(array("status" => FALSE, "count" => $count, "data" => $data));
+			echo json_encode(array("status" => FALSE));
 		}
 	}
 	

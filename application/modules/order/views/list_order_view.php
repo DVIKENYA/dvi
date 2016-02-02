@@ -1,4 +1,6 @@
+<?php echo $this->session->flashdata('msg');  ?>
 <div class="row">
+
     <div class="col-lg-12 col-sm-12">
 
       <a href="<?php echo site_url('order/create_order');?>" class="btn btn-primary state_change" id="create_order" value="Create Order">Create Order</a>
@@ -10,7 +12,7 @@
   </br>
 <div class="row">
   
-  <?php echo $this->session->flashdata('msg');  ?>
+
 <div class="col-lg-12 col-sm-12">
  <div class="panel default blue_title h2">
 

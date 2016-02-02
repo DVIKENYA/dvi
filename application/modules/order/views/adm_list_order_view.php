@@ -1,8 +1,9 @@
+<?php echo $this->session->flashdata('msg');  ?>
 <div class="well well-sm"><b>Orders placed to me</b></div>
   </br>
 <div class="row">
   
-  <?php echo $this->session->flashdata('msg');  ?>
+
 <div class="col-lg-12 col-sm-12">
  <div class="panel default blue_title h2">
 
@@ -50,3 +51,11 @@
 </div>
 </div>
 
+<script type="text/javascript">
+
+    window.setTimeout(function() {
+        $("#alert-message").fadeTo(500, 0).slideUp(500, function(){
+            $(this).remove();
+        });
+    }, 5000);
+</script>

@@ -37,7 +37,7 @@ echo form_open('',$form_attributes);?>
 		                 background-color: #E0F2F7 !important }</style>
              		<td><?php $data=array('name' => 'available_quantity','id'=> 'available_quantity','class'=>'form-control available_quantity' ); echo form_input($data);?></td>
              		<td><?php $data=array('name' => 'physical_count','required'=>'true','type'=>'Number', 'min'=>'0','id'=>'physical_count' ,'class'=>'form-control physical_count'); echo form_input($data);?></td>
-             		
+					<td hidden><?php $data=array('name' => 'id','id'=> 'id','class'=>'form-control id' ,'hidden'=>'' ); echo form_input($data);?></td>
              		<td ><a href="#" class="add"><span class="label label-success"><i class="fa  fa-plus-square"></i> <b>ADD</b></span></a><span class="divider">  </span><a href="#" class="remove"><span class="label label-danger"><i class="fa  fa-minus-square"></i> <b>REMOVE</b></span></a></td>
                
              	</tr>
@@ -120,25 +120,29 @@ echo form_open('',$form_attributes);?>
 
 		   var vaccines = retrieveFormValues_Array('vaccine');
 		   var batch_no = retrieveFormValues_Array('batch_no');
+		   var expiry_date = retrieveFormValues_Array('expiry_date');
+		   var available_quantity = retrieveFormValues_Array('available_quantity');
 		   var physical_count = retrieveFormValues_Array('physical_count');
+		   var id = retrieveFormValues_Array('id');
 
 
 
 		   	for(var i = 0; i < vaccine_count; i++) {
 		   		var get_vaccine=vaccines[i];
 		   		var get_batch=batch_no[i];
-		   		var get_count=physical_count[i];
-		   		
+		   		var get_expiry=expiry_date[i];
+		   		var get_quantity=available_quantity[i];
+				var get_count=physical_count[i];
+				var get_id=id[i];
 
 					    $.ajax(
 					    {
 					        url : formURL,
 					        type: "POST",
-					        data : {"vaccine":get_vaccine,"batch_no":get_batch,"physical_count":get_count},
+					        data : {"vaccine":get_vaccine,"batch_no":get_batch,"expiry_date":get_expiry,"available_quantity":get_quantity,"physical_count":get_count,"id":get_id},
 					       /* dataType : json,*/
 					     success:function(data, textStatus, jqXHR) 
 					        {
-					        	console.log(data);
 					        	window.location.replace('<?php echo base_url().'stock/list_inventory'?>');
 					            //data: return data from server
 					        },
@@ -178,6 +182,7 @@ echo form_open('',$form_attributes);?>
 					    	stock_row.closest("tr").find(".batch_no ").append("<option value='0'>Select batch </option> ");
 				    $.each(data,function(key,value){
 				    		stock_row.closest("tr").find(".batch_no").append("<option value='"+value.batch_number+"'>"+value.batch_number+"</option> ");
+
 			    		/*value[0].batch_number;*/
 			    		
 			    	});
@@ -212,6 +217,7 @@ echo form_open('',$form_attributes);?>
 					    $.each(data,function(key,value){
 					    		stock_row.closest("tr").find(".expiry_date").val(value.expiry_date);
 					    		stock_row.closest("tr").find(".available_quantity").val(value.stock_balance);
+								stock_row.closest("tr").find(".id").val(value.id);
 					    });
 					                                });
 					    request.fail(function(jqXHR, textStatus) {

@@ -1,5 +1,5 @@
 <?php
-class Order extends MY_Controller 
+class Order extends MY_Controller
 {
 
 function __construct() {
@@ -182,7 +182,7 @@ Modules::run('secure_tings/is_logged_in');
       
       $this->db->insert_batch('order_item',$temp);    
  
- $this -> session ->set_flashdata('order_message','Orders Saved Successfully');
+    $this -> session ->set_flashdata('msg','<div id="alert-message" class="alert alert-success text-center">Order submitted Successfully</div>');
     redirect('order/list_orders');
     
 }

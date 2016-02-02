@@ -5,7 +5,7 @@
   <div class="table-responsive">
     <div class="well well-sm"><b>Stocks Ledger</b></div>
 
-<div class="margin-top-10"></div>
+<div class="margin-top-10"><h4></h4></div>
 
      <div class="col-lg-12 col-sm-12">
      <div class="panel default blue_title h2">
@@ -28,7 +28,6 @@
                     <tr>
                         <th >Transaction <br>Date</th>
                         <th >Vaccine/Diluent</th>
-                        
                         <th >Amount <br>Received</th>
                         <th >Batch <br>Number</th>
                         <th >Expiry <br>Date</th>
@@ -42,7 +41,6 @@
                     <tr>
                         <th >Transaction <br>Date</th>
                         <th >Vaccine/Diluent</th>
-                        
                         <th >Amount <br>Received</th>
                         <th >Batch <br>Number</th>
                         <th >Expiry <br>Date</th>
@@ -111,7 +109,6 @@
                                 <th >Batch <br>Number</th>
                                 <th >Expiry <br>Date</th>
                                 <th >Stock<br>Quantity</th>
-
                             </tr>
                             </tfoot>
                         </table>

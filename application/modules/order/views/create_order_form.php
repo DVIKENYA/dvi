@@ -40,14 +40,17 @@ echo form_hidden('station',$station);
 ?>
 
          <tbody>
-              <?php foreach ($vaccines as $vaccine) { ?>
+              <?php
+              $max = sizeof($vaccines);
+              foreach ($vaccines as $vaccine) {
+//                  for($i=0;$i<$max;$i++){?>
               <tr vaccine_id="<?php echo $vaccine['ID'] ?>">
                 <td><?php echo $vaccine['Vaccine_name']?></td>
                 <td><?php $data=array('name' => 'stock_on_hand[]','id'=> 'stock_on_hand_'.$vaccine['ID'] , 'class'=>'form-control stock_on_hand_','readonly'=>'readonly'); echo form_input($data);?></td>
                 <td><?php $data=array('name' => 'min_stock[]','id'=> 'min_stock_'.$vaccine['ID'] ,'class'=>'form-control min_stock_', 'readonly'=>'readonly'); echo form_input($data);?></td>
                 <td><?php $data=array('name' => 'max_stock[]','id'=> 'max_stock_'.$vaccine['ID'],'class'=>'form-control max_stock_','readonly'=>'readonly' ); echo form_input($data);?></td>
                 <td><?php $data=array('name' => 'first_expiry_date[]','id'=> 'first_expiry_date_'.$vaccine['ID'] , 'class'=>'form-control first_expiry_date_','readonly'=>'readonly'); echo form_input($data);?></td>
-                <td><?php $data=array('name' => 'quantity_dose[]','id'=> 'quantity_dose_'.$vaccine['ID'] ); echo form_input($data);?></td>
+                <td><?php $data=array('name' => 'quantity_dose[]','tabindex' => $vaccine['ID'],'id'=> 'quantity_dose_'.$vaccine['ID'] ); echo form_input($data);?></td>
                 <?php echo form_hidden('vaccine[]',$vaccine['ID']);?>
                 
               </tr>

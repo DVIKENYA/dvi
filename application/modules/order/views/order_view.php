@@ -43,13 +43,7 @@ echo form_open('',$form_attributes);?>
           <tr align="center" order_row="1">
               <td><?php echo $orderitems['Vaccine_name'] ?></td>
           
-<!--          <td> <select name="vaccine" class="form-control vaccine" id="vaccine">
-                     <option value="">--Select One--</option>
-                     <?php foreach ($orderitems as $orderitems) { 
-                         echo "<option value='".$vaccine['ID']."'>".$vaccine['Vaccine_name']."</option>";
-                         }?>
-                    </select>  </td>-->
-                   
+
                     <td><?php $data=array('name' => 'stock_on_hand','id'=> 'stock_on_hand' , 'class'=>'form-control stock_on_hand_','readonly'=>'readonly','value'=> $stock_on_hand ); echo form_input($data);?></td>
                     <td><?php $data=array('name' => 'min_stock','id'=> 'min_stock' , 'class'=>'form-control min_stock_', 'readonly'=>'readonly','value'=>$min_stock ); echo form_input($data);?></td>
                     <td><?php $data=array('name' => 'max_stock','id'=> 'max_stock', 'class'=>'form-control max_stock_', 'readonly'=>'readonly','value'=>$max_stock ); echo form_input($data);?></td>

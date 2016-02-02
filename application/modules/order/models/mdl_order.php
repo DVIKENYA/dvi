@@ -7,10 +7,6 @@ function __construct() {
 parent::__construct();
 }
 
-    function get_table() {
-        $table = "tablename";
-        return $table;
-    }
     // Get a list of orders placed to your station
 
     function get_placed_orders($station,$station_id){
@@ -20,7 +16,7 @@ parent::__construct();
         return $query->result_array();
     }
 
-    // Get listof orders you have submitted 
+    // Get list of orders you have submitted
     function get_submitted_orders($station,$station_id){
         $call_procedure="CALL get_submitted_orders($station,'$station_id')";
         $query=$this->db->query($call_procedure);
@@ -28,7 +24,7 @@ parent::__construct();
         return $query->result_array();
     }
 
-        // Get listof orders you have submitted 
+        // Get list of all placed orders
     function get_all_placed_orders($station,$station_id){
         $call_procedure="CALL get_all_placed_orders($station,'$station_id')";
         $query=$this->db->query($call_procedure);

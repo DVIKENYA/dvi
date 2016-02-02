@@ -11,7 +11,7 @@
   <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
     <div class="form-group">
       <b>Received From</b>
-      <?php $data=array('name' => 'received_from','id'=> 'received_from','class'=>'form-control','value'=>$receipts[0]['issued_by_station_id']); echo form_input($data);?>
+      <?php $data=array('name' => 'received_from','id'=> 'received_from','class'=>'form-control','disabled'=>'','value'=>$receipts[0]['issued_by_station_id']); echo form_input($data);?>
     </div>
   </div>
   <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
