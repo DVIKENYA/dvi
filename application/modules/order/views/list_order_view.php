@@ -71,7 +71,7 @@
         <tbody>
           <?php $option=1 ; ?>
         <?php foreach ($submitted_orders as $order) { 
-         $ledger_url = base_url().'order/view_orders/'.$order['order_by'].'/'.$order['date_created'].'/'.$option.'/'.$order['order_id'];
+         $ledger_url = base_url().'order/view_orders/'.$order['order_by'].'/'.$order['date_created'].'/'.$option.'/'.$order['order_id'].'/'.$order['status_name'];
          
          ?>
         
@@ -100,9 +100,8 @@
 
         <tbody>
           <?php $option=2 ; ?>
-        <?php foreach ($all_orders as $order) { 
-         $ledger_url = base_url().'order/view_orders/'.$order['order_by'].'/'.$order['date_created'].'/'.$option.'/'.$order['order_id'];
-         
+        <?php foreach ($all_orders as $order) {
+        $ledger_url = base_url().'order/view_orders/'.$order['order_by'].'/'.$order['date_created'].'/'.$option.'/'.$order['order_id'].'/'.$order['status_name'];
          ?>
         
               <tr>

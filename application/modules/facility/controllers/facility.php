@@ -118,7 +118,7 @@ class Facility extends MY_Controller {
 
       public function action_list(){
             $this->load->model('mdl_facility');
-
+          
             $list = $this->getFacility();
             $data = array();
             $no = $_POST['start'];
@@ -140,7 +140,7 @@ class Facility extends MY_Controller {
 
             $output = array(
               "draw" => $_POST['draw'],
-              "recordsTotal" => $this->count_all(),
+              "recordsTotal" => $this->count_filtered(),
               "recordsFiltered" => $this->count_filtered(),
               "data" => $data,
             );
@@ -229,8 +229,10 @@ class Facility extends MY_Controller {
       }
 
       function getFacility(){
+            $data['user_object'] = $this->get_user_object();
+            $station_id=$data['user_object']['user_statiton'];
             $this->load->model('mdl_facility');
-            $query = $this->mdl_facility->getFacility();
+            $query = $this->mdl_facility->getFacility($station_id);
             return $query;
       }
 
@@ -254,8 +256,10 @@ class Facility extends MY_Controller {
       }
 
       function count_filtered() {
+            $data['user_object'] = $this->get_user_object();
+            $station_id=$data['user_object']['user_statiton'];
             $this->load->model('mdl_facility');
-            $query = $this->mdl_facility->count_filtered();
+            $query = $this->mdl_facility->count_filtered($station_id);
             return $query;
       }
 

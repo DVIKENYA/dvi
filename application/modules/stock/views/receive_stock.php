@@ -147,7 +147,7 @@ echo form_open('',$form_attributes);?>
           });
 
        
-       var formURL="<?php echo base_url();?>stock/test";
+       var formURL="<?php echo base_url();?>stock/save_received_stocks";
 
        var vaccines = retrieveFormValues_Array('vaccine');
        var s11 = retrieveFormValues('s11');

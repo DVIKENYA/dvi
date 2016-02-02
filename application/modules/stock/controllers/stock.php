@@ -331,6 +331,17 @@ class Stock extends MY_Controller
        echo json_encode($data);
     }
 
+    function get_order_batch_details(){
+  // Gets more details of the batch selected
+      $data['user_object'] = $this->get_user_object();
+      $station_id=$data['user_object']['user_statiton'];
+      $order_id=$this->input->post('order_id');
+      $selected_batch=$this->input->post('selected_batch');
+      $this->load->model('stock/mdl_stock');
+      $data= $this->mdl_stock->get_order_batch_details($selected_batch, $order_id);
+     
+       echo json_encode($data);
+    }
        function get_orders(){
         $data['user_object'] = $this->get_user_object();
         $station_id=$data['user_object']['user_statiton'];
@@ -527,8 +538,8 @@ class Stock extends MY_Controller
           //var_dump($query);
           $data['vaccine_id'] = $row->vaccine_id;
           $data['batch_no'] = $row->batch_number;
-          $data['expiry_date'] = $row->expiry_date;
-          $data['vvm_status'] = $row->name;
+          // $data['expiry_date'] = $row->expiry_date;
+          // $data['vvm_status'] = $row->name;
           $data_array['issue_row'.$row->vaccine_id][] = $data;
 
           }
@@ -611,7 +622,7 @@ class Stock extends MY_Controller
       redirect('order/list_orders');
     }
 
-    function test(){
+    function save_received_stocks(){
         Modules::run('secure_tings/is_logged_in');
 
         $data2['user_object2'] = $this->get_user_object();

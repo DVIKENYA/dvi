@@ -75,7 +75,7 @@ public function list_orders(){
 }
 // The function accepts two arguments, order_by and date when order was created,
 //  to list the order items on viewing an order
-public function view_orders($order_by,$date_created,$option,$order_id){
+public function view_orders($order_by,$date_created,$option,$order_id,$status_name){
   Modules::run('secure_tings/is_logged_in');
   $this->load->model('order/mdl_order');
   $data['section'] = "Stock";
@@ -83,6 +83,7 @@ public function view_orders($order_by,$date_created,$option,$order_id){
   $data['page_title'] = " Orders";
   $data['orderitems']= $this->mdl_order->get_orderitems($order_id,$order_by,$date_created);
   $data['option']=$option;
+  $data['status_name']=$status_name;
   $data['order_id']=$order_id;
   $data['module'] = "order";
   $data['view_file'] = "order_view";

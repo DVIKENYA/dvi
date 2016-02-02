@@ -5,8 +5,8 @@
     </div>
   </div>
   <div class="row">
-  </br>
-  </br>
+  <br>
+
   <?php echo $this->session->flashdata('msg');  ?>
     <div class="col-lg-12" style="margin-top: 10px;">
      <div class="table-responsive">
@@ -42,6 +42,7 @@
     var table;
     $(document).ready(function() {
       table = $('#table').DataTable({ 
+        "sDom": '<l<t>ip>',
         "processing": true, //Feature control the processing indicator.
         "serverSide": true, //Feature control DataTables' server-side processing mode.
         

@@ -1,13 +1,12 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');?>
   <div class="row">
     <div class="col-lg-12">
-		 <a href="<?php echo site_url('region/submit');?>" class="btn btn-primary">Add Regions</a>
+<!--		 <a href="--><?php //echo site_url('region/submit');?><!--" class="btn btn-primary">Add Regions</a>-->
 
     </div>
   </div>
   <div class="row">
-  </br>
-  </br>
+
   <?php echo $this->session->flashdata('msg');  ?>
     <div class="col-lg-12" style="margin-top: 10px;">
      <div class="table-responsive">

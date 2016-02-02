@@ -59,7 +59,7 @@
      <td><?php $data=array('name' => 'batch_no[]','id'=>'batch_no','class'=>'batch_no form-control','value'=>$vaccine['batch_no'],'readonly'=>''); echo form_input($data);?></td>
      <td><?php $data=array('name' => 'expiry_date[]','id'=> 'expiry_date','class'=>'form-control expiry_date', 'type'=>'date','value'=>$vaccine['expiry_date'],'readonly'=>''); echo form_input($data);?></td>
      <td><?php $data=array('name' => 'quantity_ordered[]','id'=> 'quantity_ordered','class'=>'quantity_ordered form-control','value'=>$vaccine['amount_ordered'],'readonly'=>''); echo form_input($data);?></td>
-     <td><?php $data=array('name' => 'quantity_received[]','id'=> 'quantity_received','class'=>'quantity_received form-control','value'=>$vaccine['amount_issued']); echo form_input($data);?></td>
+     <td><?php $data=array('name' => 'quantity_received[]','id'=> 'quantity_received','class'=>'quantity_received form-control','type'=>'number','min'=>'0','value'=>$vaccine['amount_issued']); echo form_input($data);?></td>
      <td>
       <select name="vvm_status[]" class=" form-control vvm_status " id="vvm_status" name="vvm_status">
         <option value=""> --Select One-- </option>

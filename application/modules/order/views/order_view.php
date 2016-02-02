@@ -62,12 +62,15 @@ echo form_open('',$form_attributes);?>
    	</table>
     </div>
    </div> </div> 
-   <?php if ($option==1){ ?>               
+   <?php if ($option==1 && $status_name=="issued"){ ?>               
    <input type="button" value="Receive Order" class="btn btn-sm btn-danger" onclick="window.location.href='<?php echo base_url().'stock/receive_stocks'.'/'.$order_id?>'" />
-   <?php }else if ($option==2){ ?>
+   <?php }else if ($option==2 && $status_name =="pending"){ ?>
    <input type="button" value="Issue Order" class="btn btn-sm btn-danger" onclick="window.location.href='<?php echo base_url().'stock/issue_stocks'.'/'.$order_id ?>'" />
-   <?php 
-   }
+   <?php} else{?> 
+<!--   <input type="button" value="Receive Order" class="btn btn-sm btn-danger" disabled="" hidden/>-->
+  <?php }
+   
+
 echo form_close();
   
 

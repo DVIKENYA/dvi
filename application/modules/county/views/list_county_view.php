@@ -1,12 +1,12 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');?>
   <div class="row">
     <div class="col-lg-12">
-      <a href="<?php echo site_url('county/create');?>" class="btn btn-primary">Add County</a>
+<!--      <a href="--><?php //echo site_url('county/create');?><!--" class="btn btn-primary">Add County</a>-->
     </div>
   </div>
   <div class="row">
-  </br>
-  </br>
+
+
   <?php echo $this->session->flashdata('msg');  ?>
     <div class="col-lg-12" style="margin-top: 10px;">
      <div class="table-responsive">
@@ -47,9 +47,9 @@
 
                     //echo $this->table->generate($records);
                     echo $this->pagination->create_links(); ?>
-                    
-                    
-                    
+
+
+     </div>
                 
                         </div>
 

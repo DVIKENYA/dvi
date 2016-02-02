@@ -232,6 +232,21 @@ class Mdl_Stock extends CI_Model
         $this->db->where($array);
 		$query = $this->db->get();
 		return $query->result();
+	}	
+
+	function get_order_batch_details($selected_batch ,$order_id){
+		$this->db->distinct();
+		$this->db->select('m.order_id,o.vaccine_id,ms.batch_number,ms.expiry_date,mvs.name as status');
+		$this->db->from('m_order m');
+		$this->db->join('order_item o ', 'o.order_id=m.order_id', 'inner');
+		$this->db->join('m_vaccines mv ', 'mv.ID=o.vaccine_id', 'inner');
+		$this->db->join('m_stock_balance ms ', ' ms.vaccine_id=mv.ID', 'inner');
+		$this->db->join('m_vvm_status mvs ', ' mvs.id=ms.vvm_status', 'inner');
+		$array = array('ms.batch_number' => $selected_batch, 'm.order_id' => $order_id);
+        $this->db->where($array);
+		$query = $this->db->get('m_stock_balance');
+		return $query->result_array();
+		return $query->result();
 	}
 
 	
