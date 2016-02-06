@@ -50,7 +50,7 @@ echo form_hidden('station',$station);
                 <td><?php $data=array('name' => 'min_stock[]','id'=> 'min_stock_'.$vaccine['ID'] ,'class'=>'form-control min_stock_', 'readonly'=>'readonly'); echo form_input($data);?></td>
                 <td><?php $data=array('name' => 'max_stock[]','id'=> 'max_stock_'.$vaccine['ID'],'class'=>'form-control max_stock_','readonly'=>'readonly' ); echo form_input($data);?></td>
                 <td><?php $data=array('name' => 'first_expiry_date[]','id'=> 'first_expiry_date_'.$vaccine['ID'] , 'class'=>'form-control first_expiry_date_','readonly'=>'readonly'); echo form_input($data);?></td>
-                <td><?php $data=array('name' => 'quantity_dose[]','tabindex' => $vaccine['ID'],'id'=> 'quantity_dose_'.$vaccine['ID'] ); echo form_input($data);?></td>
+                <td><?php $data=array('name' => 'quantity_dose[]','tabindex' => $vaccine['ID'],'id'=> 'quantity_dose_'.$vaccine['ID'],'type'=> 'number','autocomplete'=> 'off'); echo form_input($data);?></td>
                 <?php echo form_hidden('vaccine[]',$vaccine['ID']);?>
                 
               </tr>

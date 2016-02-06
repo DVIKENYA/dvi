@@ -52,7 +52,7 @@
       <th style="width:9%;" class="small">Comment</th>
    </thead>
    <tbody>
-<?php foreach ($receipts as $vaccine) { ?>
+<?php var_dump($receipts);foreach ($receipts as $vaccine) { ?>
      <tr align="center" receive_row="<?php echo $vaccine['ID'] ?>"> 
      <td><?php echo $vaccine['Vaccine_name']?></td>
      <?php echo form_hidden('vaccine[]',$vaccine['ID']);?>

@@ -11,7 +11,7 @@ Modules::run('secure_tings/is_logged_in');
 function index() {
   Modules::run('secure_tings/is_logged_in');
  
-  $data['section'] = "DVI Kenya";
+  $data['section'] = "NVIP Chanjo";
   $data['subtitle'] = "Dashboard";
   $user_level=$this->session->userdata['logged_in']['user_level'];
   $data['view_file'] = "inbox_view";

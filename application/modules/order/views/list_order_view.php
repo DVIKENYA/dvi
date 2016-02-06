@@ -3,7 +3,7 @@
 
     <div class="col-lg-12 col-sm-12">
 
-      <a href="<?php echo site_url('order/create_order');?>" class="btn btn-primary state_change" id="create_order" value="Create Order">Create Order</a>
+      <a href="<?php echo site_url('order/create_order');?>" class="btn btn-primary state_change" id="create_order" value="Create Order">Request Stocks</a>
     </div>
   </div>
   </br>
@@ -19,9 +19,9 @@
               <div class="panel-body">
                 <ul class="nav nav-tabs" id="myTab">
                 
-                  <li class="active"><a data-toggle="tab" href="#tab1"><b>Orders to me</b></a></li>
-                  <li><a data-toggle="tab" href="#tab2"><b>Orders from me</b></a></li>
-                  <li><a data-toggle="tab" href="#tab3"><b>Order History</b></a></li>
+                  <li class="active"><a data-toggle="tab" href="#tab1"><b>Requests to me</b></a></li>
+                  <li><a data-toggle="tab" href="#tab2"><b>Requests from me</b></a></li>
+                  <li><a data-toggle="tab" href="#tab3"><b>Request History</b></a></li>
                   </ul>
 <div class="tab-content" id="myTabContent">
   <div id="tab1" class="tab-pane fade in active">
@@ -31,7 +31,7 @@
 
     <table class="table table-bordered table-striped" id="list_orders_tbl">
         <thead>
-                <tr><th>Order # </th><th>Order from</th><th>Date Created</th><th align="center">Action</th></tr>
+                <tr><th>Order # </th><th>Request from</th><th>Date Created</th><th align="center">Action</th></tr>
         </thead>
 
         <tbody>
@@ -48,7 +48,7 @@
               <td><?php echo $order['date_created']?></td>
               
               <td><a href="<?php  echo $ledger_url ?>" class="btn btn-danger btn-xs">Issue <i class="fa fa-share"></i></a>
-              <a href="<?php  echo $forward_url ?>" class="btn btn-danger btn-xs">Forward Order <i class="fa fa-exchange"></i></a></td>
+              <a href="<?php  echo $forward_url ?>" class="btn btn-danger btn-xs">Forward Request <i class="fa fa-exchange"></i></a></td>
                    
         <?php }?>
               </tr>
@@ -62,12 +62,12 @@
   
   <div id="tab2" class="tab-pane fade">
   <form id="list_orders_fm">
-<!--Listing Submitted Orders-->
+<!--Listing Submitted Requests-->
 
 
     <table class="table table-bordered table-striped" id="list_orders_tbl">
         <thead>
-                <tr><th>Order # </th><th>Date Created</th><th>Status</th><th>Action</th></tr>
+                <tr><th>Request # </th><th>Date Created</th><th>Status</th><th>Action</th></tr>
         </thead>
 
         <tbody>
@@ -92,12 +92,12 @@
   </div>
   <div id="tab3" class="tab-pane fade">
     <form id="list_orders_fm">
-      <!--Listing Submitted Orders-->
+      <!--Listing Submitted Requests-->
 
 
     <table class="table table-bordered table-striped" id="list_orders_tbl">
         <thead>
-                <tr><th>Order # </th><th>Date Created</th><th>Status</th><th>Action</th></tr>
+                <tr><th>Request # </th><th>Date Created</th><th>Status</th><th>Action</th></tr>
         </thead>
 
         <tbody>

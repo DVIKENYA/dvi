@@ -24,7 +24,7 @@ echo form_open('',$form_attributes);?>
 <div class="col-lg-3">
   <div class="panel-body">
   <b>S11 Code</b>
-    <?php $data=array('name' => 's11','id'=> 's11','class'=>'form-control','required'=>'','type'=>'text'); echo form_input($data);?>
+    <?php $data=array('name' => 's11','id'=> 's11','class'=>'form-control','type'=>'text'); echo form_input($data);?>
     </div>
 </div>
 <div class="col-lg-3">
@@ -233,6 +233,8 @@ echo form_open('',$form_attributes);?>
 
 
 
-
+             window.onbeforeunload = function() {
+                 
+             }
     
    </script>

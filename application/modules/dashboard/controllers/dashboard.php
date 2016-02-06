@@ -13,10 +13,18 @@ Modules::run('secure_tings/is_logged_in');
 function home() {
   Modules::run('secure_tings/is_logged_in');
   //$data['chart'] = $this->get_chart();
+
+  $user_level=$this->session->userdata['logged_in']['user_level'];
+
+   if($user_level=='3'){
+    $data['dpt3cov'] = $this->get_subcounty_dpt3cov();
+   }elseif ($user_level=='2'){
+    $data['dpt3cov'] = $this->get_county_dpt3cov();
+   }
   $data['wastage'] = $this->get_wastage();
   $data['mavaccine'] = $this->vaccines();
   //$data['coverage'] = $this->get_coverage();
-  $data['section'] = "DVI Kenya";
+  $data['section'] = "NVIP Chanjo";
   $data['subtitle'] = "Dashboard";
   $user_level=$this->session->userdata['logged_in']['user_level'];
   //$data['page_title'] = "Baringo County";
@@ -102,6 +110,47 @@ function get_chart() {
 
   }
 
+  function get_county_dpt3cov() {
+    $this->load->model('mdl_dashboard');
+
+    $user_id = $this->session->userdata['logged_in']['user_id'];
+   
+    $query = $this->mdl_dashboard->get_county_dpt3();
+     
+    $json_array=array();
+    foreach ($query->result() as $row) {
+      $data['county_name'] = $row->county_name;
+      $data['totaldpt3'] = (int)$row->totaldpt3;
+
+    array_push($json_array,$data);
+
+    }
+    //echo json_encode($json_array);
+    return $json_array;
+
+  }
+
+    function get_subcounty_dpt3cov() {
+
+    $this->load->model('mdl_dashboard');
+    $user_id = $this->session->userdata['logged_in']['user_id'];
+     
+    $query = $this->mdl_dashboard->get_subcounty_dpt3(5);
+     
+    $json_array=array();
+    foreach ($query->result() as $row) {
+      $data['totaldpt3'] = (int)$row->totaldpt3;
+      $data['subcounty_name'] = $row->subcounty_name;
+      
+
+    array_push($json_array,$data);
+
+    }
+    //echo json_encode($json_array);
+    return $json_array;
+    
+  }
+
 function get_wastage() {
     $this->load->model('mdl_dashboard');
     $user_id = $this->session->userdata['logged_in']['user_id'];
@@ -133,7 +182,34 @@ function get_wastage() {
    return $json_array;
   }
 
+function get_mofstock(){
 
+$user_id = ($this->session->userdata['logged_in']['user_id']);
+$this->load->model('mdl_dashboard');
+$query = $this->mdl_dashboard->get_months_stock($user_id);
+
+  $json_array = array();
+    foreach ($query->result() as $row) {
+      // $json_array= array(
+      // $row->Vaccine,
+      // (int)$row->BCG,
+      // (int)$row->DPT,
+      // (int)$row->MEASLES,
+      // (int)$row->OPV,
+      // (int)$row->PCV,
+      // (int)$row->ROTA
+      //  );
+
+      $data['name'] = $row->Vaccine;
+      $data['y'] = (float)$row->BCG;
+
+       array_push($json_array, $data);
+
+      }
+   echo json_encode($json_array);
+   //return $json_array;
+
+}
  
 function get_linechart(){
     $this->load->model('mdl_dashboard');

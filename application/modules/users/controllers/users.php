@@ -73,7 +73,7 @@ function create_user(){
    $data['masubcounty']  = $this->mdl_users->get_subcounty();
    $data['mafacilities']  = $this->mdl_users->get_facilities();
    $data['maregion']  = $this->mdl_users->getRegion();
-   $data['section'] = "DVI Kenya";
+   $data['section'] = "NVIP Chanjo";
    $data['subtitle'] = "Users";
    $data['page_title'] = "Add New Users";
    $data['module']="users";

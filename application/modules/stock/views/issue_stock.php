@@ -25,8 +25,8 @@ echo form_open('',$form_attributes);?>
 <div class="row">
 	<div class="col-lg-3">
 	  <div class="panel-body">
-	  <b>Issue To</b>
-	    <?php
+	  <b>Issue To</b><br>
+	  <?php
         echo form_error('issued_to');
         echo form_dropdown('issued_to', $location, 'id="issued_to" class="form-control"'); 
         ?>
@@ -93,7 +93,7 @@ echo form_open('',$form_attributes);?>
 		     			<a href="#" class="add btn"><span class="label label-success"><i class="fa fa-plus-square"></i> <b>ADD</b></span></a><br>
 		             	<a href="#" class="remove btn" ><span class="label label-danger"><i class="fa  fa-minus-square"></i> <b>REMOVE</b></span></a>
 		    </td>
-
+		     <?php  echo form_hidden('date_recorded',date('Y-m-d',strtotime(date('Y-m-d'))));?>
            </tr>     	
              	
 	</tbody>
@@ -172,35 +172,49 @@ echo form_open('',$form_attributes);?>
 		   
 		   var formURL="<?php echo base_url();?>stock/save_issued_stock";
 
+		   var date_issued = retrieveFormValues('date_issued');
+		   var date_recorded = retrieveFormValues('date_recorded');
+		   var issued_to= retrieveFormValues('issued_to');
+		   var s11 = retrieveFormValues('s11');
+
 		   var vaccines = retrieveFormValues_Array('vaccine');
 		   var batch_no = retrieveFormValues_Array('batch_no');
 		   var expiry_date = retrieveFormValues_Array('expiry_date');
+		   var vvm_status = retrieveFormValues_Array('vvm_status');
 		   var amt_ordered = retrieveFormValues_Array('amt_ordered');
 		   var amt_issued = retrieveFormValues_Array('amt_issued');
-		   var vvm_status = retrieveFormValues_Array('vvm_status');
-		   var date_issued = retrieveFormValues('date_issued');
-		   var issued_to= retrieveFormValues('issued_to');
-		   var transaction_type= retrieveFormValues('transaction_type');
-		   var s11 = retrieveFormValues('s11');
-
+		  
 		   
-		   	for(var i = 0; i < vaccine_count; i++) {
-		   		var get_vaccine=vaccines[i];
-		   		var get_batch=batch_no[i];
-		   		var get_expiry=expiry_date[i];
-		   		var get_amt_ordered=amt_ordered[i];
-		   		var get_amt_issued=amt_issued[i];
-		   		var get_vvm_status=vvm_status[i];
-		   		var get_date_issued=date_issued;
-                var get_issued_to=issued_to;
-                var get_transaction_type=transaction_type;
-                var get_s11 = s11;
+		   
+	
+		   
+			var dat  = new Array();
+			var get_date_recorded=date_recorded;
+			var get_date_issued=date_issued;
+			var get_issued_to=issued_to;
+			
+			var get_s11 = s11;
 
-			    $.ajax(
+			for(var i = 0; i < vaccine_count; i++) {
+			var data  = new Array();
+			var get_vaccine=vaccines[i];
+			var get_batch=batch_no[i];
+			var get_expiry=expiry_date[i];
+			var get_amount_ordered=amt_ordered[i];
+			var get_amount_issued=amt_issued[i];
+			var get_vvm_status=vvm_status[i];
+
+
+			data = {"vaccine_id":get_vaccine,"batch_no":get_batch,"expiry_date":get_expiry,"amount_ordered":get_amount_ordered,"amount_issued":get_amount_issued,"vvm_status":get_vvm_status};
+				dat.push(data);
+			}
+			console.log(dat);
+			batch = JSON.stringify(dat);
+          $.ajax(
 			    {
 			        url : formURL,
 			        type: "POST",
-			        data : {"transaction_type":get_transaction_type,"issued_to":get_issued_to, "s11":get_s11, "date_issued":get_date_issued,"vaccine":get_vaccine,"batch_no":get_batch,"expiry_date":get_expiry,"amt_issued":get_amt_issued,"vvm_status":get_vvm_status},
+			        data : {"issued_to":get_issued_to,"date_recorded":get_date_recorded, "s11":get_s11, "date_issued":get_date_issued,"batch":batch},
 			       /* dataType : json,*/
 			        success:function(data, textStatus, jqXHR) 
 			        {
@@ -213,7 +227,7 @@ echo form_open('',$form_attributes);?>
 			            //if fails      
 			        }
 			    });
-		 }
+		 
 		   // e.unbind(); //unbind. to stop multiple form submit.
            });
 

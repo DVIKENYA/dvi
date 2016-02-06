@@ -140,7 +140,7 @@ CREATE TABLE `ci_sessions` (
 
 LOCK TABLES `ci_sessions` WRITE;
 /*!40000 ALTER TABLE `ci_sessions` DISABLE KEYS */;
-INSERT INTO `ci_sessions` VALUES ('418a40740d56d07500baadd3ca3ab47e','::1','Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101 Firefox/38.0 Iceweasel/38.5.0',1454576368,'a:1:{s:9:\"user_data\";s:0:\"\";}'),('636bb1252b6ce8cfa82746eb64649bf1','::1','Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101 Firefox/38.0 Iceweasel/38.5.0',1454568137,'a:2:{s:9:\"user_data\";s:0:\"\";s:9:\"logged_in\";a:6:{s:7:\"user_id\";s:2:\"15\";s:10:\"user_fname\";s:7:\"Baringo\";s:10:\"user_lname\";s:5:\"North\";s:10:\"user_group\";s:1:\"3\";s:10:\"user_level\";s:1:\"4\";s:9:\"logged_in\";b:1;}}');
+INSERT INTO `ci_sessions` VALUES ('1876058a54b27bee71fc4c9379769504','::1','Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101 Firefox/38.0 Iceweasel/38.5.0',1454585412,'a:2:{s:9:\"user_data\";s:0:\"\";s:9:\"logged_in\";a:6:{s:7:\"user_id\";s:1:\"2\";s:10:\"user_fname\";s:5:\"Admin\";s:10:\"user_lname\";s:8:\"Dvikenya\";s:10:\"user_group\";s:1:\"1\";s:10:\"user_level\";s:1:\"1\";s:9:\"logged_in\";b:1;}}');
 /*!40000 ALTER TABLE `ci_sessions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2089,6 +2089,513 @@ SET character_set_client = utf8;
 SET character_set_client = @saved_cs_client;
 
 --
+-- Dumping routines for database 'dvikenya'
+--
+/*!50003 DROP FUNCTION IF EXISTS `calc_max_stock` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` FUNCTION `calc_max_stock`(period_stock FLOAT) RETURNS decimal(9,2)
+BEGIN
+  DECLARE max_stock DECIMAL(9,2);
+  SET max_stock= 1.25 * period_stock;
+  RETURN max_stock;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `calc_min_stock` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` FUNCTION `calc_min_stock`(period_stock FLOAT) RETURNS decimal(9,2)
+BEGIN
+  DECLARE min_stock DECIMAL(9,2);
+  SET min_stock= 0.25 * period_stock;
+  RETURN min_stock;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `calc_orders` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `calc_orders`(
+IN $station_id VARCHAR(255),
+IN $station_level VARCHAR(255)
+)
+begin
+if($station_level=2)THEN
+SELECT ID, Vaccine_name,first_expiry_date,Doses_required,Wastage_factor,
+stock_on_hand,region_name,population_one,
+period_stock,calc_max_stock(period_stock)as maxstock,
+calc_min_stock(period_stock)as minstock
+ FROM calc_region_orders
+ WHERE region_name=$station_id
+ ;
+else if($station_level=3)THEN
+SELECT ID, Vaccine_name,first_expiry_date,Doses_required,Wastage_factor,
+stock_on_hand,county_name,population_one,
+period_stock,calc_max_stock(period_stock)as maxstock,
+calc_min_stock(period_stock)as minstock
+ FROM calc_county_orders
+ WHERE county_name=$station_id
+ ;
+ 
+else if($station_level=4)THEN
+SELECT ID, Vaccine_name,first_expiry_date,Doses_required,Wastage_factor,
+stock_on_hand,subcounty_name,population_one,
+period_stock,calc_max_stock(period_stock)as maxstock,
+calc_min_stock(period_stock)as minstock
+ FROM calc_subcounty_orders
+ WHERE subcounty_name=$station_id
+ ;
+else if($station_level=5)THEN
+SELECT ID, Vaccine_name,first_expiry_date,Doses_required,Wastage_factor,
+stock_on_hand,facility_name,population_one,
+period_stock,calc_max_stock(period_stock)as maxstock,
+calc_min_stock(period_stock)as minstock
+ FROM calc_facility_order
+ WHERE facility_name=$station_id
+ ;
+ 
+END IF;
+END IF;
+END IF;
+END IF;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `forward_order` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `forward_order`(
+ IN p_station_level int(11),
+ IN p_order_id int(11)
+)
+BEGIN
+ UPDATE m_order SET m_order.station_level = p_station_level WHERE m_order.order_id = p_order_id;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `GetAllVaccines` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetAllVaccines`()
+    READS SQL DATA
+BEGIN
+SELECT Vaccine_name,ID FROM m_vaccines;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_all_placed_orders` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_placed_orders`(IN `$station` INT, IN `$station_id` INT)
+begin
+if ($station= '1') then
+SELECT DISTINCT(date_created),station_id,order_by,order_id,status_name FROM m_order m WHERE station_level= 2 ;
+
+ELSE if($station= '2' )THEN
+SELECT DISTINCT(date_created),station_id,order_by,order_id,status_name FROM view_county_orders fv WHERE fv.region_name= $station_id ;
+
+ELSE if($station= '3' )THEN
+SELECT DISTINCT(date_created),station_id,order_by,order_id,status_name FROM view_subcounty_orders fv WHERE fv.county_name= $station_id ;
+
+ELSE if($station= '4' )THEN
+SELECT DISTINCT(date_created),station_id,order_by,order_id,status_name FROM view_facility_orders fv WHERE fv.subcounty_name= $station_id ;
+
+ELSE if($station= '5' )THEN
+SELECT DISTINCT(date_created),station_id,order_by,order_id,status_name FROM view_facility_orders fv WHERE fv.facility_name= $station_id ;
+
+END IF;
+END IF;
+END IF;
+END IF;
+END IF;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_orders` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_orders`(
+IN $station VARCHAR(255)
+)
+begin
+if ($station= '1') then
+SELECT l.date_created  FROM m_order l;
+
+ELSE if($station= '2' )THEN
+SELECT l.date_created,mr.region_name as station_name FROM m_order l
+LEFT JOIN m_region mr on mr.id=l.station_id;
+
+ELSE if($station= '3' )THEN
+SELECT l.date_created,mc.county_name as station_name FROM m_order l
+LEFT JOIN m_county mc on mc.id=l.station_id;
+
+ELSE if($station= '4' )THEN
+SELECT l.date_created, ms.subcounty_name as station_name FROM m_order l
+LEFT JOIN  m_subcounty ms ON ms.id = l.station_id;
+
+ELSE if($station= '5' )THEN
+SELECT l.date_created, mf.facility_name as station_name FROM m_order l
+LEFT JOIN facility_userbase_view mf ON mf.facility = l.station_id;
+
+END IF;
+END IF;
+END IF;
+END IF;
+END IF;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_order_infor` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_order_infor`(
+IN $order_id varchar(255))
+BEGIN
+SELECT m.order_id,m.order_by,m.station_id
+FROM m_order m
+WHERE m.order_id=$order_id;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_order_to_issue` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_order_to_issue`(IN `$order_id` VARCHAR(255), IN `$station_name` VARCHAR(255))
+BEGIN
+SELECT m.order_id,m.order_by,m.station_id,o.vaccine_id,mv.Vaccine_name,ms.batch_number,ms.expiry_date,ms.stock_balance,o.qty_order_doses,mvm.name
+FROM m_order m
+INNER JOIN order_item o ON o.order_id=m.order_id
+INNER JOIN m_vaccines mv ON mv.ID=o.vaccine_id
+INNER JOIN m_stock_balance ms on ms.vaccine_id=mv.ID
+LEFT JOIN m_vvm_status mvm on mvm.id=ms.vvm_status
+WHERE m.order_id=$order_id AND ms.station_id=$station_name  ;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_order_to_receive` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_order_to_receive`(
+IN $order_id varchar(255))
+BEGIN
+
+SELECT mi.order_id,mi.issue_id,mi.S11,mi.issued_by_station_id,mv.Vaccine_name,mv.ID,msi.batch_no,msi.expiry_date,msi.amount_ordered,msi.amount_issued,mvs.name 
+FROM m_issue_stock mi
+RIGHT JOIN m_issue_stock_item msi  ON msi.issue_id=mi.issue_id
+LEFT JOIN m_vaccines mv on mv.ID=msi.vaccine_id
+LEFT join m_vvm_status mvs on mvs.id=msi.vvm_status
+WHERE mi.order_id=$order_id;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_order_values` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_order_values`(
+IN $selected_vaccine VARCHAR(255)
+)
+begin
+SELECT sum(msb.`stock_balance`) AS stock_balance,
+	   min(msb.`expiry_date`) as first_expiry_date, mv.Doses_required, mv.Wastage_factor 
+       FROM `m_stock_balance` msb
+       LEFT JOIN m_vaccines mv ON mv.ID= msb.`vaccine_id`
+       WHERE msb.vaccine_id=$selected_vaccine;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_placed_orders` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_placed_orders`(IN `$station` INT, IN `$station_id` INT)
+begin
+if ($station= '1') then
+SELECT DISTINCT(date_created),station_id,order_by,order_id,status_name FROM m_order m WHERE station_level= 2 AND status_name ="pending";
+
+ELSE if($station= '2' )THEN
+SELECT DISTINCT(date_created),station_id,order_by,order_id,status_name FROM view_subcounty_county_orders fv WHERE fv.region_name= $station_id AND status_name ="pending";
+
+ELSE if($station= '3' )THEN
+SELECT DISTINCT(date_created),station_id,order_by,order_id,status_name FROM view_subcounty_orders fv WHERE fv.county_name= $station_id AND status_name ="pending" ;
+
+ELSE if($station= '4' )THEN
+SELECT DISTINCT(date_created),station_id,order_by,order_id,status_name FROM view_facility_orders fv WHERE fv.subcounty_name= $station_id AND status_name ="pending" ;
+
+ELSE if($station= '5' )THEN
+SELECT DISTINCT(date_created),station_id,order_by,order_id,status_name FROM view_facility_orders fv WHERE fv.facility_name= $station_id AND status_name ="pending";
+
+END IF;
+END IF;
+END IF;
+END IF;
+END IF;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_prepare_order_values` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_prepare_order_values`(
+IN $selected_vaccine VARCHAR(255),
+IN $station_id VARCHAR(255)
+)
+begin
+ if($station= '3' )THEN
+SELECT sum(msb.`stock_balance`) AS stock_balance,
+       min(msb.`expiry_date`) as first_expiry_date, mv.Doses_required, mv.Wastage_factor,mc.county_name, mc.id,mc.population_one
+       FROM `m_stock_balance` msb
+       LEFT JOIN m_vaccines mv ON mv.ID= msb.`vaccine_id`
+       LEFT JOIN m_county mc ON mc.county_name=msb.station_id
+       WHERE msb.vaccine_id=$selected_vaccine AND msb.station_level=$station AND msb.station_id= $station_id;
+
+ELSE if($station= '4' )THEN
+SELECT sum(msb.`stock_balance`) AS stock_balance,
+       min(msb.`expiry_date`) as first_expiry_date, mv.Doses_required, mv.Wastage_factor,mc.subcounty_name, mc.id,mc.population_one
+       FROM `m_stock_balance` msb
+       LEFT JOIN m_vaccines mv ON mv.ID= msb.`vaccine_id`
+       LEFT JOIN m_subcounty mc ON mc.subcounty_name=msb.station_id
+       WHERE msb.vaccine_id=$selected_vaccine AND msb.station_level=$station AND msb.station_id= $station_id;
+      
+
+ELSE if($station= '5' )THEN
+SELECT sum(msb.`stock_balance`) AS stock_balance,
+       min(msb.`expiry_date`) as first_expiry_date, mv.Doses_required, mv.Wastage_factor,mc.facility_name, mc.id 
+       FROM `m_stock_balance` msb
+       LEFT JOIN m_vaccines mv ON mv.ID= msb.`vaccine_id`
+       LEFT JOIN m_facility mc ON mc.facility_name=msb.station_id
+       WHERE msb.vaccine_id=$selected_vaccine AND msb.station_level=$station AND msb.station_id= $station_id;
+
+
+END IF;
+END IF;
+END IF;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_submitted_orders` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_submitted_orders`(
+IN $station VARCHAR(255),
+IN $station_id VARCHAR(255)
+)
+begin
+if ($station= '1') then
+SELECT DISTINCT(date_created),station_id,order_by,order_id,status_name FROM m_order m ;
+
+ELSE if($station= '2' )THEN
+SELECT DISTINCT(date_created),station_id,order_by,order_id,status_name FROM view_region_orders fv ;
+
+ELSE if($station= '3' )THEN
+SELECT DISTINCT(date_created),station_id,order_by,order_id,status_name FROM view_county_orders fv WHERE fv.county_name= $station_id ;
+
+ELSE if($station= '4' )THEN
+SELECT DISTINCT(date_created),station_id,order_by,order_id,status_name FROM view_subcounty_orders fv WHERE fv.subcounty_name= $station_id ;
+
+ELSE if($station= '5' )THEN
+SELECT DISTINCT(date_created),station_id,order_by,order_id,status_name FROM view_facility_orders fv WHERE fv.facility_name= $station_id ;
+
+END IF;
+END IF;
+END IF;
+END IF;
+END IF;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `test_orders` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `test_orders`(
+IN $station_id VARCHAR(255),
+IN $station_level VARCHAR(255)
+)
+begin
+if($station_level=3)THEN
+SELECT ID, Vaccine_name,first_expiry_date,Doses_required,Wastage_factor,
+stock_on_hand,county_name,population_one,
+period_stock,calc_max_stock(period_stock)as maxstock,
+calc_min_stock(period_stock)as minstock
+ FROM calc_county_orders
+ WHERE county_name=$station_id
+ ;
+ 
+else if($station_level=4)THEN
+SELECT ID, Vaccine_name,first_expiry_date,Doses_required,Wastage_factor,
+stock_on_hand,county_name,population_one,
+
+period_stock,calc_max_stock(period_stock)as maxstock,
+calc_min_stock(period_stock)as minstock
+ FROM calc_subcounty_orders
+ WHERE subcounty_name=$station_id
+ ;
+else if($station_level=5)THEN
+SELECT ID, Vaccine_name,first_expiry_date,Doses_required,Wastage_factor,
+stock_on_hand,county_name,population_one,
+period_stock,calc_max_stock(period_stock)as maxstock,
+calc_min_stock(period_stock)as minstock
+ FROM calc_facility_order
+ WHERE facility_name=$station_id
+ ;
+ 
+END IF;
+END IF;
+END IF;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+
+--
 -- Final view structure for view `calc_county_orders`
 --
 
@@ -2743,4 +3250,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-02-04 12:34:09
+-- Dump completed on 2016-02-04 16:49:04

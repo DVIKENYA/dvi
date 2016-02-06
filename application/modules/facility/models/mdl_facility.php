@@ -3,7 +3,7 @@
 
 class Mdl_Facility extends CI_Model {
 var $order = array('id' => 'desc');
-var $column = array('mf.id', 'mf.facility_name', 'officer_incharge', 'vaccine_carrier', 'cold_box','subcounty_name', 'county_name');
+var $column = array('mf.id', 'mf.facility_name', 'officer_incharge', 'vaccine_carrier', 'cold_box','subcounty_name', 'county_name', 'region_name');
 var $fridge_columns = array('m_facility.facility_name', 'm_facility_fridges.refrigerator_id', 'Model', 'Manufacturer', 'temperature_monitor_no', 'main_power_source');
 var $facility_fridges = array('m_facility_fridges.refrigerator_id',  'm_fridges.Model', 'm_fridges.Manufacturer', 'temperature_monitor_no', 'main_power_source','refrigerator_age');
 
@@ -29,8 +29,10 @@ $this->search_order($station_id);
         $this->db->from('m_facility mf');
         $this->db->join('m_subcounty', 'm_subcounty.id = mf.subcounty_id');
         $this->db->join('m_county', 'm_county.id = mf.county_id');
+        $this->db->join('m_region', 'm_county.region_id = m_region.id');
         $this->db->where('county_name',$station_id);
         $this->db->or_where('subcounty_name',$station_id);
+		$this->db->or_where('region_name',$station_id);
 		$i = 0;
 
 		foreach ($this->column as $item)
