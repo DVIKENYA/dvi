@@ -81,7 +81,7 @@ public function view_orders($order_by,$date_created,$option,$order_id,$status_na
   $data['section'] = "Stock";
   $data['subtitle'] = "View Orders";
   $data['page_title'] = " Orders";
-  $data['orderitems']= $this->mdl_order->get_orderitems($order_id,$order_by,$date_created);
+  $data['orderitems']= $this->mdl_order->get_order_items($order_id,$order_by,$date_created);
   $data['option']=$option;
   $data['status_name']=$status_name;
   $data['order_id']=$order_id;

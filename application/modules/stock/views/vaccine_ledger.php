@@ -5,11 +5,9 @@
         <div class="information green_info">
             <div class="information_inner">
                 <div class="info green_symbols"><i class="fa fa-cubes icon"></i></div>
-                <span>Stock Balance </span>
+               <span>Stock Balance </span>
                 <h1 class="bolded"><?php echo($bal[0]['stock_balance']);?></h1>
-                <div class="infoprogress_green">
-                    <div class="greenprogress"></div>
-                </div>
+
             </div>
         </div>
     </div>
@@ -41,6 +39,7 @@
 
                     <tr>
                         <th >Transaction <br>Date</th>
+
                         <th >Vaccine/Diluent</th>
                         <th >Amount <br>Received</th>
                         <th >Batch <br>Number</th>
@@ -75,7 +74,7 @@
                     <tr>
                         <th >Transaction <br>Date</th>
                         <th >Vaccine/Diluent</th>
-                        <th >Origin/Destination</th>
+                        <th >Destination</th>
                         <th >Amount <br>Issued</th>
                         <th >Batch <br>Number</th>
                         <th >Expiry <br>Date</th>
@@ -90,7 +89,7 @@
                     <tr>
                         <th >Transaction <br>Date</th>
                         <th >Vaccine/Diluent</th>
-                        <th >Origin/Destination</th>
+                        <th >Destination</th>
                         <th >Amount <br>Issued</th>
                         <th >Batch <br>Number</th>
                         <th >Expiry <br>Date</th>
@@ -176,7 +175,7 @@
 
   $(document).ready(function() {
     
-    table1 = $('#table1').DataTable({ 
+    table1 = $('#table1').DataTable({
     "sDom": '<l<t>ip>',
     "processing": true, //Feature control the processing indicator.
     "serverSide": true, //Feature control DataTables' server-side processing mode.
@@ -212,7 +211,7 @@
 
     $(document).ready(function() {
     
-    table2 = $('#table2').DataTable({ 
+    table2 = $('#table2').DataTable({
     "sDom": '<l<t>ip>',
     "processing": true, //Feature control the processing indicator.
     "serverSide": true, //Feature control DataTables' server-side processing mode.

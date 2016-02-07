@@ -114,90 +114,6 @@ class Stock extends MY_Controller
           echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
          
     }
-    function save_issued_stock(){
-          Modules::run('secure_tings/is_logged_in');
-          $data2['user_object2'] = $this->get_user_object();
-       $data3['user_object3'] = $this->get_user_object();
-       
-      
-       
-       $issued_to=$this->input->post('issued_to');
-       $S11=$this->input->post('s11');
-       $date_issued=$this->input->post('date_issued');
-       $date_recorded=$this->input->post('date_recorded');
-       $user_id= $data2['user_object2']['user_id'];
-       $user_level= $data2['user_object2']['user_level'];
-       $station_name=$data3['user_object3']['user_statiton'];
-     
-
-       //$issue_array['order_id']=$order_id;
-       $issue_array['S11']=$S11;
-       $issue_array['date_issued']=$date_issued;
-       $issue_array['issued_to']=$issued_to;
-       $issue_array['date_recorded']=$date_recorded;
-       $issue_array['issued_by_user']=$user_id;
-       $issue_array['issued_by_station_level']=$user_level;
-       $issue_array['issued_by_station_id']=$station_name;
-      
-       $this->db->insert('m_issue_stock', $issue_array);
-       $issue_id = $this->db->insert_id();
-
-       // Issue Stock Item Information
-       $vaccine=$this->input->post('vaccine');
-       $batch_no=$this->input->post('batch_no');
-       $expiry_date=$this->input->post('expiry_date');
-       $amount_ordered=$this->input->post('amount_ordered');
-       $stock_quantity=$this->input->post('available_quantity');
-       $amount_issued=$this->input->post('amount_issued');
-       $vvm_status=$this->input->post('vvm_status');
-      
-
-       $batch = stripcslashes($_POST['batch']);
-       $batch = json_decode($batch,TRUE);
-       
-        $issue_array=array();
-        $issue_counter=0;
-
-      foreach ($batch as $item) {
-        $issue_array[$issue_counter]['vaccine_id']=$item['vaccine_id'];
-        $issue_array[$issue_counter]['batch_no']=$item['batch_no'];
-        $issue_array[$issue_counter]['expiry_date']=$item['expiry_date'];
-        $issue_array[$issue_counter]['vvm_status']=$item['vvm_status'];
-        $issue_array[$issue_counter]['amount_ordered']=$item['amount_ordered'];
-        $issue_array[$issue_counter]['amount_issued']=$item['amount_issued'];
-        $issue_array[$issue_counter]['issue_id']=$issue_id[$issue_counter];
-         
-         $issue_counter++;
-       }
-
-       $main_array['own_issues']=$issue_array;
-       // Add assigned issue id to issue items
-      foreach ($main_array as $key => $value) {
-        foreach ($value as $keyvac => $valuevac) {
-          foreach ($valuevac as $keys => $values) {
-            if ($keys == "issue_id") {
-            $temp[$keyvac]['issue_id'] = $issue_id;
-          }  else{
-            $temp[$keyvac][$keys] = $values;
-          }
-          
-              
-          }
-        
-        }
-         echo json_encode($temp);
-
-      $this->db->insert_batch('m_issue_stock_item',$temp);
-         
-      }
-       
-
-          $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">Stock successfully issued to <strong>'.$issued_to.'</strong>!</div>');
-          
-           redirect('order/list_orders');
-    
-          //var_dump($data);
-    }
 
     function list_inventory(){
           Modules::run('secure_tings/is_logged_in');
@@ -237,14 +153,7 @@ class Stock extends MY_Controller
          //echo Modules::run('template/admin', $data);
     
     }
-    function vaccine_ledg($selected_vaccine){
 
-      $this->load->model('stock/mdl_stock');
-      $data= $this->mdl_stock->get_vaccine_ledger($selected_vaccine);
-       echo json_encode($data);
-
-    }
-    
     function vaccine_count(){
       
       $id= $this->uri->segment(3);
@@ -321,9 +230,7 @@ class Stock extends MY_Controller
           $row = array();
           $row[] = $bal->date_created;
           $row[] = $bal->vaccine_name;
-          
           $row[] = $bal->amount_received;
-                   
           $row[] = $bal->batch_no;
           $row[] = $bal->expiry_date;
           $data[] = $row;
@@ -355,9 +262,8 @@ class Stock extends MY_Controller
           $row = array();
           $row[] = $bal->date_created;
           $row[] = $bal->vaccine_name;
-       
-          $row[] = $bal->issuing_station;
-          $row[] = $bal->amount_issued;          
+          $row[] = $bal->issued_to;
+          $row[] = $bal->amount_issued;
           $row[] = $bal->batch_no;
           $row[] = $bal->expiry_date;
           $data[] = $row;
@@ -412,10 +318,37 @@ class Stock extends MY_Controller
       $station_id=$data['user_object']['user_statiton'];
       $selected_batch=$this->input->post('selected_batch');
       $this->load->model('stock/mdl_stock');
-      $data= $this->mdl_stock->get_batchdetails($selected_batch, $station_id);
+      $data= $this->mdl_stock->get_batch_details($selected_batch, $station_id);
      /* echo json_encode($selected_vaccine);*/
        echo json_encode($data);
     }
+
+    function get_order_batch(){
+        //Modules::run('secure_tings/is_logged_in');
+        $info['user_object'] = $this->get_user_object();
+        $station_id=$info['user_object']['user_statiton'];
+        $this->load->model('mdl_stock');
+        $order_id=$this->input->post('order_id');
+        $selected_batch=$this->input->post('selected_batch');
+
+        $data_array=array();
+        foreach ($selected_batch as $item) {
+            $query = $this->mdl_stock->get_order_batch($order_id,$item['selected_batch'], $station_id);
+
+            foreach ($query as $row) {
+                //var_dump($query);
+                $data['vaccine_id'] = $row->vaccine_id;
+                $data['batch_no'] = $row->batch_number;
+                // $data['expiry_date'] = $row->expiry_date;
+                // $data['vvm_status'] = $row->name;
+                $data_array['issue_row'.$row->vaccine_id][] = $data;
+
+            }
+
+        }
+        echo json_encode($data_array);
+    }
+
 
     function get_order_batch_details(){
   // Gets more details of the batch selected
@@ -424,9 +357,8 @@ class Stock extends MY_Controller
       $order_id=$this->input->post('order_id');
       $selected_batch=$this->input->post('selected_batch');
       $this->load->model('stock/mdl_stock');
-      $data= $this->mdl_stock->get_order_batch_details($selected_batch, $order_id);
-     
-       echo json_encode($data);
+      $data= $this->mdl_stock->get_order_batch_details($selected_batch, $order_id,  $station_id);
+      echo json_encode($data);
     }
        function get_orders(){
         $data['user_object'] = $this->get_user_object();
@@ -592,6 +524,79 @@ class Stock extends MY_Controller
       redirect('order/list_orders');
     }
 
+    function save_issued_stock(){
+        Modules::run('secure_tings/is_logged_in');
+        $data2['user_object2'] = $this->get_user_object();
+        $data3['user_object3'] = $this->get_user_object();
+
+
+
+        $issued_to=$this->input->post('issued_to');
+        $S11=$this->input->post('s11');
+        $date_issued=$this->input->post('date_issued');
+        $date_recorded=$this->input->post('date_recorded');
+        $user_id= $data2['user_object2']['user_id'];
+        $user_level= $data2['user_object2']['user_level'];
+        $station_name=$data3['user_object3']['user_statiton'];
+
+
+        //$issue_array['order_id']=$order_id;
+        $issue_array['S11']=$S11;
+        $issue_array['date_issued']=$date_issued;
+        $issue_array['issued_to']=$issued_to;
+        $issue_array['date_recorded']=$date_recorded;
+        $issue_array['issued_by_user']=$user_id;
+        $issue_array['issued_by_station_level']=$user_level;
+        $issue_array['issued_by_station_id']=$station_name;
+
+        $this->db->insert('m_issue_stock', $issue_array);
+        $issue_id = $this->db->insert_id();
+
+        $batch = stripcslashes($_POST['batch']);
+        $batch = json_decode($batch,TRUE);
+
+        $issue_array=array();
+        $issue_counter=0;
+
+        foreach ($batch as $item) {
+            $issue_array[$issue_counter]['vaccine_id']=$item['vaccine_id'];
+            $issue_array[$issue_counter]['batch_no']=$item['batch_no'];
+            $issue_array[$issue_counter]['expiry_date']=$item['expiry_date'];
+            $issue_array[$issue_counter]['vvm_status']=$item['vvm_status'];
+            $issue_array[$issue_counter]['amount_ordered']=$item['amount_ordered'];
+            $issue_array[$issue_counter]['amount_issued']=$item['amount_issued'];
+            $issue_array[$issue_counter]['issue_id']=$issue_id[$issue_counter];
+
+            $issue_counter++;
+        }
+
+        $main_array['own_issues']=$issue_array;
+        // Add assigned issue id to issue items
+        foreach ($main_array as $key => $value) {
+            foreach ($value as $keyvac => $valuevac) {
+                foreach ($valuevac as $keys => $values) {
+                    if ($keys == "issue_id") {
+                        $temp[$keyvac]['issue_id'] = $issue_id;
+                    }  else{
+                        $temp[$keyvac][$keys] = $values;
+                    }
+
+
+                }
+
+            }
+            echo json_encode($temp);
+
+            $this->db->insert_batch('m_issue_stock_item',$temp);
+
+        }
+
+
+        $this->session->set_flashdata('msg','<div id="alert-message" class="alert alert-success text-center">Stocks have been issued successfully</div>');
+        redirect('order/list_orders');
+
+    }
+
     function receive_stocks($order_id){
       Modules::run('secure_tings/is_logged_in');
       $this->load->model('vaccines/mdl_vaccines');
@@ -610,29 +615,6 @@ class Stock extends MY_Controller
       echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
     }
 
-    function get_order_batch(){
-      //Modules::run('secure_tings/is_logged_in');
-      $this->load->model('mdl_stock');
-      $order_id=$this->input->post('order_id');
-      $selected_batch=$this->input->post('selected_batch');
-      
-      $data_array=array();
-      foreach ($selected_batch as $item) {
-        $query = $this->mdl_stock->get_order_batch($order_id,$item['selected_batch']);
-       
-        foreach ($query as $row) {
-          //var_dump($query);
-          $data['vaccine_id'] = $row->vaccine_id;
-          $data['batch_no'] = $row->batch_number;
-          // $data['expiry_date'] = $row->expiry_date;
-          // $data['vvm_status'] = $row->name;
-          $data_array['issue_row'.$row->vaccine_id][] = $data;
-
-          }
-                    
-       }
-       echo json_encode($data_array);
-    }
 
     function new_save_received_stock(){
       Modules::run('secure_tings/is_logged_in');
@@ -711,28 +693,21 @@ class Stock extends MY_Controller
     function save_received_stocks(){
         Modules::run('secure_tings/is_logged_in');
 
-        $data2['user_object2'] = $this->get_user_object();
+        $data['user_object'] = $this->get_user_object();
                 
         $S11=$this->input->post('s11');
         $date_received=$this->input->post('date_received');
         $date_recorded=$this->input->post('date_recorded');
         $received_from=$this->input->post('received_from');
-        $user_id= $data2['user_object2']['user_id'];
-        $user_level= $data2['user_object2']['user_level'];
-        $station_name=$data2['user_object2']['user_statiton'];
-        
-        $order_array['date_created']=$date_recorded;
-        $order_array['station_level']=$user_level;
-        $order_array['station_id']=$station_name;
-        $order_array['order_destination']=$received_from;
+        $user_id= $data['user_object']['user_id'];
+        $user_level= $data['user_object']['user_level'];
+        $station_name=$data['user_object']['user_statiton'];
 
-        $this->db->insert('m_order', $order_array);
-        $order_id=$this->db->insert_id();
-
-        $receive_array['order_id']=$order_id;
+//        $receive_array['order_id']=$order_id;
         $receive_array['S11']=$S11;
         $receive_array['date_received']=$date_received;
         $receive_array['date_recorded']=$date_recorded;
+        $receive_array['received_from']=$received_from;
         $receive_array['received_by_user']=$user_id;
         $receive_array['station_level']=$user_level;
         $receive_array['station_id']=$station_name;
@@ -769,12 +744,13 @@ class Stock extends MY_Controller
                 }
             }
           
-        } 
-        $this->db->insert_batch('m_receive_stock_item',$temp);
-        echo json_encode($temp);
+        }
+            $this->db->insert_batch('m_receive_stock_item',$temp);
+
       }
-      
+
       $this->session->set_flashdata('msg','<div id="alert-message" class="alert alert-success text-center">Received stocks have been saved successfully</div>');
+        redirect('order/list_orders');
   }
 
 }

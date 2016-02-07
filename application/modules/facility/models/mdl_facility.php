@@ -25,14 +25,23 @@ $this->search_order($station_id);
 }
 	function search_order($station_id)
 	{
-        $this->db->select($this->column);
-        $this->db->from('m_facility mf');
-        $this->db->join('m_subcounty', 'm_subcounty.id = mf.subcounty_id');
-        $this->db->join('m_county', 'm_county.id = mf.county_id');
-        $this->db->join('m_region', 'm_county.region_id = m_region.id');
-        $this->db->where('county_name',$station_id);
-        $this->db->or_where('subcounty_name',$station_id);
-		$this->db->or_where('region_name',$station_id);
+        if ($station_id!=NULL){
+			$this->db->select($this->column);
+			$this->db->from('m_facility mf');
+			$this->db->join('m_subcounty', 'm_subcounty.id = mf.subcounty_id');
+			$this->db->join('m_county', 'm_county.id = mf.county_id');
+			$this->db->join('m_region', 'm_county.region_id = m_region.id');
+			$this->db->where('county_name',$station_id);
+			$this->db->or_where('subcounty_name',$station_id);
+			$this->db->or_where('region_name',$station_id);
+
+		}else{
+			$this->db->select($this->column);
+			$this->db->from('m_facility mf');
+			$this->db->join('m_subcounty', 'm_subcounty.id = mf.subcounty_id');
+			$this->db->join('m_county', 'm_county.id = mf.county_id');
+			$this->db->join('m_region', 'm_county.region_id = m_region.id');
+		}
 		$i = 0;
 
 		foreach ($this->column as $item)

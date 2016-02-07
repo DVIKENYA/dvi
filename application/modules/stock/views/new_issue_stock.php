@@ -24,7 +24,7 @@ echo form_open('stock/new_save_issued_stock',$form_attributes);?>
     <div class="col-lg-3">
 	  <div class="panel-body">
 	  <b>Date Issued</b>
-	   <?php  $data=array('name' => 'date_issued','required'=>'true','id'=>'datepicker','required'=>'true', 'class'=>'form-control'); echo form_input($data);?>
+	   <?php  $data=array('name' => 'date_issued','required'=>'true','id'=>'datepicker','required'=>'true', 'class'=>'form-control','autocomplete'=>'off'); echo form_input($data);?>
 	   
  		</div>
 	  </div>
@@ -70,8 +70,8 @@ echo form_open('stock/new_save_issued_stock',$form_attributes);?>
 						background-color: #E0F2F7 !important
 					}</style>
 					<td>
-						<select name="batch_no[]" class="form-control batch_no" id="batch_no<?php echo $vaccine['vaccine_id']; ?>">
-						         <option value="0">Select batch</option>
+						<select name="batch_no[]" class="form-control batch_no" id="batch_no<?php echo $vaccine['vaccine_id']; ?>" required>
+						         <option value="">Select batch</option>
 						         
 						</select>
 				    </td>
@@ -154,7 +154,7 @@ echo form_open('stock/new_save_issued_stock',$form_attributes);?>
 	            	<?php }?>
 
 					function batch_detail(selected_batch,stock_row){
-						var _url="<?php echo base_url();?>stock/get_order_batch_details";
+						var _url="<?php echo base_url();?>stock/get_batch_details";
 									
 							var request=$.ajax({
 								     url: _url,

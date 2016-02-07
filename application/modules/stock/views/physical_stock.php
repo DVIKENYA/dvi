@@ -24,19 +24,20 @@ echo form_open('',$form_attributes);?>
 		
              	<tr physical_row="1">
              	<input type="hidden" name ="transaction_type" class="transaction_type" value="2">
-			     <td> <select name="vaccine" class="form-control vaccine" id="vaccine">
-		                 <option value="" selected="selected">--Select One--</option> 
+                     <td> <select name="vaccine" class="form-control vaccine" id="vaccine" required>
+		                 <option value="" selected="selected">Select Vaccine</option>
 		                 <?php foreach ($vaccines as $vaccine) { 
 		                     echo "<option value='".$vaccine['ID']."'>".$vaccine['Vaccine_name']."</option>";
 		                     }?>
-                </select></td>
-             		<td> <select name="batch_no" class="form-control batch_no" id="batch_no" ></select></td>
-             		<td><?php $data=array('name' => 'expiry_date','id'=> 'expiry_date','class'=>'form-control expiry_date'); echo form_input($data);?></td>
+                        </select>
+                     </td>
+             		<td> <select name="batch_no" class="form-control batch_no" id="batch_no" required ></select></td>
+             		<td><?php $data=array('name' => 'expiry_date','id'=> 'expiry_date','class'=>'form-control expiry_date','disabled'=>''); echo form_input($data);?></td>
              		 <style type="text/css">
 		                input[id="available_quantity"]{
 		                 background-color: #E0F2F7 !important }</style>
-             		<td><?php $data=array('name' => 'available_quantity','id'=> 'available_quantity','class'=>'form-control available_quantity' ); echo form_input($data);?></td>
-             		<td><?php $data=array('name' => 'physical_count','required'=>'true','type'=>'Number', 'min'=>'0','id'=>'physical_count' ,'class'=>'form-control physical_count'); echo form_input($data);?></td>
+             		<td><?php $data=array('name' => 'available_quantity','id'=> 'available_quantity','class'=>'form-control available_quantity','disabled'=>'','required'=>'' ); echo form_input($data);?></td>
+             		<td><?php $data=array('name' => 'physical_count','required'=>'true','type'=>'Number', 'min'=>'0','id'=>'physical_count' ,'class'=>'form-control physical_count','required'=>'' ); echo form_input($data);?></td>
 					<td hidden><?php $data=array('name' => 'id','id'=> 'id','class'=>'form-control id' ,'hidden'=>'' ); echo form_input($data);?></td>
              		<td ><a href="#" class="add"><span class="label label-success"><i class="fa  fa-plus-square"></i> <b>ADD</b></span></a><span class="divider">  </span><a href="#" class="remove"><span class="label label-danger"><i class="fa  fa-minus-square"></i> <b>REMOVE</b></span></a></td>
                
@@ -179,7 +180,7 @@ echo form_open('',$form_attributes);?>
 					    	stock_row.closest("tr").find(".batch_no option").remove();
 					    	stock_row.closest("tr").find(".expiry_date ").val("");
 					    	stock_row.closest("tr").find(".available_quantity").val("");
-					    	stock_row.closest("tr").find(".batch_no ").append("<option value='0'>Select batch </option> ");
+					    	stock_row.closest("tr").find(".batch_no ").append("<option value=''>Select batch </option> ");
 				    $.each(data,function(key,value){
 				    		stock_row.closest("tr").find(".batch_no").append("<option value='"+value.batch_number+"'>"+value.batch_number+"</option> ");
 

@@ -47,13 +47,13 @@ parent::__construct();
         return $query;
     }
 // Get a list of items in an order 
-function get_orderitems($order_id,$order_by,$date_created){
+function get_order_items($order_id,$order_by,$date_created){
     
         $this->db->select('o.order_by,o.date_created as order_date,o.station_id,mv.Vaccine_name,oi.stock_on_hand, oi.min_stock, oi.max_stock,oi.first_expiry, oi.qty_order_doses as quantity_ordered');
         $this->db->from('m_order o');
         $this->db->join('order_item oi', 'oi.order_id=o.order_id', 'inner');
         $this->db->join('m_vaccines mv ', 'mv.ID=oi.vaccine_id', 'inner');
-	    $this->db->where(array('o.order_id' => $order_id,'o.order_by' => $order_by,'o.date_created'=>$date_created));
+	    $this->db->where(array('o.order_id' => $order_id,'o.order_by' => $order_by,'o.date_created'=>$date_created,'oi.qty_order_doses !='=>0));
         $query = $this->db->get();
         return $query->result_array();
 }                    

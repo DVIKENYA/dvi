@@ -35,7 +35,7 @@ echo form_open('',$form_attributes);?>
 	<div class="col-lg-3">
 	  <div class="panel-body">
 	  <b>S11 #</b>
-	    <?php $data=array('name' => 's11','required'=>'true', 'id'=> 's11','class'=>'form-control'); echo form_input($data);?>
+	    <?php $data=array('name' => 's11', 'id'=> 's11','class'=>'form-control'); echo form_input($data);?>
 	    </div>
 	</div>
     
@@ -75,7 +75,7 @@ echo form_open('',$form_attributes);?>
 		<tr issue_row="1">
 			<input type="hidden" name ="transaction_type" class="transaction_type" value="2">
             <td><select name="vaccine" class="form-control vaccine" id="vaccine" required="true">
-		                 <option value="">--Select One--</option>
+		                 <option value="">Select Vaccine</option>
 		                 <?php foreach ($vaccines as $vaccine) { 
 		                     echo "<option value='".$vaccine['ID']."'>".$vaccine['Vaccine_name']."</option>";
 		                     }?>
@@ -256,7 +256,7 @@ echo form_open('',$form_attributes);?>
 			    	stock_row.closest("tr").find(".expiry_date ").val("");
 			    	stock_row.closest("tr").find(".available_quantity").val("");
 			    	stock_row.closest("tr").find(".vvm_status").val("");
-			    	stock_row.closest("tr").find(".batch_no ").append("<option value='0'>Select batch </option> ");
+			    	stock_row.closest("tr").find(".batch_no ").append("<option value=''>Select batch </option> ");
 			    	$.each(data,function(key,value){
 			    	stock_row.closest("tr").find(".batch_no").append("<option value='"+value.batch_number+"'>"+value.batch_number+"</option> ");
 

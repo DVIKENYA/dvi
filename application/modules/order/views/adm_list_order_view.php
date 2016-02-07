@@ -1,5 +1,5 @@
 <?php echo $this->session->flashdata('msg');  ?>
-<div class="well well-sm"><b>Orders placed to me</b></div>
+<div class="well well-sm"><b>Requests</b></div>
   </br>
 <div class="row">
   
@@ -10,7 +10,7 @@
               <div class="panel-body">
                 <ul class="nav nav-tabs" id="myTab">
                 
-                  <li class="active"><a data-toggle="tab" href="#tab1"><b>Placed Orders</b></a></li>
+                  <li class="active"><a data-toggle="tab" href="#tab1"><b>Requests to me</b></a></li>
                   
                 </ul>
                 <div class="tab-content">
@@ -21,7 +21,7 @@
 
     <table class="table table-bordered table-striped" id="list_orders_tbl">
         <thead>
-                <tr><th>Order # </th><th>Order from</th><th>Date Created</th><th>Action</th></tr>
+                <tr><th>Request # </th><th>Order from</th><th>Date Created</th><th>Action</th></tr>
         </thead>
 
         <tbody>

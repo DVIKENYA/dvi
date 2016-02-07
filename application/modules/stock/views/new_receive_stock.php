@@ -23,7 +23,7 @@
   <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
     <div class="form-group">
       <b>Date Received</b>
-      <?php $data=array('name' => 'date_received','id'=>'date_received','class'=>'form-control'); echo form_input($data);?>
+      <?php $data=array('name' => 'date_received','id'=>'date_received','class'=>'form-control','required'=>'','type'=>'date','autocomplete'=>'off'); echo form_input($data);?>
     </div>
   </div> 
 
@@ -52,7 +52,7 @@
       <th style="width:9%;" class="small">Comment</th>
    </thead>
    <tbody>
-<?php var_dump($receipts);foreach ($receipts as $vaccine) { ?>
+<?php foreach ($receipts as $vaccine) { ?>
      <tr align="center" receive_row="<?php echo $vaccine['ID'] ?>"> 
      <td><?php echo $vaccine['Vaccine_name']?></td>
      <?php echo form_hidden('vaccine[]',$vaccine['ID']);?>
@@ -61,8 +61,8 @@
      <td><?php $data=array('name' => 'quantity_ordered[]','id'=> 'quantity_ordered','class'=>'quantity_ordered form-control','value'=>$vaccine['amount_ordered'],'readonly'=>''); echo form_input($data);?></td>
      <td><?php $data=array('name' => 'quantity_received[]','id'=> 'quantity_received','class'=>'quantity_received form-control','type'=>'number','min'=>'0','value'=>$vaccine['amount_issued']); echo form_input($data);?></td>
      <td>
-      <select name="vvm_status[]" class=" form-control vvm_status " id="vvm_status" name="vvm_status">
-        <option value=""> --Select One-- </option>
+      <select name="vvm_status[]" class=" form-control vvm_status " id="vvm_status" name="vvm_status" required>
+        <option value="">Select Status </option>
         <option value="1">Stage 1</option>
         <option value="2">Stage 2</option>
         <option value="3">Stage 3</option>

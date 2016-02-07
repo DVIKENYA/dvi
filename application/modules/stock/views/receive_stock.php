@@ -30,7 +30,7 @@ echo form_open('',$form_attributes);?>
 <div class="col-lg-3">
   <div class="panel-body">
   <b>Date Received</b>
-   <?php $data=array('name' => 'date_received','id'=>'date_received','class'=>'form-control','required'=>'','type'=>'date'); echo form_input($data);?>
+   <?php $data=array('name' => 'date_received','id'=>'date_received','class'=>'form-control','required'=>'','type'=>'date','autocomplete'=>'off'); echo form_input($data);?>
     </div>
 </div> 
 
@@ -60,21 +60,21 @@ echo form_open('',$form_attributes);?>
 
       <tr align="center" receive_row="1"> 
               
-              <td> <select name="vaccine" class="vaccine form-control" id="vaccine">
-                 <option value="">--Select One--</option>
+              <td> <select name="vaccine" class="vaccine form-control" id="vaccine" required>
+                 <option value="">Select Vaccine</option>
                  <?php foreach ($vaccines as $vaccine) { 
                      echo "<option value='".$vaccine['ID']."'>".$vaccine['Vaccine_name']."</option>";
                      }?>
                 </select></td>
 
         
-                <td><?php $data=array('name' => 'batch_no','id'=>'batch_no','class'=>'batch_no form-control','required'=>'','type'=>'text'); echo form_input($data);?></td>
-                <td><?php $data=array('name' => 'expiry_date','id'=> 'expiry_date','class'=>'form-control expiry_date', 'type'=>'date','required'=>'','type'=>'date'); echo form_input($data);?></td>
+                <td><?php $data=array('name' => 'batch_no','id'=>'batch_no','class'=>'batch_no form-control','required'=>'','type'=>'text','autocomplete'=>'off'); echo form_input($data);?></td>
+                <td><?php $data=array('name' => 'expiry_date','id'=> 'expiry_date','class'=>'form-control expiry_date', 'type'=>'date','required'=>'','type'=>'date','autocomplete'=>'off'); echo form_input($data);?></td>
                 <td><?php $data=array('name' => 'amount_received','id'=> 'amount_received','class'=>'amount_received form-control','required'=>'','type'=>'number'); echo form_input($data);?></td>
                 
                 <td>
                 <select name="vvm_status" class=" form-control vvm_status " id="vvm_status" name="vvm_status">
-                <option value=""> --Select One-- </option>
+                <option value="">Select Status </option>
                     <option value="1">Stage 1</option>
                     <option value="2">Stage 2</option>
                     <option value="3">Stage 3</option>
@@ -190,7 +190,6 @@ echo form_open('',$form_attributes);?>
               success:function(data, textStatus, jqXHR) 
               {
                   //data: return data from server
-                  console.log(data);
                   window.location.replace('<?php echo base_url().'stock/list_inventory'?>');
 
 

@@ -20,7 +20,7 @@ class Mdl_Stock extends CI_Model
 			'batch_no',
 			'date_created',
 			'expiry_date',
-			'issuing_station',
+			'issued_to',
 			'amount_ordered',
 			'amount_issued',
 	
@@ -58,22 +58,24 @@ class Mdl_Stock extends CI_Model
         return $query->result_array();
 	}
 	function get_batches($selected_vaccine, $station_id){
-		$this->db->select('batch_number,expiry_date');
-		$s = array('vaccine_id' => $selected_vaccine);
-		$u = array('station_id' => $station_id);
-        $this->db->where($s);
-        $this->db->where($u);
-        $this->db->group_by('batch_number');
-		$query = $this->db->get('m_stock_balance');
+        $this->db->select('batch_number');
+        $array = array('vaccine_id' => $selected_vaccine, 'station_id' => $station_id);
+        $this->db->where($array);
+        $this->db->group_by('ms.batch_number,ms.station_id');
+        $this->db->having('sum(ms.stock_balance) > 0');
+        $query = $this->db->get('m_stock_balance ms');
 		return $query->result_array();
 	}
 
-	function get_batchdetails($selected_batch, $station_id){
-		$this->db->select('order_id as id, expiry_date,sum(stock_balance) as stock_balance,mv.name as status');
+	function get_batch_details($selected_batch, $station_id){
+        $sum = ('if(sum(ms.stock_balance) > 0,sum(ms.stock_balance),false) as stock_balance');
+		$this->db->select('batch_number,expiry_date,order_id as id, expiry_date,mv.name as status,'.$sum.'',false);
 		$this->db->join('m_vvm_status mv', 'mv.id = vvm_status', 'left');
 		$array = array('batch_number' => $selected_batch, 'station_id' => $station_id);
         $this->db->where($array);
-		$query = $this->db->get('m_stock_balance');
+        $this->db->group_by('ms.vaccine_id,ms.batch_number,ms.station_id');
+        $this->db->having('sum(ms.stock_balance) > 0');
+		$query = $this->db->get('m_stock_balance ms');
 		return $query->result_array();
 	
 	}
@@ -221,32 +223,34 @@ class Mdl_Stock extends CI_Model
 		}
 	}
 
-	function get_order_batch($order_id ,$vaccine_id){
-		$this->db->distinct();
-		$this->db->select('m.order_id,o.vaccine_id,ms.batch_number,ms.expiry_date,mvs.name');
-		$this->db->from('m_order m');
-		$this->db->join('order_item o ', 'o.order_id=m.order_id', 'inner');
-		$this->db->join('m_vaccines mv ', 'mv.ID=o.vaccine_id', 'inner');
-		$this->db->join('m_stock_balance ms ', ' ms.vaccine_id=mv.ID', 'inner');
-		$this->db->join('m_vvm_status mvs ', ' mvs.id=ms.vvm_status', 'inner');
-		$array = array('o.vaccine_id' => $vaccine_id, 'm.order_id' => $order_id);
-		$this->db->group_by('ms.vaccine_id,ms.batch_number,ms.station_id');
+    function get_order_batch($order_id ,$vaccine_id, $station_id){
+        $this->db->distinct();
+        $this->db->select('m.order_id,o.vaccine_id,ms.batch_number,ms.expiry_date,mvs.name');
+        $this->db->from('m_order m');
+        $this->db->join('order_item o ', 'o.order_id=m.order_id', 'inner');
+        $this->db->join('m_vaccines mv ', 'mv.ID=o.vaccine_id', 'inner');
+        $this->db->join('m_stock_balance ms ', ' ms.vaccine_id=mv.ID', 'inner');
+        $this->db->join('m_vvm_status mvs ', ' mvs.id=ms.vvm_status', 'inner');
+        $array = array('o.vaccine_id' => $vaccine_id, 'm.order_id' => $order_id, 'ms.station_id' => $station_id);
+        $this->db->group_by('ms.vaccine_id,ms.batch_number,ms.station_id');
         $this->db->where($array);
-		$query = $this->db->get();
-		return $query->result();
-	}	
+        $query = $this->db->get();
+        return $query->result();
+    }
 
-	function get_order_batch_details($selected_batch ,$order_id){
+    function get_order_batch_details($selected_batch ,$order_id, $station_id){
 		$this->db->distinct();
-		$this->db->select(' m.order_id,o.vaccine_id,ms.batch_number,ms.expiry_date,sum(ms.stock_balance) as stock_balance,mvs.name as status');
+        $sum = ('if(sum(ms.stock_balance) > 0,sum(ms.stock_balance),false) as stock_balance');
+        $this->db->select(' m.order_id,o.vaccine_id,ms.batch_number,ms.expiry_date,mvs.name as status,'.$sum.'',false);
 		$this->db->from('m_order m');
 		$this->db->join('order_item o ', 'o.order_id=m.order_id', 'inner');
 		$this->db->join('m_vaccines mv ', 'mv.ID=o.vaccine_id', 'inner');
 		$this->db->join('m_stock_balance ms ', ' ms.vaccine_id=mv.ID', 'inner');
 		$this->db->join('m_vvm_status mvs ', ' mvs.id=ms.vvm_status', 'inner');
-		$array = array('ms.batch_number' => $selected_batch, 'm.order_id' => $order_id);
+		$array = array('ms.batch_number' => $selected_batch, 'm.order_id' => $order_id, 'ms.station_id' => $station_id);
         $this->db->where($array);
         $this->db->group_by('ms.vaccine_id,ms.batch_number,ms.station_id');
+        $this->db->having('sum(ms.stock_balance) > 0');
 		$query = $this->db->get('m_stock_balance');
 		// return $query->result_array();
 		return $query->result();
@@ -254,37 +258,25 @@ class Mdl_Stock extends CI_Model
 
 	function get_stock_balance($selected_vaccine ,$station_id){
 		$this->db->distinct();
-		// $this->db->select(' ms.batch_number,ms.expiry_date,sum(ms.stock_balance) as stock_balance');
-		// $this->db->from('m_stock_balance ms');
-		// $this->db->join('m_vaccines mv ', 'mv.ID=ms.vaccine_id', 'inner');
-		// $this->db->join('m_vvm_status mvs ', ' mvs.id=ms.vvm_status', 'inner');
-		// $array = array('ms.vaccine_id' => $selected_vaccine, 'ms.station_id' => $station_id);
-  //       $this->db->where($array);
-  //       $this->db->group_by('ms.vaccine_id,ms.station_id');
-		$this->db->select(' ms.batch_number,ms.expiry_date,sum(ms.stock_balance) as stock_balance');
-		$this->db->from('m_order m');
-		$this->db->join('order_item o ', 'o.order_id=m.order_id', 'inner');
-		$this->db->join('m_vaccines mv ', 'mv.ID=o.vaccine_id', 'inner');
-		$this->db->join('m_stock_balance ms ', ' ms.vaccine_id=mv.ID', 'inner');
-		$this->db->join('m_vvm_status mvs ', ' mvs.id=ms.vvm_status', 'inner');
-		$array = array('o.vaccine_id' => $selected_vaccine, 'ms.station_id' => $station_id);
+        $sum = ('if(sum(ms.stock_balance) > 0,sum(ms.stock_balance),false) as stock_balance');
+		$this->db->select($sum,false);
+		$this->db->from('m_stock_balance ms');
+		$array = array('ms.vaccine_id' => $selected_vaccine, 'ms.station_id' => $station_id);
 		$this->db->where($array);
-        $this->db->group_by('o.vaccine_id, ms.station_id');
+        $this->db->group_by('ms.vaccine_id, ms.station_id');
 		$query = $this->db->get();
 		return $query->result_array();
 	}
 
 	function get_batch_stock_summary($selected_vaccine ,$station_id){
 		$this->db->distinct();
-		$this->db->select(' ms.batch_number,ms.expiry_date,sum(ms.stock_balance) as stock_balance');
-		$this->db->from('m_order m');
-		$this->db->join('order_item o ', 'o.order_id=m.order_id', 'inner');
-		$this->db->join('m_vaccines mv ', 'mv.ID=o.vaccine_id', 'inner');
-		$this->db->join('m_stock_balance ms ', ' ms.vaccine_id=mv.ID', 'inner');
-		$this->db->join('m_vvm_status mvs ', ' mvs.id=ms.vvm_status', 'inner');
-		$array = array('o.vaccine_id' => $selected_vaccine, 'ms.station_id' => $station_id);
+		$sum = ('if(sum(ms.stock_balance) > 0,sum(ms.stock_balance),false) as stock_balance');
+		$this->db->select('ms.batch_number,ms.expiry_date, '.$sum.'',false);
+		$this->db->from('m_stock_balance ms');
+		$array = array('ms.vaccine_id' => $selected_vaccine, 'ms.station_id' => $station_id );
         $this->db->where($array);
-        $this->db->group_by('o.vaccine_id, ms.batch_number, ms.station_id');
+        $this->db->group_by('ms.vaccine_id, ms.batch_number');
+        $this->db->having('sum(ms.stock_balance) > 0');
 		$query = $this->db->get();
 		return $query->result_array();
 	}
