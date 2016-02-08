@@ -45,10 +45,13 @@ class Stock extends MY_Controller
     public function list_issue_stock(){
         Modules::run('secure_tings/is_logged_in');
         $this->load->model('order/mdl_order');
-        $data2['user_object2'] = $this->get_user_object();
-        $data3['user_object3'] = $this->get_user_object();
-        $station= $data2['user_object2']['user_level'];
-        $station_id=$data3['user_object3']['user_statiton'];
+        $this->load->model('vaccines/mdl_vaccines');
+        $this->load->model('stock/mdl_stock');
+        $data['vaccines']= $this->mdl_vaccines->getVaccine();
+        $info['user_object'] = $this->get_user_object();
+
+        $station= $info['user_object']['user_level'];
+        $station_id=$info['user_object']['user_statiton'];
         $data['orders']= $this->mdl_order->get_placed_orders($station,$station_id);
         $data['all_orders']= $this->mdl_order->get_all_placed_orders($station,$station_id);
         $data['submitted_orders']= $this->mdl_order->get_submitted_orders($station,$station_id);
@@ -56,8 +59,35 @@ class Stock extends MY_Controller
         $data['subtitle'] = "Request Stocks";
         $data['page_title'] = "Request Stocks";
         $data['module'] = "stock";
+        $user_level = $this->session->userdata['logged_in']['user_level'];
+        $user_id = $this->session->userdata['logged_in']['user_id'];
+        if($user_level==1){
+            /*
+            user_level = national
+            retrieve all regions
+            */
+            $data['locations'] = $this->mdl_stock->get_region_base();
+        }elseif ($user_level==2) {
+            /*
+            user_level = regional
+            retrieve all counties
+            */
+            $data['locations'] = $this->mdl_stock->get_county_base($user_id);
+        }elseif ($user_level==3) {
+            /*
+            user_level = county
+            retrieve all subcounties
+            */
+            $data['locations'] = $this->mdl_stock->get_subcounty_base($user_id);
+        }elseif ($user_level==4) {
+            /*
+            user_level = subounty
+            retrieve all facilities
+            */
+            $data['locations'] = $this->mdl_stock->get_facility_base($user_id);
+        }
         if($station=='1'){
-            $data['view_file'] = "list_issue_stock";
+            $data['view_file'] = "issue_stock";
         }else{
             $data['view_file'] = "list_issue_stock";
         }
@@ -68,6 +98,44 @@ class Stock extends MY_Controller
 
     }
 
+    public function list_receive_stock(){
+        Modules::run('secure_tings/is_logged_in');
+        $this->load->model('order/mdl_order');
+        $this->load->model('vaccines/mdl_vaccines');
+        $info['user_object'] = $this->get_user_object();
+        $user_level = $this->session->userdata['logged_in']['user_level'];
+        $info['user_object'] = $this->get_user_object();
+        $station_id=$info['user_object']['statiton_above'];
+        if($user_level==1){
+            /*
+            user_level = national
+            retrieve all regions
+            */
+            $data['location'] = "National Arrival";
+        }else{
+            $data['location'] = $station_id;
+        }
+        $station= $info['user_object']['user_level'];
+        $station_id=$info['user_object']['user_statiton'];
+        $data['vaccines']= $this->mdl_vaccines->getVaccine();
+        $data['orders']= $this->mdl_order->get_placed_orders($station,$station_id);
+        $data['all_orders']= $this->mdl_order->get_all_placed_orders($station,$station_id);
+        $data['submitted_orders']= $this->mdl_order->get_submitted_orders($station,$station_id);
+        $data['section'] = "Manage Stock";
+        $data['subtitle'] = "Request Stocks";
+        $data['page_title'] = "Request Stocks";
+        $data['module'] = "stock";
+        if($station=='1'){
+            $data['view_file'] = "receive_stock";
+        }else{
+            $data['view_file'] = "list_receive_stock";
+        }
+        $data['user_object'] = $this->get_user_object();
+        $data['main_title'] = $this->get_title();
+        echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
+
+
+    }
     function save_received_stock(){
       Modules::run('secure_tings/is_logged_in');
   $data2['user_object2'] = $this->get_user_object();
