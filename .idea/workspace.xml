@@ -2,22 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8218d332-efa5-408c-b77c-d8e62a025590" name="Default" comment="Modified">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/application/modules/stock/views/new_issue_stock.php.bak" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/modules/facility/models/mdl_facility.php" afterPath="$PROJECT_DIR$/application/modules/facility/models/mdl_facility.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/config/database.php" afterPath="$PROJECT_DIR$/application/config/database.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/modules/order/controllers/order.php" afterPath="$PROJECT_DIR$/application/modules/order/controllers/order.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/modules/order/models/mdl_order.php" afterPath="$PROJECT_DIR$/application/modules/order/models/mdl_order.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/modules/order/views/adm_list_order_view.php" afterPath="$PROJECT_DIR$/application/modules/order/views/adm_list_order_view.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/modules/order/views/create_order_form.php" afterPath="$PROJECT_DIR$/application/modules/order/views/create_order_form.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/modules/order/views/list_order_view.php" afterPath="$PROJECT_DIR$/application/modules/order/views/list_order_view.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/modules/stock/controllers/stock.php" afterPath="$PROJECT_DIR$/application/modules/stock/controllers/stock.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/modules/stock/models/mdl_stock.php" afterPath="$PROJECT_DIR$/application/modules/stock/models/mdl_stock.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/modules/stock/views/issue_stock.php" afterPath="$PROJECT_DIR$/application/modules/stock/views/issue_stock.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/modules/stock/views/new_issue_stock.php" afterPath="$PROJECT_DIR$/application/modules/stock/views/new_issue_stock.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/modules/stock/views/new_receive_stock.php" afterPath="$PROJECT_DIR$/application/modules/stock/views/new_receive_stock.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/modules/stock/views/physical_stock.php" afterPath="$PROJECT_DIR$/application/modules/stock/views/physical_stock.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/modules/stock/views/receive_stock.php" afterPath="$PROJECT_DIR$/application/modules/stock/views/receive_stock.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/modules/stock/views/vaccine_ledger.php" afterPath="$PROJECT_DIR$/application/modules/stock/views/vaccine_ledger.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/modules/template/views/admin_view.php" afterPath="$PROJECT_DIR$/application/modules/template/views/admin_view.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.php" afterPath="$PROJECT_DIR$/index.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/modules/template/views/epi_view.php" afterPath="$PROJECT_DIR$/application/modules/template/views/epi_view.php" />
     </list>
     <list id="52672ce4-3ab3-4d2f-ad7f-9c60eea4d322" name="Rejected commit: Default" comment="Modified" />
     <ignored path="dvikenya.iws" />
@@ -40,31 +34,41 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="vaccine_ledger.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/application/modules/stock/views/vaccine_ledger.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-10.0">
-              <caret line="91" column="29" selection-start-line="91" selection-start-column="29" selection-end-line="91" selection-end-column="29" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="stock.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/modules/stock/controllers/stock.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-1.3207548">
-              <caret line="193" column="55" selection-start-line="193" selection-start-column="32" selection-end-line="193" selection-end-column="55" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="44" column="24" selection-start-line="44" selection-start-column="24" selection-end-line="44" selection-end-column="24" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="new_receive_stock.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/application/modules/stock/views/new_receive_stock.php">
+      <file leaf-file-name="list_issue_stock.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/application/modules/stock/views/list_issue_stock.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-8.708333">
-              <caret line="63" column="110" selection-start-line="63" selection-start-column="110" selection-end-line="63" selection-end-column="110" />
+            <state vertical-scroll-proportion="0.025641026">
+              <caret line="10" column="39" selection-start-line="10" selection-start-column="39" selection-end-line="10" selection-end-column="39" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="order.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/modules/order/controllers/order.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="50" column="0" selection-start-line="50" selection-start-column="0" selection-end-line="74" selection-end-column="1" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="list_order_view.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/modules/order/views/list_order_view.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-26.25">
+              <caret line="57" column="0" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -73,18 +77,38 @@
       <file leaf-file-name="new_issue_stock.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/modules/stock/views/new_issue_stock.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-8.125">
-              <caret line="73" column="48" selection-start-line="73" selection-start-column="48" selection-end-line="73" selection-end-column="48" />
+            <state vertical-scroll-proportion="-18.125">
+              <caret line="177" column="55" selection-start-line="177" selection-start-column="55" selection-end-line="177" selection-end-column="55" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="receive_stock.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/application/modules/stock/views/receive_stock.php">
+      <file leaf-file-name="epi_view.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/modules/template/views/epi_view.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-3.75">
-              <caret line="32" column="146" selection-start-line="32" selection-start-column="92" selection-end-line="32" selection-end-column="146" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="144" column="73" selection-start-line="144" selection-start-column="73" selection-end-line="144" selection-end-column="73" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="admin_view.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/modules/template/views/admin_view.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="145" column="83" selection-start-line="145" selection-start-column="83" selection-end-line="145" selection-end-column="83" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="new_receive_stock.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/modules/stock/views/new_receive_stock.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="63" column="110" selection-start-line="63" selection-start-column="110" selection-end-line="63" selection-end-column="110" />
               <folding />
             </state>
           </provider>
@@ -93,18 +117,18 @@
       <file leaf-file-name="mdl_stock.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/modules/stock/models/mdl_stock.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-3.3018868">
+            <state vertical-scroll-proportion="0.0">
               <caret line="274" column="46" selection-start-line="274" selection-start-column="46" selection-end-line="274" selection-end-column="46" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="create_order_form.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="create_order_form.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/modules/order/views/create_order_form.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.54278076">
-              <caret line="50" column="151" selection-start-line="50" selection-start-column="151" selection-end-line="50" selection-end-column="151" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="61" column="81" selection-start-line="61" selection-start-column="81" selection-end-line="61" selection-end-column="81" />
               <folding />
             </state>
           </provider>
@@ -139,23 +163,24 @@
         <option value="$PROJECT_DIR$/application/modules/facility/controllers/facility.php" />
         <option value="$PROJECT_DIR$/application/modules/order/views/order_view.php" />
         <option value="$PROJECT_DIR$/application/modules/users/models/mdl_users.php" />
-        <option value="$PROJECT_DIR$/application/modules/template/views/epi_view.php" />
-        <option value="$PROJECT_DIR$/application/modules/order/views/list_order_view.php" />
-        <option value="$PROJECT_DIR$/application/modules/template/views/admin_view.php" />
         <option value="$PROJECT_DIR$/application/modules/facility/models/mdl_facility.php" />
         <option value="$PROJECT_DIR$/application/modules/stock/views/physical_stock.php" />
         <option value="$PROJECT_DIR$/index.php" />
         <option value="$PROJECT_DIR$/application/modules/stock/views/issue_stock.php" />
-        <option value="$PROJECT_DIR$/application/modules/order/controllers/order.php" />
         <option value="$PROJECT_DIR$/application/modules/order/models/mdl_order.php" />
         <option value="$PROJECT_DIR$/application/modules/stock/views/vaccine_ledger.php" />
         <option value="$PROJECT_DIR$/application/modules/order/views/adm_list_order_view.php" />
         <option value="$PROJECT_DIR$/application/modules/stock/views/receive_stock.php" />
-        <option value="$PROJECT_DIR$/application/modules/stock/controllers/stock.php" />
-        <option value="$PROJECT_DIR$/application/modules/stock/views/new_issue_stock.php" />
         <option value="$PROJECT_DIR$/application/modules/stock/views/new_receive_stock.php" />
         <option value="$PROJECT_DIR$/application/modules/stock/models/mdl_stock.php" />
         <option value="$PROJECT_DIR$/application/modules/order/views/create_order_form.php" />
+        <option value="$PROJECT_DIR$/application/modules/order/controllers/order.php" />
+        <option value="$PROJECT_DIR$/application/modules/stock/controllers/stock.php" />
+        <option value="$PROJECT_DIR$/application/modules/template/views/epi_view.php" />
+        <option value="$PROJECT_DIR$/application/modules/template/views/admin_view.php" />
+        <option value="$PROJECT_DIR$/application/modules/stock/views/list_issue_stock.php" />
+        <option value="$PROJECT_DIR$/application/modules/order/views/list_order_view.php" />
+        <option value="$PROJECT_DIR$/application/modules/stock/views/new_issue_stock.php" />
       </list>
     </option>
   </component>
@@ -169,9 +194,10 @@
   </component>
   <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true" interpreter_name="PHP 5.6" />
   <component name="ProjectFrameBounds">
-    <option name="y" value="27" />
-    <option name="width" value="1366" />
-    <option name="height" value="741" />
+    <option name="x" value="-1" />
+    <option name="y" value="26" />
+    <option name="width" value="1368" />
+    <option name="height" value="743" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -214,7 +240,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="Scope">
         <subPane subId="Project Files">
           <PATH>
@@ -661,6 +686,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -729,15 +755,13 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="27" width="1366" height="741" extended-state="0" />
+    <frame x="-1" y="26" width="1368" height="743" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24926686" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2489019" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="PHP-CGI Server" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32941177" sideWeight="0.5029762" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32913387" sideWeight="0.49702382" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32913387" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -745,10 +769,12 @@
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32913387" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="PHP-CGI Server" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32913387" sideWeight="0.49702382" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
@@ -794,13 +820,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/application/modules/order/views/adm_list_order_view.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="28" column="8" selection-start-line="28" selection-start-column="8" selection-end-line="28" selection-end-column="161" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/application/modules/order/views/order_view.php">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1012,7 +1031,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.4116638">
           <caret line="16" column="48" selection-start-line="16" selection-start-column="34" selection-end-line="16" selection-end-column="48" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1023,27 +1041,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/modules/template/views/epi_view.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="180" column="49" selection-start-line="180" selection-start-column="49" selection-end-line="180" selection-end-column="49" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/application/modules/facility/models/mdl_facility.php">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-3.4615386">
           <caret line="27" column="24" selection-start-line="27" selection-start-column="24" selection-end-line="27" selection-end-column="24" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/modules/template/views/admin_view.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.15437393">
-          <caret line="6" column="0" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1051,7 +1052,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1059,7 +1059,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-3.018868">
           <caret line="182" column="94" selection-start-line="182" selection-start-column="94" selection-end-line="182" selection-end-column="94" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1067,7 +1066,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-1.25">
           <caret line="4" column="4" selection-start-line="4" selection-start-column="4" selection-end-line="4" selection-end-column="4" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1075,15 +1073,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-0.625">
           <caret line="20" column="34" selection-start-line="20" selection-start-column="34" selection-end-line="20" selection-end-column="34" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/modules/order/controllers/order.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-3.8679245">
-          <caret line="83" column="51" selection-start-line="83" selection-start-column="51" selection-end-line="83" selection-end-column="51" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1091,23 +1080,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-11.291667">
           <caret line="55" column="140" selection-start-line="55" selection-start-column="140" selection-end-line="55" selection-end-column="140" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/modules/order/views/list_order_view.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-11.25">
-          <caret line="99" column="31" selection-start-line="99" selection-start-column="24" selection-end-line="99" selection-end-column="31" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/modules/stock/views/vaccine_ledger.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-10.0">
+        <state vertical-scroll-proportion="0.0">
           <caret line="91" column="29" selection-start-line="91" selection-start-column="29" selection-end-line="91" selection-end-column="29" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1115,7 +1094,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.6666667">
           <caret line="23" column="31" selection-start-line="23" selection-start-column="31" selection-end-line="23" selection-end-column="31" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1123,21 +1101,12 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-8.75">
           <caret line="243" column="67" selection-start-line="243" selection-start-column="56" selection-end-line="243" selection-end-column="67" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/modules/stock/views/new_issue_stock.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-8.125">
-          <caret line="73" column="48" selection-start-line="73" selection-start-column="48" selection-end-line="73" selection-end-column="48" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/modules/stock/views/receive_stock.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-3.75">
+        <state vertical-scroll-proportion="0.0">
           <caret line="32" column="146" selection-start-line="32" selection-start-column="92" selection-end-line="32" selection-end-column="146" />
           <folding />
         </state>
@@ -1145,23 +1114,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/modules/stock/views/new_receive_stock.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-8.708333">
+        <state vertical-scroll-proportion="0.0">
           <caret line="63" column="110" selection-start-line="63" selection-start-column="110" selection-end-line="63" selection-end-column="110" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/modules/stock/controllers/stock.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-1.3207548">
-          <caret line="193" column="55" selection-start-line="193" selection-start-column="32" selection-end-line="193" selection-end-column="55" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/modules/stock/models/mdl_stock.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-3.3018868">
+        <state vertical-scroll-proportion="0.0">
           <caret line="274" column="46" selection-start-line="274" selection-start-column="46" selection-end-line="274" selection-end-column="46" />
           <folding />
         </state>
@@ -1169,8 +1130,64 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/modules/order/views/create_order_form.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.54278076">
-          <caret line="50" column="151" selection-start-line="50" selection-start-column="151" selection-end-line="50" selection-end-column="151" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="61" column="81" selection-start-line="61" selection-start-column="81" selection-end-line="61" selection-end-column="81" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/modules/order/controllers/order.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="50" column="0" selection-start-line="50" selection-start-column="0" selection-end-line="74" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/modules/stock/controllers/stock.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="44" column="24" selection-start-line="44" selection-start-column="24" selection-end-line="44" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/modules/template/views/admin_view.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="145" column="83" selection-start-line="145" selection-start-column="83" selection-end-line="145" selection-end-column="83" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/modules/template/views/epi_view.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="144" column="73" selection-start-line="144" selection-start-column="73" selection-end-line="144" selection-end-column="73" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/modules/order/views/list_order_view.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-26.25">
+          <caret line="57" column="0" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/modules/stock/views/new_issue_stock.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-18.125">
+          <caret line="177" column="55" selection-start-line="177" selection-start-column="55" selection-end-line="177" selection-end-column="55" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/modules/stock/views/list_issue_stock.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.025641026">
+          <caret line="10" column="39" selection-start-line="10" selection-start-column="39" selection-end-line="10" selection-end-column="39" />
           <folding />
         </state>
       </provider>

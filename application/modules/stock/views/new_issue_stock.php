@@ -174,8 +174,9 @@ echo form_open('stock/new_save_issued_stock',$form_attributes);?>
 						    		
 						    		stock_row.find("#vvm_status<?php echo $item['vaccine_id']; ?>").val(value.status);
 						    		stock_row.find("#available_quantity<?php echo $item['vaccine_id']; ?>").val(value.stock_balance);
-						    		
-						    		
+
+									var max = stock_row.find("#available_quantity<?php echo $item['vaccine_id']; ?>").val();
+									stock_row.closest("tr").find("#amt_issued<?php echo $item['vaccine_id']; ?>").attr('max', max);
 						    	});
 						    	<?php }?>
 						    });

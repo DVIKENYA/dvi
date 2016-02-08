@@ -59,7 +59,7 @@ echo form_hidden('station',$station);
    </div> 
 
    <?php 
-   $data=array('name' => 'place_order','id'=> 'p_order','value' => 'Place Order','class'=>'btn btn-sm btn-danger');
+   $data=array('name' => 'place_order','id'=> 'p_order','value' => 'Place Request','class'=>'btn btn-sm btn-danger');
     echo form_submit($data);
     echo form_close();
    ?>

@@ -42,6 +42,32 @@ class Stock extends MY_Controller
       echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
     }
 
+    public function list_issue_stock(){
+        Modules::run('secure_tings/is_logged_in');
+        $this->load->model('order/mdl_order');
+        $data2['user_object2'] = $this->get_user_object();
+        $data3['user_object3'] = $this->get_user_object();
+        $station= $data2['user_object2']['user_level'];
+        $station_id=$data3['user_object3']['user_statiton'];
+        $data['orders']= $this->mdl_order->get_placed_orders($station,$station_id);
+        $data['all_orders']= $this->mdl_order->get_all_placed_orders($station,$station_id);
+        $data['submitted_orders']= $this->mdl_order->get_submitted_orders($station,$station_id);
+        $data['section'] = "Manage Stock";
+        $data['subtitle'] = "Request Stocks";
+        $data['page_title'] = "Request Stocks";
+        $data['module'] = "stock";
+        if($station=='1'){
+            $data['view_file'] = "list_issue_stock";
+        }else{
+            $data['view_file'] = "list_issue_stock";
+        }
+        $data['user_object'] = $this->get_user_object();
+        $data['main_title'] = $this->get_title();
+        echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
+
+
+    }
+
     function save_received_stock(){
       Modules::run('secure_tings/is_logged_in');
   $data2['user_object2'] = $this->get_user_object();

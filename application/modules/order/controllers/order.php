@@ -37,8 +37,8 @@ public function create_order(){
   $station_id= $data3['user_object3']['user_statiton'];
   $data['order_vaccines']=$this->mdl_order->calc_orders($station_id,$station_level);
   $data['section'] = "Vaccines";
-  $data['subtitle'] = "Place Order";
-  $data['page_title'] = "Place Order";
+  $data['subtitle'] = "Request Stock";
+  $data['page_title'] = "Manage Stock";
   $data['module'] = "order";
   $data['view_file'] = "create_order_form";
   $data['user_object'] = $this->get_user_object();
@@ -78,8 +78,8 @@ public function list_orders(){
 public function view_orders($order_by,$date_created,$option,$order_id,$status_name){
   Modules::run('secure_tings/is_logged_in');
   $this->load->model('order/mdl_order');
-  $data['section'] = "Stock";
-  $data['subtitle'] = "View Orders";
+  $data['section'] = "Manage Stock";
+  $data['subtitle'] = "View Request";
   $data['page_title'] = " Orders";
   $data['orderitems']= $this->mdl_order->get_order_items($order_id,$order_by,$date_created);
   $data['option']=$option;
@@ -102,9 +102,9 @@ if (!empty($content_array)) {
   $orderitems=$content_array;
   $data['orderitems']=$orderitems['orderitems'];
 }
-  $data['section'] = "Vaccines";
-  $data['subtitle'] = "Orders";
-  $data['page_title'] = " Order";
+  $data['section'] = "Manage Stock";
+  $data['subtitle'] = "Requests";
+  $data['page_title'] = " Requests";
   $data['module'] = "order";
   $data['options']="view";
   $data['view_file'] = "create_order_form";
