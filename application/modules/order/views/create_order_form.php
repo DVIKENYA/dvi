@@ -14,21 +14,29 @@ if($region==$user_object['user_statiton']){
 }elseif ($subcounty==$user_object['user_statiton']) {
   echo form_hidden('order_destination', $county);
 }
-?>               
+
+?>
                   <!--Place order form -->
    <div id="order_infor">
 
       <table class="table table-bordered" id="store_infor_tbl">
-          <td>Order By : <?php echo $user_object['user_statiton']; ?> </td>
-          <td>Order To : <?php echo $user_object['statiton_above']; ?> </td>
-          <td>Date: <?php echo date('Y-m-d',strtotime(date('Y-m-d')));?></td>
+          <tr>
+              <td>Station Name : <?php echo $user_object['user_statiton']; ?> </td>
+              <td>Send Order To : <?php echo $user_object['statiton_above']; ?> </td>
+              <td id="today">Today's Date: <?php echo date('Y-m-d',strtotime(date('Y-m-d')));?></td>
+          </tr>
+          <tr>
+              <td>Requestor's Name : <?php echo $user_object['user_fname'].' '.$user_object['user_lname']; ?> </td>
+              <td id="last_date">Last Order Date : <?php if(empty($order_details)){}else{ echo $order_details[0]['date_created'];} ?></td>
+              <td><label id="time">Lead Time :</label></td>
+          </tr>
       </table>
     <div id="order">
     <table class="table table-bordered" >
       
       <thead>
          <tr align="center">
-          <td>Vaccine</td><td>Stock On Hand</td><td>Minimum Stock</td><td>Maximum Stock</td><td>First Expiry Date</td><td>Quantity to order(Doses)</td>
+          <td>Vaccine</td><td>Stock In Hand</td><td>Minimum Stock</td><td>Maximum Stock</td><td>First Expiry Date</td><td>Quantity to order(Doses)</td>
         </tr>
       </thead>
 
@@ -79,7 +87,20 @@ echo form_hidden('station',$station);
     max.val(Math.ceil("<?php echo $order_v['maxstock']; ?>"));
     var quantity = $("#quantity_dose_<?php echo $order_v['ID']; ?>");
     var doses = (max.val())-stock.val();
+    doses = Math.max(0, doses);
     quantity.val(doses);
-    console.log(doses);
     <?php }?>
+    var today =$('#today').html();
+    today = today.substring(today.indexOf(":") + 1);
+    today = today.replace(/-/g, "/");
+
+    var last_date =$('#last_date').html();
+    last_date = last_date.substring(last_date.indexOf(":") + 1);
+    last_date = last_date.replace(/-/g, "/");
+    var date1 = new Date(today);
+    var date2 = new Date(last_date);
+    var timeDiff = Math.abs(date2.getTime() - date1.getTime());
+    var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    var lead_time =$('#time');
+    lead_time.after(diffDays);
 </script>

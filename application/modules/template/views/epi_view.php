@@ -21,6 +21,9 @@
 <script src="<?php echo base_url();?>assets/js/jquery-ui.min.js"></script>
 <script src="<?php echo base_url();?>assets/js/bootbox.min.js"></script>
 
+<script src="<?php echo base_url() ?>assets/plugins/highcharts/highcharts.js" type="text/javascript"></script>
+<script src="<?php echo base_url() ?>assets/plugins/highcharts/modules/no-data-to-display.js"></script>
+<script src="<?php echo base_url() ?>assets/plugins/highcharts/modules/exporting.js"></script>
 </head>
 <body class="light_theme  fixed_header left_nav_fixed">
 <div class="wrapper">
@@ -109,7 +112,7 @@
         <div class="user_admin dropdown"> <a href="javascript:void(0);" data-toggle="dropdown"><img src="<?php echo base_url() ?>assets/images/user.jpg" /><span class="user_adminname"><?php echo '<b> Hello '.$user_object['user_fname'].' </b>' ;?></span> <b class="caret"></b> </a>
           <ul class="dropdown-menu">
             <div class="top_pointer"></div>
-            <li> <a href="profile.html"><i class="fa fa-user"></i> Profile</a> </li>
+            <li> <a href="<?php echo site_url('users/profile');?>"><i class="fa fa-user"></i> Profile</a> </li>
 <!--            <li> <a href="help.html"><i class="fa fa-question-circle"></i> Help</a> </li>-->
 <!--            <li> <a href="settings.html"><i class="fa fa-cog"></i> Setting </a></li>-->
             <li> <a href="<?php echo site_url('users/logout');?>"><i class="fa fa-power-off"></i> Logout</a> </li>
@@ -236,8 +239,6 @@ if ($user_object['user_level']=='1') {?>
 <script src="<?php echo base_url() ?>assets/js/edit-graph.js"></script>
 <script src="<?php echo base_url() ?>assets/plugins/kalendar/kalendar.js" type="text/javascript"></script>
 <script src="<?php echo base_url() ?>assets/plugins/kalendar/edit-kalendar.js" type="text/javascript"></script>
-<script src="<?php echo base_url() ?>assets/plugins/highcharts/highcharts.js" type="text/javascript"></script>
-
 <script src="<?php echo base_url() ?>assets/plugins/data-tables/jquery.dataTables.min.js"></script>
 <script src="<?php echo base_url() ?>assets/plugins/data-tables/DT_bootstrap.js"></script>
 <script src="<?php echo base_url() ?>assets/plugins/sparkline/jquery.sparkline.js" type="text/javascript"></script>

@@ -1,12 +1,4 @@
-<?php 
-$order = array();
-$order[]="Select Order Number";
-  foreach($orders as $row ){
-    $order[$row->order_id] = $row->order_id; 
-  }
-
-?>
- <div class="row">
+<div class="row">
     <div class="col-lg-12">
 <?php
 $form_attributes = array('id' => 'stock_received_fm','method' =>'post','class'=>'form-inline','role'=>'form');
@@ -37,9 +29,7 @@ echo form_open('',$form_attributes);?>
 
 </div>
 <input type="hidden" name ="transaction_type" class="transaction_type" value="1">
-
 <br/>
-<br/><br/>
 
 <div class="table-responsive">
 <div class="well well-sm"><b>Vaccine Details</b></div>

@@ -112,7 +112,7 @@ img {border: 0!important;}
 .badge{ background-color:#f35958; text-align:center;margin:0px 0px 0px 4px;}
 
 
-.user_admin{ border-radius:100px; width:170px;float:right; margin-left:18px; padding-left:7px; text-decoration:none !important; float:left;}
+.user_admin{ border-radius:100px; width:190px;float:right; margin-left:18px; padding-left:7px; text-decoration:none !important; float:left;}
 .user_admin a{ text-decoration:none;color:#6E778C !important; }
 .user_admin:hover{color:#D2322D !important; text-decoration:none !important;}
 .user_adminname{ font-size:13px;margin-left:5px;}

@@ -1,16 +1,6 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');?>
 <?php 
-$location = array();
-$location[]="Select Location";
-  foreach($locations as $row ){
-    $location[$row->location] = $row->location; 
-  }
 
-$order = array();
-$order[]="Select Order Number";
-  foreach($orders as $row ){
-    $order[$row->order_id] = $row->order_id; 
-  }
 ?>
 
 
@@ -26,10 +16,12 @@ echo form_open('',$form_attributes);?>
 	<div class="col-lg-3">
 	  <div class="panel-body">
 	  <b>Issue To</b><br>
-	  <?php
-        echo form_error('issued_to');
-        echo form_dropdown('issued_to', $location, 'id="issued_to" class="form-control"'); 
-        ?>
+		  <select name="issued_to" class="form-control issued_to" id="issued_to" required="true">
+			  <option value="">Select Location</option>
+			  <?php foreach($locations as $row ){
+				  echo "<option value='".$row->location."'>". $row->location."</option>";
+			  }?>
+		  </select>
 	   </div>
 	</div>
 	<div class="col-lg-3">

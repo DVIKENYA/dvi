@@ -20,7 +20,6 @@
                 <ul class="nav nav-tabs" id="myTab">
 
                     <li class="active"><a data-toggle="tab" href="#tab1"><b>Requests from me</b></a></li>
-                    <li><a data-toggle="tab" href="#tab2"><b>Requests History</b></a></li>
 
                 </ul>
                 <div class="tab-content" id="">
@@ -56,35 +55,6 @@
                         </form>
                     </div>
 
-                    <div id="tab2" class="tab-pane fade">
-                        <form id="list_orders_fm">
-                            <!--Listing Submitted Requests-->
-
-
-                            <table class="table table-bordered table-striped" id="list_orders_tbl">
-                                <thead>
-                                <tr><th>Request # </th><th>Date Created</th><th>Status</th><th>Action</th></tr>
-                                </thead>
-
-                                <tbody>
-                                <?php $option=2 ; ?>
-                                <?php foreach ($all_orders as $order) {
-                                $ledger_url = base_url().'order/view_orders/'.$order['order_by'].'/'.$order['date_created'].'/'.$option.'/'.$order['order_id'].'/'.$order['status_name'];
-                                ?>
-
-                                <tr>
-                                    <td><?php  echo $order['order_id']?></td>
-                                    <td><?php echo $order['date_created']?></td>
-                                    <td style="color:red"><?php echo $order['status_name']?></td>
-                                    <td><a href="<?php  echo $ledger_url ?>" class="btn btn-danger btn-xs">View <i class="fa fa-eye"></i></a></td>
-                                    <?php }?>
-                                </tr>
-
-                                </tbody>
-                            </table>
-
-                        </form>
-                    </div>
 
                 </div>
             </div>

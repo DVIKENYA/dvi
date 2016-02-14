@@ -16,6 +16,13 @@ parent::__construct();
         return $query->result_array();
     }
 
+    function get_last_order_details($station_id){
+        $call_procedure="CALL last_order_details('$station_id')";
+        $query=$this->db->query($call_procedure);
+        $query->next_result();
+        return $query->result_array();
+    }
+
     // Get list of orders you have submitted
     function get_submitted_orders($station,$station_id){
         $call_procedure="CALL get_submitted_orders($station,'$station_id')";
@@ -49,8 +56,9 @@ parent::__construct();
 // Get a list of items in an order 
 function get_order_items($order_id,$order_by,$date_created){
     
-        $this->db->select('o.order_by,o.date_created as order_date,o.station_id,mv.Vaccine_name,oi.stock_on_hand, oi.min_stock, oi.max_stock,oi.first_expiry, oi.qty_order_doses as quantity_ordered');
+        $this->db->select('CONCAT(mu.f_name," ",mu.l_name) as order_by,o.date_created as order_date,o.station_id,mv.Vaccine_name,oi.stock_on_hand, oi.min_stock, oi.max_stock,oi.first_expiry, oi.qty_order_doses as quantity_ordered',false);
         $this->db->from('m_order o');
+        $this->db->join('m_users mu', 'mu.id=o.order_by', 'inner');
         $this->db->join('order_item oi', 'oi.order_id=o.order_id', 'inner');
         $this->db->join('m_vaccines mv ', 'mv.ID=oi.vaccine_id', 'inner');
 	    $this->db->where(array('o.order_id' => $order_id,'o.order_by' => $order_by,'o.date_created'=>$date_created,'oi.qty_order_doses !='=>0));

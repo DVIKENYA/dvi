@@ -75,10 +75,24 @@ function getChart($user_id)
 }
 
 
+    function get_stock_balance($station_id){
+        $this->db->distinct();
+        $sum = ('if(sum(ms.stock_balance) > 0,sum(ms.stock_balance),false) as stock_balance');
+        $this->db->select('mv.Vaccine_name,'.$sum,false);
+        $this->db->from('m_stock_balance ms');
+        $this->db->join('m_vaccines mv ', 'mv.ID=ms.vaccine_id', 'inner');
+        $array = array('ms.station_id' => $station_id);
+        $this->db->where($array);
+        $this->db->group_by('ms.vaccine_id, ms.station_id');
+        $query = $this->db->get();
+        return $query;
+    }
+
+
 function get_months_stock($user_id){
     $this->db->distinct();
-    $this->db->select('Vaccine,BCG,DPT,MEASLES,ROTA,PCV,OPV');
-    $this->db->group_by('Vaccine');
+    $this->db->select('BCG,DPT,MEASLES,ROTA,PCV,OPV');
+    $this->db->group_by('user_id');
     $this->db->where("user_id", $user_id);
     $query = $this->db->get('prov_mofstock');
 
@@ -107,6 +121,14 @@ function get_linechart()
  return $query->result();
 
 }
+
+// Get listof orders you have submitted 
+    function get_minmax_stock($station,$station_id){
+        $call_procedure="CALL test($station,'$station_id')";
+        $query=$this->db->query($call_procedure);
+        $query->next_result();
+        return $query->result_array();
+    }
 
 function getData()
 {
@@ -175,9 +197,7 @@ function get_subcounty_wastage($id){
 
 function get_subcounty_coverage($id){
 
-        $this->db->select('`periodname` AS Months, `totalbcg` , `totaldpt2` , 
-            `totaldpt3` , `totalmeasles` , `totalopv` ,`totalopv1`,`totalopv2`,
-            `totalopv3`,`totalpcv1`,`totalpcv2`, `totalpcv3`,`totalrota1`,`totalrota2`,m_subcounty.id, subcounty_name');
+        $this->db->select('`periodname` AS Months, BCG,DPT2,DPT3,MEASLES,OPV,OPV1,OPV2,OPV3,PCV1,PCV2,PCV3,ROTA1,ROTA2,m_subcounty.id, subcounty_name');
         $this->db->from('view_subcountycov_calculated');
         $this->db->join('m_subcounty', 'm_subcounty.id = view_subcountycov_calculated.subcounty_id');
         $this->db->join('user_base',' user_base.subcounty=view_subcountycov_calculated.subcounty_id');
@@ -215,25 +235,29 @@ function get_national_coverage($id){
 function get_county_dpt3(){
 
     $this->db->select('county_name,totaldpt3');
-    $this->db->from('county_dpt3_cov');
-    //$this->db->join('user_base');
-    //$this->db->where('user_id',$id);
-    $query = $this->db->get();
+    $query = $this->db->get('county_dpt3_cov',3);
 
     return $query;
 }
 
-function get_subcounty_dpt3($limit = null){
+function get_subcounty_dpt3(){
 
     $this->db->select('subcounty_name,totaldpt3');
-    $this->db->from('subcounty_dpt3_cov');
-    //$this->db->join('user_base');
-    if($limit) $this->db->limit($limit);
-    //$this->db->where('user_id',$id);
-    $query = $this->db->get();
+    $query = $this->db->get('subcounty_dpt3_cov',3);
 
     return $query;
 }
+
+function get_facility_dpt3(){
+
+$this->db->select('facility_name,totaldpt3');
+$this->db->where('totaldpt3 > 0');
+$query = $this->db->get('facility_dpt3_cov',3);
+
+return $query;
+
+}
+
 
 function get_facility_base($user_id){
         

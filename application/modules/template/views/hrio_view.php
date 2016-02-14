@@ -58,7 +58,7 @@
           <div class="user_admin dropdown"> <a href="javascript:void(0);" data-toggle="dropdown"><span class="user_adminname"><?php echo '<b> Hello '.$user_object['user_fname'].' </b>' ;?></span> <img src="<?php echo base_url() ?>assets/images/user.jpg" /> <b class="caret"></b> </a>
             <ul class="dropdown-menu">
               <div class="top_pointer"></div>
-              <li> <a href="<?php //echo site_url('admin/user/profile');?>"><i class="fa fa-user"></i> Profile</a> </li>
+              <li> <a href="<?php echo site_url('users/profile');?>"><i class="fa fa-user"></i> Profile</a> </li>
               <!--  <li> <a href="#"><i class="fa fa-question-circle"></i> Help</a> </li> -->
               <!-- <li> <a href="#"><i class="fa fa-cog"></i> Setting </a></li> -->
               <li> <a href="<?php echo site_url('users/logout');?>"><i class="fa fa-power-off"></i> Logout</a> </li>

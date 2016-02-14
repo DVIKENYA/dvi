@@ -61,9 +61,98 @@ class Users extends MY_Controller
 
    }
 
+    function profile(){
+
+        Modules::run('secure_tings/is_logged_in');
+        $data['section'] = "NVIP Chanjo";
+        $data['subtitle'] = "Profile";
+        $data['page_title'] = "Profile Page";
+        $data['module']="users";
+        $user_id = $this->session->userdata['logged_in']['user_id'];
+        $data['profile'] = $this->get_data_from_db($user_id);
+        $data['view_file']="profile_view";
+        $data['user_object'] = $this->get_user_object();
+        $data['main_title'] = $this->get_title();
+        $this->load->library('form_validation');
 
 
-function create_user(){
+        $this->form_validation->set_rules('first_name', 'First Name', 'required|xss_clean');
+        $this->form_validation->set_rules('last_name', 'Last Name', 'required|xss_clean');
+//        $this->form_validation->set_rules('username', 'Username', 'required|xss_clean');
+        $this->form_validation->set_rules('phone', 'Phone', 'required|xss_clean');
+        $this->form_validation->set_rules('email', 'Email', 'required|valid_email|xss_clean');
+        if($this->form_validation->run()===FALSE)
+        {
+
+        }
+        else
+        {
+
+            $new_data = array(
+                'f_name' => $this->input->post('first_name'),
+                'l_name' => $this->input->post('last_name'),
+                'phone' => $this->input->post('phone'),
+                'email' => $this->input->post('email')
+            );
+
+            $this->_update($user_id, $new_data);
+
+           // modify session
+//            $session_data = array('user_fname' => $this->input->post('first_name'), 'user_lname' => $this->input->post('last_name'));
+//            $this->session->set_userdata('logged_in',$session_data);
+            $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">Profile Updated Successfully. Changes will be appear on start of new session</div>');
+            redirect('users/profile','refresh');
+        }
+        echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
+    }
+
+    function change_pass(){
+        $this->load->library('form_validation');
+        $this->form_validation->set_rules('password', 'Password', 'required|xss_clean|matches[password_confirm]');
+        $this->form_validation->set_rules('password_confirm', 'Password Confirm', 'required|xss_clean|matches[password]');
+
+        if($this->form_validation->run()===FALSE)
+        {
+            redirect('users/profile');
+        }
+        else
+        {
+            $password = $this->input->post('password', TRUE);
+            if(strlen($password)>=6) $new_data['password'] = Modules::run('secure_tings/hash_it', $password);
+            $user_id = $this->session->userdata['logged_in']['user_id'];
+            $this->_update($user_id, $new_data);
+
+            $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">Password Changed Successfully.</div>');
+            redirect('users/profile','refresh');
+        }
+    }
+    function get_data_from_db(){
+        $user_id = $this->session->userdata['logged_in']['user_id'];
+        $query = $this->get_where($user_id);
+
+        foreach ($query->result() as $row){
+            $data['first_name'] = $row->f_name;
+            $data['last_name'] = $row->l_name;
+            $data['phone'] = $row->phone;
+            $data['email'] = $row->email;
+            $data['username'] = $row->username;
+
+
+        }
+        return $data;
+    }
+
+    function get_profile_data_from_post(){
+        $data['f_name']=$this->input->post('f_name', TRUE);
+        $data['l_name']=$this->input->post('l_name', TRUE);
+        $data['username']=$this->input->post('username', TRUE);
+        $data['phone']=$this->input->post('phone', TRUE);
+        $data['email']=$this->input->post('email', TRUE);
+
+        return $data;
+    }
+
+    function create_user(){
     
    Modules::run('secure_tings/ni_admin');
    $data= $this->get_register_data_from_post();
@@ -83,23 +172,6 @@ function create_user(){
    echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
 }
 
-// function getcounty_ajax() {
-       
-//         if (isset($_POST) && isset($_POST['region'])) {
-//             $region_id = $_POST['region'];
-//                  $macounties = $this->mdl_users->loadcountyfromregion($region_id);
-//                      foreach ($macounties as $row) {
-//                 $arrcounties[$row->id] = $row->county_name;
-//             }
-             
-//             $data['county'] = $arrcountries;
-
-//             // print form_dropdown('state',$arrstates);
-//         } else {
-//             $this->create_user();
-//         }
-    
-//   }
 
 function get_register_data_from_post(){
     $data['f_name']=$this->input->post('f_name', TRUE);
@@ -124,7 +196,7 @@ Modules::run('secure_tings/is_logged_in');
     $this->form_validation->set_rules('user_group', 'User Group', 'required|xss_clean');
     $this->form_validation->set_rules('user_level', 'Access Level', 'required|xss_clean');
     $this->form_validation->set_rules('password', 'Password', 'required|xss_clean|matches[passwordc]');
-    $this->form_validation->set_rules('passwordc', 'Password Confirm', 'required|xss_clean|matches[password');
+    $this->form_validation->set_rules('passwordc', 'Password Confirm', 'required|xss_clean|matches[password]');
     $this->form_validation->set_rules('national', 'National', 'xss_clean');
     $this->form_validation->set_rules('regional', 'Region', 'xss_clean');
     $this->form_validation->set_rules('countyuser', 'County', 'xss_clean');

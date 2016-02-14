@@ -1,6 +1,8 @@
  <div class="row">
   <div class="col-lg-12">
 <?php
+var_dump($orderitems);
+$level=$user_object['user_level'];
 $form_attributes = array('id' => 'view_orderfm','class'=>'form-inline','role'=>'form');
 echo form_open('',$form_attributes);?> 
 
@@ -13,8 +15,8 @@ echo form_open('',$form_attributes);?>
      	<table class="table table-bordered table-striped" id="store_infor_tbl">
      		<tr><td style="width:50%">Store Name : <?php  print_r($orderitems[0]['station_id']);  ?> </td><td>Order Date: <?php print_r($orderitems[0]['order_date']);?></td></tr>
           <tr>
-          <td>Order By :<?php  print_r($orderitems[0]['station_id']); ?> </td>
-          <td>Date: <?php echo date('Y-m-d',strtotime(date('Y-m-d')));?></td>
+          <td>Requestor's Name : <?php  print_r($orderitems[0]['order_by']); ?> </td>
+          <td>Today's Date: <?php echo date('Y-m-d',strtotime(date('Y-m-d')));?></td>
      
      	</table>
 
@@ -58,12 +60,12 @@ echo form_open('',$form_attributes);?>
    </div> </div> 
    <?php if ($option==1 && $status_name=="issued"){ ?>               
    <input type="button" value="Receive Order" class="btn btn-sm btn-danger" onclick="window.location.href='<?php echo base_url().'stock/receive_stocks'.'/'.$order_id?>'" />
-   <?php }else if ($option==2 && $status_name =="pending"){ ?>
+   <?php }else if ($option==2 && $status_name =="pending" && $level !=3){ ?>
    <input type="button" value="Issue Order" class="btn btn-sm btn-danger" onclick="window.location.href='<?php echo base_url().'stock/issue_stocks'.'/'.$order_id ?>'" />
    <?php} else{?> 
 <!--   <input type="button" value="Receive Order" class="btn btn-sm btn-danger" disabled="" hidden/>-->
   <?php }
-   
+
 
 echo form_close();
   

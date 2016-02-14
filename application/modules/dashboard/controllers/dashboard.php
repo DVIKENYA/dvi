@@ -18,13 +18,15 @@ function home() {
 
    if($user_level=='3'){
     $data['dpt3cov'] = $this->get_subcounty_dpt3cov();
-   }elseif ($user_level=='2'){
+   }elseif ($user_level=='2' || $user_level=='1'){
     $data['dpt3cov'] = $this->get_county_dpt3cov();
+   }elseif ($user_level=='4'){
+    $data['dpt3cov'] = $this->get_facility_dpt3cov();
    }
   $data['wastage'] = $this->get_wastage();
   $data['mavaccine'] = $this->vaccines();
   //$data['coverage'] = $this->get_coverage();
-  $data['section'] = "NVIP Chanjo";
+  $data['section'] = "DVI Kenya";
   $data['subtitle'] = "Dashboard";
   $user_level=$this->session->userdata['logged_in']['user_level'];
   //$data['page_title'] = "Baringo County";
@@ -46,6 +48,32 @@ function home() {
 }
 
 
+function minmax_stock(){
+
+  $info['user_object'] = $this->get_user_object();
+  $station_level= $info['user_object']['user_level'];
+  $station_id=$info['user_object']['user_statiton'];
+
+
+$this->load->model('mdl_dashboard');
+$query = $this->mdl_dashboard->get_minmax_stock($station_level,$station_id);
+
+//var_dump($query);
+
+$json_array = array();
+foreach ($query as $row) {
+
+  $data['min_stock'] = (int)$row['min_stock'];
+  $data['max_stock'] = (int)$row['max_stock'];
+
+  array_push($json_array, $data);
+}
+
+echo json_encode($json_array);
+
+}
+
+
 function get_init(){
   $this->load->model('mdl_dashboard');
   $query = $this->mdl_dashboard->initWastage();
@@ -61,13 +89,15 @@ function get_init(){
 }
 
 function get_chart() {
-    $user_id = ($this->session->userdata['logged_in']['user_id']);
+    $info['user_object'] = $this->get_user_object();
+    $station_id=$info['user_object']['user_statiton'];
     $this->load->model('mdl_dashboard');
-    $query = $this->mdl_dashboard->getChart($user_id);
+    $query = $this->mdl_dashboard->get_stock_balance($station_id);
+//    var_dump($query);
     $json_array=array(); 
     foreach ($query->result() as $row) {
-       $data['name'] = $row->Vaccine;
-       $data['y'] = (float)$row->Stock_balance;
+       $data['name'] = $row->Vaccine_name;
+       $data['y'] = (float)$row->stock_balance;
        
        array_push($json_array,$data);
     }    
@@ -151,6 +181,29 @@ function get_chart() {
     
   }
 
+  function get_facility_dpt3cov(){
+
+
+    $this->load->model('mdl_dashboard');
+    $user_id = $this->session->userdata['logged_in']['user_id'];
+     
+    $query = $this->mdl_dashboard->get_facility_dpt3(10);
+     
+    $json_array=array();
+    foreach ($query->result() as $row) {
+      $data['totaldpt3'] = (int)$row->totaldpt3;
+      $data['facility_name'] = $row->facility_name;
+      
+
+    array_push($json_array,$data);
+
+    }
+    //echo json_encode($json_array);
+    return $json_array;
+    
+
+  }
+
 function get_wastage() {
     $this->load->model('mdl_dashboard');
     $user_id = $this->session->userdata['logged_in']['user_id'];
@@ -200,8 +253,14 @@ $query = $this->mdl_dashboard->get_months_stock($user_id);
       // (int)$row->ROTA
       //  );
 
-      $data['name'] = $row->Vaccine;
-      $data['y'] = (float)$row->BCG;
+      $data['name'] = "BCG";
+      $data['y'] = (int)$row->BCG;
+
+      // $data['BCG'] = $row->BCG;
+      // $data['MEASLES'] = (float)$row->MEASLES;
+      // $data['DPT'] = (float)$row->DPT;
+      // $data['OPV'] = (float)$row->OPV;
+      // $data['PCV'] = (float)$row->PCV;
 
        array_push($json_array, $data);
 

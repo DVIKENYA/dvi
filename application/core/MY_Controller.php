@@ -79,6 +79,7 @@ class MY_Controller extends MX_Controller
 	{
 		if (isset($this->session->userdata['logged_in'])) {
 			$user_fname = ($this->session->userdata['logged_in']['user_fname']);
+			$user_lname = ($this->session->userdata['logged_in']['user_lname']);
 			$user_group = ($this->session->userdata['logged_in']['user_group']);
 			$user_level = ($this->session->userdata['logged_in']['user_level']);
 			$user_id = ($this->session->userdata['logged_in']['user_id']);
@@ -129,7 +130,9 @@ class MY_Controller extends MX_Controller
 				$user_statiton_id = $facility_id;
 				$statiton_above = $subcounty;    
 			}
-			$data = array('user_fname' =>$user_fname ,
+			$data = array(
+						'user_fname' =>$user_fname ,
+						'user_lname' =>$user_lname ,
 						'user_group' =>$user_group ,
 						'user_level' =>$user_level ,
 						'user_id' =>$user_id ,

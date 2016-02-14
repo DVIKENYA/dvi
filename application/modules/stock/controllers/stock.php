@@ -23,9 +23,9 @@ class Stock extends MY_Controller
       $info['user_object'] = $this->get_user_object();
       $station_id=$info['user_object']['statiton_above'];
           if($user_level==1){
-            /* 
+            /*
             user_level = national
-            retrieve all regions 
+            retrieve all regions
             */
             $data['location'] = "National Arrival";
           }else{
@@ -87,7 +87,7 @@ class Stock extends MY_Controller
             $data['locations'] = $this->mdl_stock->get_facility_base($user_id);
         }
         if($station=='1'){
-            $data['view_file'] = "issue_stock";
+            $data['view_file'] = "list_issue_stock";
         }else{
             $data['view_file'] = "list_issue_stock";
         }

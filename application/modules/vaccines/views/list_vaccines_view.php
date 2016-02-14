@@ -5,8 +5,8 @@
     </div>
   </div>
   <div class="row">
-  </br>
-  </br>
+
+  <br>
   <?php echo $this->session->flashdata('msg');  ?>
     <div class="col-lg-12" style="margin-top: 10px;">
      <div class="table-responsive">
@@ -47,7 +47,7 @@
                     
                 
                         </div>
-
+    </div>
   <script type="text/javascript">
 window.setTimeout(function() {
     $("#alert-message").fadeTo(500, 0).slideUp(500, function(){

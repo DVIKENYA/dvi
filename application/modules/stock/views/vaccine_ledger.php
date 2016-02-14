@@ -6,7 +6,7 @@
             <div class="information_inner">
                 <div class="info green_symbols"><i class="fa fa-cubes icon"></i></div>
                <span>Stock Balance </span>
-                <h1 class="bolded"><?php echo($bal[0]['stock_balance']);?></h1>
+                <h1 class="bolded"><?php if(empty($bal)){echo 0;}else{echo($bal[0]['stock_balance']);}?></h1>
 
             </div>
         </div>
