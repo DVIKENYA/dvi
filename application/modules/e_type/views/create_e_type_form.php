@@ -12,7 +12,7 @@
 
             <br><br>
             <div class="col-lg-6 col-lg-offset-3">
-                  <?php echo validation_errors('<div class="alert alert-danger alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><b>',' </b></div>');
+                  <?php //echo validation_errors('<div class="alert alert-danger alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><b>',' </b></div>');
                     
                     $array = array();
                     foreach($maequipment as $row ){

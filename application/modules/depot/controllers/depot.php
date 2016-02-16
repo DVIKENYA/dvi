@@ -9,10 +9,15 @@ class Depot extends MY_Controller {
           $data['module']="depot";
           $data['view_file']="list_depot_view";
           $data['section'] = "Configuration";
-          $data['subtitle'] = "List Depot";
-          $data['page_title'] = "Depot";
+          $data['subtitle'] = "List Store";
+          $data['page_title'] = "Store";
           $data['user_object'] = $this->get_user_object();
           $data['main_title'] = $this->get_title();
+          $this->load->library('make_bread');
+          $this->make_bread->add('Configurations', '', 0);
+          $this->make_bread->add('List Stores', '', 0);
+          $data['breadcrumb'] = $this->make_bread->output();
+          //
           echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);      }
          
 
@@ -34,8 +39,8 @@ class Depot extends MY_Controller {
             $data['module'] = "depot";
             $data['view_file'] = "create_depot_form";
             $data['section'] = "Configuration";
-            $data['subtitle'] = "Add Depot";
-            $data['page_title'] = "Depot";
+            $data['subtitle'] = "Add Store";
+            $data['page_title'] = "Store";
             $data['user_object'] = $this->get_user_object();
             $data['main_title'] = $this->get_title();
             $data['level'] =$this->session->userdata['logged_in']['user_level'];
@@ -60,20 +65,22 @@ class Depot extends MY_Controller {
                   */
                   $data['locations'] = $this->mdl_stock->get_subcounty_base($user_id);
                }
+
+                  $this->load->library('make_bread');
+                  $this->make_bread->add('Configurations', '', 0);
+                  $this->make_bread->add('List Stores', 'depot/', 0);
+                  $this->make_bread->add('Add Store', '', 0);
+                  $data['breadcrumb'] = $this->make_bread->output();
                   echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);   
 
       }
 
-        // function submit(){ 
-        //   $data =  $this->get_data_from_post();
-        //   var_dump($data);
-        // }
 
          function submit(){
 
             $this->load->library('form_validation');
             $this->form_validation->set_rules('depot_location','Depot Location','trim|required');
-            
+            $this->form_validation->set_error_delimiters('<p class="red_text semi-bold">'.'*', '</p>');
             $update_id = $this->input->post('update_id', TRUE);
             if ($this->form_validation->run() == FALSE)
             {   
@@ -86,11 +93,11 @@ class Depot extends MY_Controller {
                    
                    if(is_numeric($update_id)){
                        $this->_update($update_id, $data);
-                       $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">Depot details updated successfully!</div>');
+                       $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">Store details updated successfully!</div>');
 
                    } else {
                        $this->_insert($data);
-                       $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">New Depot added successfully!</div>');
+                       $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">New Store added successfully!</div>');
                    }
 
                    redirect('depot');
@@ -127,7 +134,8 @@ class Depot extends MY_Controller {
                   
                   //add html for action
                   
-                  $row[] = '  <a class="btn btn-sm btn-primary" href="depot/create/'.$depot->id.'" title="Edit"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
+                  $row[] = '  <a class="btn btn-sm btn-info" href="depot/list_fridge/'.$depot->id.'" title="View"><i class="fa fa-eye"></i> View</a>
+                              <a class="btn btn-sm btn-primary" href="depot/create/'.$depot->id.'" title="Edit"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
                               <a class="btn btn-sm btn-danger"  href="depot/delete/'.$depot->id.'" title="Delete"><i class="glyphicon glyphicon-trash"></i> Delete</a>
                               <a class="btn btn-sm btn-info"  href="depot/list_fridge/'.$depot->id.'" title="Add"><i class="glyphicon glyphicon-plus"></i> Fridge</a>';
             
@@ -158,6 +166,11 @@ class Depot extends MY_Controller {
         $data['main_title'] = $this->get_title();
         $data['level'] =$this->session->userdata['logged_in']['user_level'];
         $data['station'] =$this->session->userdata['logged_in']['user_level'];
+          $this->load->library('make_bread');
+          $this->make_bread->add('Configurations', '', 0);
+          $this->make_bread->add('List Stores', 'depot/', 0);
+          $this->make_bread->add('List Refrigerators', '', 0);
+          $data['breadcrumb'] = $this->make_bread->output();
         echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);   
 
       }

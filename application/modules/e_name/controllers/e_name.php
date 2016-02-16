@@ -102,7 +102,7 @@ public function index()
         Modules::run('secure_tings/ni_met');
         $this->load->library('form_validation');
         $this->form_validation->set_rules('name', 'Equipment Name', 'required|xss_clean');
-        
+        $this->form_validation->set_error_delimiters('<p class="red_text semi-bold">'.'*', '</p>');       
 
 
         $update_id = $this->input->post('update_id', TRUE);

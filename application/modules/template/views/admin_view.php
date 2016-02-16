@@ -21,7 +21,10 @@
 <script src="<?php echo base_url() ?>assets/js/jquery-2.1.0.js"></script>
 <script src="<?php echo base_url();?>assets/js/jquery-ui.min.js"></script>
 <script src="<?php echo base_url();?>assets/js/bootbox.min.js"></script>
+<script src="<?php echo base_url() ?>assets/plugins/highcharts/highcharts.js" type="text/javascript"></script>
 
+<script src="<?php echo base_url() ?>assets/plugins/highcharts/modules/no-data-to-display.js"></script>
+<script src="<?php echo base_url() ?>assets/plugins/highcharts/modules/exporting.js"></script>
 
 </head>
 <body class="light_theme  fixed_header left_nav_fixed">
@@ -134,11 +137,7 @@
           </div>
           <div class="left_nav_slidebar">
               <ul>
-                  <li class="left_nav_active theme_border"><a href="javascript:void(0);"><i class="fa fa-home"></i> HOME <span class="left_nav_pointer"></span> <span class="plus"><i class="fa fa-plus"></i></span> </a>
-                      <ul style="display:block">
-                          <li> <a href="<?php echo site_url('dashboard/home');?>" class="left_nav_sub_active"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Dashboard</b> </a> </li>
-                      </ul>
-                  </li>
+                  <li class="left_nav_active theme_border"><a href="<?php echo site_url('dashboard/home');?>"><i class="fa fa-home"></i> HOME </a></li>
                   <li> <a href="javascript:void(0);"> <i class="fa fa-cubes"></i>MANAGE STOCK<span class="plus"><i class="fa fa-plus"></i></span></a>
                       <ul>
                           <li> <a href="<?php echo site_url('stock/physical_count');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Stock Count</b> </a> </li>
@@ -186,7 +185,7 @@
                           <li> <a href="<?php echo site_url('region/');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Add Regions</b> </a> </li>
                           <li> <a href="<?php echo site_url('county/');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Add County</b> </a> </li>
                           <li> <a href="<?php echo site_url('subcounty/');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Add Sub-County</b> </a> </li>
-                          <li> <a href="<?php echo site_url('depot');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Add Depot</b> </a> </li>
+                          <li> <a href="<?php echo site_url('depot');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Add Store</b> </a> </li>
                           <li> <a href="<?php echo site_url('facility');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Add Facilities</b> </a> </li>
                           <!-- <li> <a href="<?php echo site_url('fridge');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Add Fridges</b> </a> </li> -->
                       </ul>
@@ -207,8 +206,12 @@
         <div class="pull-left page_title theme_color">
           <h1><?php echo $section?></h1>
           <h2 class=""><?php echo $subtitle ?></h2>
-        </div>  
+        </div>
+        <div class="pull-right">
+            <?php echo $breadcrumb ?>
+        </div>
       </div>
+
       <div class="container clear_both padding_fix">
         <!--\\\\\\\ container  start \\\\\\-->
 <div class="row">
@@ -255,14 +258,12 @@
 <script src="<?php echo base_url() ?>assets/js/edit-graph.js"></script>
 <script src="<?php echo base_url() ?>assets/plugins/kalendar/kalendar.js" type="text/javascript"></script>
 <script src="<?php echo base_url() ?>assets/plugins/kalendar/edit-kalendar.js" type="text/javascript"></script>
-<script src="<?php echo base_url() ?>assets/plugins/highcharts/highcharts.js" type="text/javascript"></script>
 
-<script src="<?php echo base_url() ?>assets/plugins/highcharts/modules/no-data-to-display.js"></script>
-<script src="<?php echo base_url() ?>assets/plugins/highcharts/modules/exporting.js"></script>
 <script src="<?php echo base_url() ?>assets/plugins/data-tables/jquery.dataTables.min.js"></script>
 <script src="<?php echo base_url() ?>assets/plugins/data-tables/DT_bootstrap.js"></script>
 <script src="<?php echo base_url() ?>assets/plugins/sparkline/jquery.sparkline.js" type="text/javascript"></script>
 <script src="<?php echo base_url() ?>assets/plugins/sparkline/jquery.customSelect.min.js" ></script>
+<script src="<?php echo base_url() ?>assets/plugins/validation/parsley.min.js" ></script>
 
 
 

@@ -1,15 +1,17 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');?>
   <div class="row">
     <div class="col-lg-12">
-      <ba href="javascript:void()" onclick="add_fridge()" class="btn btn-primary">Add Refrigerator</a>
+      <a href="javascript:void()" onclick="add_fridge()" class="btn btn-primary">Add Refrigerator</a>
     </div>
   </div>
   <div class="row">
-  </br>
-  </br>
+  <br>
+  <br>
   <?php echo $this->session->flashdata('msg');  ?>
     <div class="col-lg-12" style="margin-top: 10px;">
-     <div class="table-responsive">
+        <div id="container" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
+        <br>
+        <div class="table-responsive">
     <table id="table" class="table table-bordered table-hover table-striped" cellspacing="0" width="100%">
       <thead>
       
@@ -88,7 +90,7 @@
     function add_fridge(){
       save_method = 'add';
       $('#form')[0].reset(); // reset form on modals
-      $('#fridge_modal_form').modal('show'); // show bootstrap moda
+      $('#fridge_modal_form').modal('show'); // show bootstrap modal
       $('.modal-title').text('Add Refrigerator');
     }
 
@@ -168,23 +170,6 @@
         });
       }
 
-       // ajax adding data to database
-        //   $.ajax({
-        //     url : url,
-        //     type: "POST",
-        //     data: $('#form').serialize(),
-        //     dataType: "JSON",
-        //     success: function(data)
-        //     {
-        //        //if success close modal and reload ajax table
-        //        $('#modal_form').modal('hide');
-        //        reload_table();
-        //     },
-        //     error: function (jqXHR, textStatus, errorThrown)
-        //     {
-        //         alert('Error adding / update data');
-        //     }
-        // });
     }
 
     function delete_fridge(id)
@@ -323,5 +308,40 @@
     </div><!-- /.modal -->
   <!-- End Bootstrap modal -->
 
-  </body>
-</html>
+  </div>
+      <script type="text/javascript">
+          $('#container').highcharts({
+              chart: {
+                  plotBackgroundColor: null,
+                  plotBorderWidth: null,
+                  plotShadow: false,
+                  type: 'pie'
+              },
+              title: {
+                  text: ''
+              },
+              tooltip: {
+                  pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+              },
+              plotOptions: {
+                  pie: {
+                      allowPointSelect: true,
+                      cursor: 'pointer',
+                      dataLabels: {
+                          enabled: false
+                      },
+                      showInLegend: true
+                  }
+              },
+              series: [{
+                  name: 'Brands',
+                  colorByPoint: true,
+                  data: []
+              }]
+          });
+          window.setTimeout(function() {
+              $("#alert-message").fadeTo(500, 0).slideUp(500, function(){
+                  $(this).remove();
+              });
+          }, 5000);
+      </script>

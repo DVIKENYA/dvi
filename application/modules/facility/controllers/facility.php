@@ -13,9 +13,14 @@ class Facility extends MY_Controller {
             $data['page_title'] = "Facility";
             $data['user_object'] = $this->get_user_object();
             $data['main_title'] = $this->get_title();
-            echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);     
-
-            }
+          //breadcrumbs
+          $this->load->library('make_bread');
+          $this->make_bread->add('Configurations', '', 0);
+          $this->make_bread->add('List Facilities', 'facility/', 0);
+          $data['breadcrumb'] = $this->make_bread->output();
+          //
+            echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
+         }
          
 
       public function create(){
@@ -36,10 +41,16 @@ class Facility extends MY_Controller {
             $data['module'] = "facility";
             $data['view_file'] = "create_facility_form";
             $data['section'] = "Configuration";
-            $data['subtitle'] = "Add Facility";
+            $data['subtitle'] = "Edit Facility";
             $data['page_title'] = "Facility";
             $data['user_object'] = $this->get_user_object();
             $data['main_title'] = $this->get_title();
+          $this->load->library('make_bread');
+          $this->make_bread->add('Configurations', '', 0);
+          $this->make_bread->add('List Facilities', 'facility/', 0);
+          $this->make_bread->add('Edit Facility', '', 0);
+          $data['breadcrumb'] = $this->make_bread->output();
+          //
             echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);  
          
       }
@@ -160,6 +171,11 @@ class Facility extends MY_Controller {
           $data['page_title'] = "Refrigerator";
           $data['user_object'] = $this->get_user_object();
           $data['main_title'] = $this->get_title();
+          $this->load->library('make_bread');
+          $this->make_bread->add('Configurations', '', 0);
+          $this->make_bread->add('List Facilities', 'facility/', 0);
+          $data['breadcrumb'] = $this->make_bread->output();
+          //
           echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data); 
       }
 

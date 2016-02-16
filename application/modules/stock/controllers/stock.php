@@ -56,8 +56,8 @@ class Stock extends MY_Controller
         $data['all_orders']= $this->mdl_order->get_all_placed_orders($station,$station_id);
         $data['submitted_orders']= $this->mdl_order->get_submitted_orders($station,$station_id);
         $data['section'] = "Manage Stock";
-        $data['subtitle'] = "Request Stocks";
-        $data['page_title'] = "Request Stocks";
+        $data['subtitle'] = "Issue Stocks";
+        $data['page_title'] = "Issue Stocks";
         $data['module'] = "stock";
         $user_level = $this->session->userdata['logged_in']['user_level'];
         $user_id = $this->session->userdata['logged_in']['user_id'];
@@ -93,6 +93,13 @@ class Stock extends MY_Controller
         }
         $data['user_object'] = $this->get_user_object();
         $data['main_title'] = $this->get_title();
+        //breadcrumbs
+        $this->load->library('make_bread');
+        $this->make_bread->add('Manage Stock', '', 0);
+        $this->make_bread->add('Issue Stocks', '', 0);
+        $data['breadcrumb'] = $this->make_bread->output();
+        //
+
         echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
 
 
@@ -122,8 +129,8 @@ class Stock extends MY_Controller
         $data['all_orders']= $this->mdl_order->get_all_placed_orders($station,$station_id);
         $data['submitted_orders']= $this->mdl_order->get_submitted_orders($station,$station_id);
         $data['section'] = "Manage Stock";
-        $data['subtitle'] = "Request Stocks";
-        $data['page_title'] = "Request Stocks";
+        $data['subtitle'] = "Receive Stocks";
+        $data['page_title'] = "Receive Stocks";
         $data['module'] = "stock";
         if($station=='1'){
             $data['view_file'] = "receive_stock";
@@ -132,6 +139,12 @@ class Stock extends MY_Controller
         }
         $data['user_object'] = $this->get_user_object();
         $data['main_title'] = $this->get_title();
+        //breadcrumbs
+        $this->load->library('make_bread');
+        $this->make_bread->add('Manage Stock', '', 0);
+        $this->make_bread->add('Receive Stocks', '', 0);
+        $data['breadcrumb'] = $this->make_bread->output();
+        //
         echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
 
 
@@ -205,6 +218,13 @@ class Stock extends MY_Controller
           $data['page_title'] = "Issue Stock";
           $data['user_object'] = $this->get_user_object();
           $data['main_title'] = $this->get_title();
+        //breadcrumbs
+        $this->load->library('make_bread');
+        $this->make_bread->add('Manage Stock', '', 0);
+        $this->make_bread->add('Issue Stocks', 'stock/list_issue_stock', 0);
+        $this->make_bread->add('Issue Stocks Directly', '', 0);
+        $data['breadcrumb'] = $this->make_bread->output();
+        //
           echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
          
     }
@@ -220,6 +240,13 @@ class Stock extends MY_Controller
           $data['page_title'] = "Stocks Legder";
           $data['user_object'] = $this->get_user_object();
           $data['main_title'] = $this->get_title();
+        //breadcrumbs
+        $this->load->library('make_bread');
+        $this->make_bread->add('Manage Stock', '', 0);
+        $this->make_bread->add('Stocks Ledger', '', 0);
+        $data['breadcrumb'] = $this->make_bread->output();
+        //
+
           echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
          //echo Modules::run('template/admin', $data);
     }
@@ -243,7 +270,15 @@ class Stock extends MY_Controller
           $data['page_title'] = "Stocks Ledger";
           $data['user_object'] = $this->get_user_object();
           $data['main_title'] = $this->get_title();
-          echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
+        //breadcrumbs
+        $this->load->library('make_bread');
+        $this->make_bread->add('Manage Stock', '', 0);
+        $this->make_bread->add('Stocks Ledger', 'stock/list_inventory', 1);
+
+        $data['breadcrumb'] = $this->make_bread->output();
+        //
+
+        echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
          //echo Modules::run('template/admin', $data);
     
     }
@@ -487,6 +522,13 @@ class Stock extends MY_Controller
         $data['page_title'] = "Stock Count";
         $data['user_object'] = $this->get_user_object();
         $data['main_title'] = $this->get_title();
+
+        //breadcrumbs
+        $this->load->library('make_bread');
+        $this->make_bread->add('Manage Stock', '', 0);
+        $this->make_bread->add('Stock Count', '', 0);
+        $data['breadcrumb'] = $this->make_bread->output();
+        //
         echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
     }
 

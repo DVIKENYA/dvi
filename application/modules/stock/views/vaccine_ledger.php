@@ -166,9 +166,7 @@
 
  <div class="row"></div>
  <br/>
- <div id="container" style="width:100%; height:300px; " >
-    
- </div>
+<div id="container" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
 
 
 <script type="text/javascript">
@@ -322,7 +320,35 @@
 
 
 <script type="text/javascript">
-
+    $('#container').highcharts({
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+        },
+        title: {
+            text: ''
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: false
+                },
+                showInLegend: true
+            }
+        },
+        series: [{
+            name: 'Brands',
+            colorByPoint: true,
+            data: []
+        }]
+    });
        window.setTimeout(function() {
           $("#alert-message").fadeTo(500, 0).slideUp(500, function(){
               $(this).remove(); 

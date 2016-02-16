@@ -1,7 +1,7 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');?>
   <div class="row">
     <div class="col-lg-12 ">
-    <?php echo validation_errors('<div class="alert alert-danger alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><b>',' </b></div>');?>
+    <?php //echo validation_errors('<div class="alert alert-danger alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><b>',' </b></div>');?>
       
       <?php echo form_open('',array('class'=>'form-horizontal','role'=>'form'));?>
       <div class="well well-sm"><b>Basic Job Information</b></div>

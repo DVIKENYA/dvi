@@ -44,6 +44,14 @@ public function create_order(){
   $data['view_file'] = "create_order_form";
   $data['user_object'] = $this->get_user_object();
   $data['main_title'] = $this->get_title();
+    //breadcrumbs
+    $this->load->library('make_bread');
+    $this->make_bread->add('Manage Stock', '', 0);
+    $this->make_bread->add('Request Stocks', 'order/list_orders', 0);
+    $this->make_bread->add('Create Request', '', 0);
+
+    $data['breadcrumb'] = $this->make_bread->output();
+    //
  echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
 
 }
@@ -70,6 +78,14 @@ public function list_orders(){
   }
   $data['user_object'] = $this->get_user_object();
   $data['main_title'] = $this->get_title();
+
+    //breadcrumbs
+    $this->load->library('make_bread');
+    $this->make_bread->add('Manage Stock', '', 0);
+    $this->make_bread->add('Request Stocks', '', 0);
+
+    $data['breadcrumb'] = $this->make_bread->output();
+    //
   echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
 
 	

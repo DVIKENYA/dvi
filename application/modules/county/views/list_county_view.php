@@ -18,23 +18,24 @@
 										                    <th>Population One</th>
 										                    <th>Women Population</th>
                                         <td align="center"><b>Edit</b></td>
-                                        <td align="center"><b>Delete</b></td>
+                                       
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php
                                     foreach ($records->result() as $row){
                                         $edit_url = base_url().'county/create/'.$row->id;
-                                        $delete_url = base_url().'county/delete/'.$row->id;
+                                       
                                       ?>
                                     <tr>
                                         <td><?php echo $row->county_name ?></td>
                     					           <td><?php echo $row->population ?></td>
+
 										                    <td><?php echo $row->population_one ?></td>
 										                    <td><?php echo $row->population_women ?></td>
 										
 										<td align="center"><a href="<?php echo $edit_url ?>"><i class="fa fa-edit"></i></a></td>
-                                        <td align="center"><a href="<?php echo $delete_url ?>"><i class="fa fa-trash-o"></i></td>
+
                                        
                                     </tr>
                                     <?php } ?>

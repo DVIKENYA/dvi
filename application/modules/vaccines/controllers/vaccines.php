@@ -41,6 +41,11 @@ public function index()
           $data['page_title'] = "Vaccines";
            $data['user_object'] = $this->get_user_object();
            $data['main_title'] = $this->get_title();
+        $this->load->library('make_bread');
+        $this->make_bread->add('Configurations', '', 0);
+        $this->make_bread->add('List Vaccines', '', 0);
+
+        $data['breadcrumb'] = $this->make_bread->output();
            echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);  
 	}
    
@@ -76,6 +81,11 @@ function create(){
 	        
 	         $data['user_object'] = $this->get_user_object();
            $data['main_title'] = $this->get_title();
+    $this->load->library('make_bread');
+    $this->make_bread->add('Configurations', '', 0);
+    $this->make_bread->add('List Vaccines', 'vaccines/', 1);
+    $this->make_bread->add('Edit Vaccines', '', 0);
+    $data['breadcrumb'] = $this->make_bread->output();
            echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
 }
             
@@ -87,15 +97,10 @@ function create(){
             $data['Vaccine_name']=$this->input->post('Vaccine_name', TRUE);
             $data['Doses_required']=$this->input->post('Doses_required', TRUE);
             $data['Wastage_factor']=$this->input->post('Wastage_factor', TRUE);
-            $data['Tray_color']=$this->input->post('Tray_color', TRUE);
-            $data['Vaccine_designation']=$this->input->post('Vaccine_designation', TRUE);
             $data['Vaccine_formulation']=$this->input->post('Vaccine_formulation', TRUE);
             $data['Mode_administration']=$this->input->post('Mode_administration', TRUE);
             $data['Vaccine_presentation']=$this->input->post('Vaccine_presentation', TRUE);
-            $data['Fridge_compart']=$this->input->post('Fridge_compart', TRUE);
             $data['Vaccine_pck_vol']=$this->input->post('Vaccine_pck_vol', TRUE);
-            $data['Diluents_pck_vol']=$this->input->post('Diluents_pck_vol', TRUE);
-            $data['Vaccine_price_vial']=$this->input->post('Vaccine_price_vial', TRUE);
             $data['Vaccine_price_dose']=$this->input->post('Vaccine_price_dose', TRUE);
              
             return $data;
@@ -108,15 +113,11 @@ function create(){
                    $data['Vaccine_name'] = $row->Vaccine_name;
                    $data['Doses_required'] = $row->Doses_required;
                    $data['Wastage_factor'] = $row->Wastage_factor;
-                   $data['Tray_color'] = $row->Tray_color;
-                   $data['Vaccine_designation'] = $row->Vaccine_designation;
                    $data['Vaccine_formulation'] = $row->Vaccine_formulation;
                    $data['Mode_administration'] = $row->Mode_administration;
                    $data['Vaccine_presentation'] = $row->Vaccine_presentation;
                    $data['Fridge_compart'] = $row->Fridge_compart;
                    $data['Vaccine_pck_vol'] = $row->Vaccine_pck_vol;
-                   $data['Diluents_pck_vol'] = $row->Diluents_pck_vol;
-                   $data['Vaccine_price_vial'] = $row->Vaccine_price_vial;
                    $data['Vaccine_price_dose'] = $row->Vaccine_price_dose;
 
 
@@ -130,36 +131,31 @@ function create(){
         $this->form_validation->set_rules('Vaccine_name', 'Vaccine Name', 'required|alpha_numeric|xss_clean');
         $this->form_validation->set_rules('Doses_required', 'Doses Required', 'required|integer|xss_clean');
         $this->form_validation->set_rules('Wastage_factor', 'Wastage Factor', 'required|decimal|xss_clean');
-        $this->form_validation->set_rules('Tray_color', 'Tray Color', 'required|alpha|xss_clean');
-	      $this->form_validation->set_rules('Vaccine_designation','Vaccine Designation','required|alpha|xss_clean');
-	      $this->form_validation->set_rules('Vaccine_formulation','Vaccine Formulation','required|alpha|xss_clean');
-	      $this->form_validation->set_rules('Mode_administration','Mode of Administration','required|alpha|xss_clean');
-	      $this->form_validation->set_rules('Vaccine_presentation','Vaccine Presentation','required|alpha|xss_clean');
-	      $this->form_validation->set_rules('Fridge_compart','Fridge Compartment','required|alpha|xss_clean');
+	      $this->form_validation->set_rules('Vaccine_formulation','Vaccine Formulation','required||xss_clean');
+	     $this->form_validation->set_rules('Mode_administration','Mode of Administration','required||xss_clean');
+	      $this->form_validation->set_rules('Vaccine_presentation','Vaccine Presentation','required||xss_clean');
+
 	      $this->form_validation->set_rules('Vaccine_pck_vol','Vaccine Packed Volume(cm3/dose)','required|numeric|xss_clean');
-	      $this->form_validation->set_rules('Diluents_pck_vol','Diluents Packed Volume(cm3/dose)','required|numeric|xss_clean');
-	      $this->form_validation->set_rules('Vaccine_price_vial','Vaccine Price($USD/Vial)','required|numeric|xss_clean');
 	      $this->form_validation->set_rules('Vaccine_price_dose','Vaccine Price($USD/Dose)','required|numeric|xss_clean');
-                        
+              $this->form_validation->set_error_delimiters('<p class="red_text semi-bold">'.'*', '</p>');
         $update_id = $this->input->post('update_id', TRUE);
         if ($this->form_validation->run() == FALSE)
-        {   
-                    $this->create();         
+        {
+                    $this->create();
         }
         else
-        {       
-                   $data =  $this->get_data_from_post();
+        {
+            $data =  $this->get_data_from_post();
                    
                    if(is_numeric($update_id)){
                        $this->_update($update_id, $data);
                        $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">Vaccine details updated successfully!</div>');
-            
+
                    } else {
                        $this->_insert($data);
                        $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">New Vaccine added successfully!</div>');
                    }
-                   
-                   //$this->session->set_flashdata('success', 'region added successfully.');
+
                    redirect('vaccines');
         }
         }

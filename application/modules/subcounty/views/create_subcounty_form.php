@@ -1,14 +1,14 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');?>
   <div class="row">
     <div class="col-lg-4 col-lg-offset-4">
-    <?php echo validation_errors('<div class="alert alert-danger alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><b>',' </b></div>');?>
+<!--    --><?php //echo validation_errors('<div class="alert alert-danger alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><b>',' </b></div>');?>
       <h1>Add New Sub County</h1>
       <?php echo form_open('subcounty/submit',array('class'=>'form-horizontal'));?>
       <div class="form-group">
         <?php
         echo form_label('Sub County Name','subcounty_name');
         echo form_error('subcounty_name');
-        echo form_input(['name' => 'subcounty_name', 'pattern'=>'[a-zA-Z\s]+', 'id' => 'subcounty',  'value' => $subcounty_name ,'class' => 'form-control', 'placeholder' => 'Enter Sub County Name']);
+        echo form_input(['name' => 'subcounty_name', 'pattern'=>'[a-zA-Z\s]+', 'id' => 'subcounty',  'value' => $subcounty_name ,'readonly' => '','class' => 'form-control', 'placeholder' => 'Enter Sub County Name']);
         ?>
       </div>
       <div class="form-group">

@@ -5,8 +5,8 @@
     </div>
   </div>
   <div class="row">
-  </br>
-  </br>
+  <br>
+  <br>
   <?php echo $this->session->flashdata('msg');  ?>
     <div class="col-lg-12" style="margin-top: 10px;">
      <div class="table-responsive">
@@ -19,23 +19,27 @@
                                         
                                         <th>Phone</th>
                                         <th>Email </th>
-                                       <!--  <td align="center"><b>Edit</b></td> -->
-                                        <!-- <td align="center"><b>Delete</b></td> -->
+                                        <th>User Group </th>
+                                        <th>User Level </th>
+                                       <td align="center"><b>Edit</b></td> 
+                                       <td align="center"><b>Delete</b></td>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php
                                     foreach ($records->result() as $row){
-                                        // $edit_url = base_url().'group/create/'.$row->id;
-                                        // $delete_url = base_url().'user/delete/'.$row->id;
+                                        $edit_url = base_url().'users/create_user/'.$row->id;
+                                        $delete_url = base_url().'users/delete/'.$row->id;
                                       ?>
                                     <tr>
                                         <td><?php echo $row->f_name."  ".$row->l_name ?></td>
                                        
                                         <td><?php echo $row->phone ?></td>
                                         <td><?php echo $row->email ?></td>
-                                        <!-- <td align="center"><a href="<?php //echo $edit_url ?>"><i class="fa fa-edit"></i></a></td> -->
-                                        <!-- <td align="center"><a href="<?php //echo $delete_url ?>"><i class="fa fa-trash-o"></i></td> -->
+                                        <td><?php echo $row->user_group ?></td>
+                                        <td><?php echo $row->user_level ?></td>
+                                        <td align="center"><a href="<?php echo $edit_url ?>"><i class="fa fa-edit"></i></a></td>
+                                        <td align="center"><a href="<?php echo $delete_url ?>"><i class="fa fa-trash-o"></i></td>
                                        
                                     </tr>
                                     <?php } ?>

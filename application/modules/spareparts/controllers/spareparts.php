@@ -140,7 +140,7 @@ Modules::run('secure_tings/ni_met');
       $this->form_validation->set_rules('unit_price', 'Equipment Unit Price', 'required|xss_clean');
       $this->form_validation->set_rules('date_purchased', 'Date of Purchase', 'required|xss_clean');
       $this->form_validation->set_rules('quantity', 'Quantity', 'required|xss_clean');
-
+      $this->form_validation->set_error_delimiters('<p class="red_text semi-bold">'.'*', '</p>');
 
       $update_id = $this->input->post('update_id', TRUE);
           if ($this->form_validation->run() == FALSE)

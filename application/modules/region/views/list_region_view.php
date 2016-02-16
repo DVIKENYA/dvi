@@ -14,7 +14,9 @@
                                 <thead>
                                     <tr>
                                         <th>Region Name</th>
-                                        <th>Region Headquarter</th>
+                                        <th>Region Manager</th>
+                                        <th>Region Manager Phone</th>
+                                        <th>Region Manager Email</th>
                                         <td align="center"><b>Edit</b></td>
                                         <td align="center"><b>Delete</b></td>
                                     </tr>
@@ -27,7 +29,9 @@
                                       ?>
                                     <tr>
                                         <td><?php echo $row->region_name ?></td>
-                                        <td><?php echo $row->region_headquarter ?></td>
+                                        <td><?php echo $row->region_manager ?></td>
+                                        <td><?php echo $row->region_manager_phone ?></td>
+                                        <td><?php echo $row->region_manager_email ?></td>
                                         <td align="center"><a href="<?php echo $edit_url ?>"><i class="fa fa-edit"></i></a></td>
                                         <td align="center"><a href="<?php echo $delete_url ?>"><i class="fa fa-trash-o"></i></td>
                                        

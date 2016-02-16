@@ -26,7 +26,7 @@ echo form_open('',$form_attributes);?>
 	</div>
 	<div class="col-lg-3">
 	  <div class="panel-body">
-	  <b>S11 #</b>
+		  <?php if ($user_object['user_level']=='1') {?><b>Voucher #</b> <?php } else  {?><b>S11 #</b> <?php } ?>
 	    <?php $data=array('name' => 's11', 'id'=> 's11','class'=>'form-control'); echo form_input($data);?>
 	    </div>
 	</div>
@@ -324,5 +324,6 @@ echo form_open('',$form_attributes);?>
 									});
 								return dump;
 				}
+
    </script>
   

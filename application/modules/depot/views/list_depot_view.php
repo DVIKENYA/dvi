@@ -1,7 +1,7 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');?>
   <div class="row">
     <div class="col-lg-12">
-      <a href="<?php echo site_url('depot/create');?>" class="btn btn-primary">Add Depot</a>
+      <a href="<?php echo site_url('depot/create');?>" class="btn btn-primary">Add Store</a>
     </div>
   </div>
   <div class="row">
@@ -14,8 +14,8 @@
         <div class="panel-body">
         <ul class="nav nav-tabs">
 
-        <li class="active"><a data-toggle="tab" href="#tab1"><b>My Depots</b></a></li>
-        <li><a data-toggle="tab" href="#tab2"><b>Other Depots</b></a></li>
+        <li class="active"><a data-toggle="tab" href="#tab1"><b>My Stores</b></a></li>
+        <li><a data-toggle="tab" href="#tab2"><b>Other Stores</b></a></li>
         </ul>
         <div class="tab-content">
         <div id="tab1" class="tab-pane fade in active">
@@ -26,9 +26,9 @@
                 <thead>
                 <tr class="button"></tr>
                   <tr>
-                    <th>Depot Location</th>
+                    <th>Store Location</th>
                     
-                    <th style="width:250px;">Action</th>
+                    <th style="width:300px;">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -36,7 +36,7 @@
 
                 <tfoot>
                   <tr>
-                    <th>Depot Location</th>
+                    <th>Store Location</th>
                     
                     <th>Action</th>
                   </tr>
@@ -53,9 +53,9 @@
             <thead>
             <tr class="button"></tr>
               <tr>
-                <th >Depot Location</th>
+                <th >Store Location</th>
                 
-                <th style="width:250px;">Action</th>
+                <th style="width:300px;">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -63,7 +63,7 @@
 
             <tfoot>
               <tr>
-                <th>Depot Location</th>
+                <th>Store Location</th>
                 
                 <th>Action</th>
               </tr>
@@ -143,5 +143,4 @@
                   });
               }, 5000);
         </script> 
-  </body>
-</html>
+  </div>

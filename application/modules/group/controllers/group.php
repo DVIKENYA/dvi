@@ -38,8 +38,14 @@ public function index()
             $data['page_title'] = "Add group";
             $data['module']="group";
             $data['view_file']="list_group_view";
-             $data['user_object'] = $this->get_user_object();
-           $data['main_title'] = $this->get_title();
+            $data['user_object'] = $this->get_user_object();
+            $data['main_title'] = $this->get_title();
+            //breadcrumbs
+            $this->load->library('make_bread');
+            $this->make_bread->add('Add Groups', '', 0);
+
+            $data['breadcrumb'] = $this->make_bread->output();
+            //
            echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data); 
 	}
    
@@ -74,6 +80,12 @@ function create(){
 	$data['view_file'] = "create_group_form";
 	 $data['user_object'] = $this->get_user_object();
            $data['main_title'] = $this->get_title();
+    //breadcrumbs
+    $this->load->library('make_bread');
+    $this->make_bread->add('Groups', 'group/', 0);
+    $this->make_bread->add('Add Groups', '', 0);
+    $data['breadcrumb'] = $this->make_bread->output();
+    //
            echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
 }
 
@@ -100,7 +112,7 @@ function get_data_from_post(){
         $this->load->library('form_validation');
         $this->form_validation->set_rules('name', 'Group Name', 'required|xss_clean');
         $this->form_validation->set_rules('description', 'Group Description', 'required|xss_clean');
-       
+        $this->form_validation->set_error_delimiters('<p class="red_text semi-bold">'.'*', '</p>');       
        
         $update_id = $this->input->post('update_id', TRUE);
         if ($this->form_validation->run() == FALSE)

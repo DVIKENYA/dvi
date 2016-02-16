@@ -15,7 +15,7 @@ echo form_open('',$form_attributes);?>
 </div>
 <div class="col-lg-3">
   <div class="panel-body">
-  <b>S11 Code</b>
+  <b>S11 #</b><br>
     <?php $data=array('name' => 's11','id'=> 's11','class'=>'form-control','type'=>'text'); echo form_input($data);?>
     </div>
 </div>

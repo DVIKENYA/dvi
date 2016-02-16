@@ -26,7 +26,7 @@ function home() {
   $data['wastage'] = $this->get_wastage();
   $data['mavaccine'] = $this->vaccines();
   //$data['coverage'] = $this->get_coverage();
-  $data['section'] = "DVI Kenya";
+  $data['section'] = "NVIP-Chanjo";
   $data['subtitle'] = "Dashboard";
   $user_level=$this->session->userdata['logged_in']['user_level'];
   //$data['page_title'] = "Baringo County";
@@ -43,6 +43,12 @@ function home() {
   $data['user_level'] = ($this->session->userdata['logged_in']['user_level']);
   $data['user_object'] = $this->get_user_object();
   $data['main_title'] = $this->get_title();
+    //breadcrumbs
+    $this->load->library('make_bread');
+    $this->make_bread->add('Dashboard', '', 0);
+    $data['breadcrumb'] = $this->make_bread->output();
+    //
+
   echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
 
 }

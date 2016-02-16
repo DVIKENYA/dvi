@@ -31,6 +31,7 @@ if($region==$user_object['user_statiton']){
               <td><label id="time">Lead Time :</label></td>
           </tr>
       </table>
+       <br>
     <div id="order">
     <table class="table table-bordered" >
       

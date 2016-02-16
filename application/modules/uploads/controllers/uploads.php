@@ -17,6 +17,12 @@
            $data['view_file'] = "file_view";
            $data['user_object'] = $this->get_user_object();
            $data['main_title'] = $this->get_title();
+            //breadcrumbs
+            $this->load->library('make_bread');
+            $this->make_bread->add('Library', 'uploads/list_files', 1);
+            $this->make_bread->add('Upload Documents', '', 0);
+            $data['breadcrumb'] = $this->make_bread->output();
+            //
            echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
        }
 
@@ -104,6 +110,11 @@
             $data['view_file'] = "list_view";
             $data['user_object'] = $this->get_user_object();
             $data['main_title'] = $this->get_title();
+            //breadcrumbs
+            $this->load->library('make_bread');
+            $this->make_bread->add('Library', '', 1);
+            $data['breadcrumb'] = $this->make_bread->output();
+            //
             echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
         }
 

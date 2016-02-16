@@ -46,7 +46,7 @@ class Users extends MY_Controller
 
        $this->pagination->initialize($config);
           // $data['query'] = $this->mdl_region->get('id', $config['per_page'], $this->uri->segment(3));
-       $data['records'] = $this->db->get('m_users', $config['per_page'], $this->uri->segment(3));
+       $data['records'] = $this->db->get('user_details', $config['per_page'], $this->uri->segment(3));
            //$this->load->view('display', $data);
        $data['module']="users";
        $data['view_file']="list_user_view";
@@ -55,6 +55,13 @@ class Users extends MY_Controller
        $data['page_title'] = "Users";
        $data['user_object'] = $this->get_user_object();
        $data['main_title'] = $this->get_title();
+        //breadcrumbs
+        $this->load->library('make_bread');
+        $this->make_bread->add('Configurations', '', 0);
+        $this->make_bread->add('Users', 'users/list_users', 1);
+
+        $data['breadcrumb'] = $this->make_bread->output();
+        //
        echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data); 
 
 
@@ -69,7 +76,7 @@ class Users extends MY_Controller
         $data['page_title'] = "Profile Page";
         $data['module']="users";
         $user_id = $this->session->userdata['logged_in']['user_id'];
-        $data['profile'] = $this->get_data_from_db($user_id);
+        $data['profile'] = $this->get_profile_data_from_db($user_id);
         $data['view_file']="profile_view";
         $data['user_object'] = $this->get_user_object();
         $data['main_title'] = $this->get_title();
@@ -81,6 +88,7 @@ class Users extends MY_Controller
 //        $this->form_validation->set_rules('username', 'Username', 'required|xss_clean');
         $this->form_validation->set_rules('phone', 'Phone', 'required|xss_clean');
         $this->form_validation->set_rules('email', 'Email', 'required|valid_email|xss_clean');
+        $this->form_validation->set_error_delimiters('<p class="red_text semi-bold">'.'*', '</p>');
         if($this->form_validation->run()===FALSE)
         {
 
@@ -110,7 +118,7 @@ class Users extends MY_Controller
         $this->load->library('form_validation');
         $this->form_validation->set_rules('password', 'Password', 'required|xss_clean|matches[password_confirm]');
         $this->form_validation->set_rules('password_confirm', 'Password Confirm', 'required|xss_clean|matches[password]');
-
+        $this->form_validation->set_error_delimiters('<p class="red_text semi-bold">'.'*', '</p>');
         if($this->form_validation->run()===FALSE)
         {
             redirect('users/profile');
@@ -126,7 +134,62 @@ class Users extends MY_Controller
             redirect('users/profile','refresh');
         }
     }
-    function get_data_from_db(){
+
+    function create_user(){
+
+        Modules::run('secure_tings/ni_admin');
+        $update_id= $this->uri->segment(3);
+
+        if (!isset($update_id )){
+            $update_id = $this->input->post('update_id', $id);
+        }
+
+        if (is_numeric($update_id)){
+            $data = $this->get_data_from_db($update_id);
+            $data['update_id'] = $update_id;
+
+        } else {
+            $data= $this->get_register_data_from_post();
+        }
+        $data['magroups']  = $this->mdl_users->get_user_groups();
+        $data['malevels']  = $this->mdl_users->get_user_levels();
+        $data['macounties']  = $this->mdl_users->get_counties();
+        $data['masubcounty']  = $this->mdl_users->get_subcounty();
+        $data['mafacilities']  = $this->mdl_users->get_facilities();
+        $data['maregion']  = $this->mdl_users->getRegion();
+        $data['section'] = "NVIP Chanjo";
+        $data['subtitle'] = "Users";
+        $data['page_title'] = "Add New Users";
+        $data['module']="users";
+        $data['view_file']="register1_form";
+        $data['user_object'] = $this->get_user_object();
+        $data['main_title'] = $this->get_title();
+        //breadcrumbs
+        $this->load->library('make_bread');
+        $this->make_bread->add('Configurations', '', 0);
+        $this->make_bread->add('Users', 'users/list_users', 1);
+        $this->make_bread->add('Add Users', '', 0);
+        $data['breadcrumb'] = $this->make_bread->output();
+        //
+        echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
+    }
+
+    function get_data_from_db($update_id){
+        $query = $this->get_where($update_id);
+        foreach ($query->result() as $row){
+            $data['f_name'] = $row->f_name;
+            $data['l_name'] = $row->l_name;
+            $data['phone'] = $row->phone;
+            $data['email'] = $row->email;
+            $data['username'] = $row->username;
+            $data['user_group'] = $row->user_group;
+            $data['user_level'] = $row->user_level;
+
+        }
+        return $data;
+    }
+
+    function get_profile_data_from_db(){
         $user_id = $this->session->userdata['logged_in']['user_id'];
         $query = $this->get_where($user_id);
 
@@ -151,38 +214,16 @@ class Users extends MY_Controller
 
         return $data;
     }
-
-    function create_user(){
-    
-   Modules::run('secure_tings/ni_admin');
-   $data= $this->get_register_data_from_post();
-   $data['magroups']  = $this->mdl_users->get_user_groups();
-   $data['malevels']  = $this->mdl_users->get_user_levels();
-   $data['macounties']  = $this->mdl_users->get_counties();
-   $data['masubcounty']  = $this->mdl_users->get_subcounty();
-   $data['mafacilities']  = $this->mdl_users->get_facilities();
-   $data['maregion']  = $this->mdl_users->getRegion();
-   $data['section'] = "NVIP Chanjo";
-   $data['subtitle'] = "Users";
-   $data['page_title'] = "Add New Users";
-   $data['module']="users";
-   $data['view_file']="register1_form";
-   $data['user_object'] = $this->get_user_object();
-  $data['main_title'] = $this->get_title();
-   echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
-}
-
-
-function get_register_data_from_post(){
-    $data['f_name']=$this->input->post('f_name', TRUE);
-    $data['l_name']=$this->input->post('l_name', TRUE);
-    $data['username']=$this->input->post('username', TRUE);
-    $data['phone']=$this->input->post('phone', TRUE);
-    $data['email']=$this->input->post('email', TRUE);
-    $data['user_level']=$this->input->post('user_level', TRUE);
-    $data['user_group']=$this->input->post('user_group', TRUE);
-    return $data;
-}
+    function get_register_data_from_post(){
+        $data['f_name']=$this->input->post('f_name', TRUE);
+        $data['l_name']=$this->input->post('l_name', TRUE);
+        $data['username']=$this->input->post('username', TRUE);
+        $data['phone']=$this->input->post('phone', TRUE);
+        $data['email']=$this->input->post('email', TRUE);
+        $data['user_level']=$this->input->post('user_level', TRUE);
+        $data['user_group']=$this->input->post('user_group', TRUE);
+        return $data;
+    }
 
 
 function register(){
@@ -202,7 +243,7 @@ Modules::run('secure_tings/is_logged_in');
     $this->form_validation->set_rules('countyuser', 'County', 'xss_clean');
     $this->form_validation->set_rules('subcountyuser', 'Sub County', 'xss_clean');
     $this->form_validation->set_rules('facilityuser', 'Facility', 'xss_clean');
-
+    $this->form_validation->set_error_delimiters('<p class="red_text semi-bold">'.'*', '</p>');
     if ($this->form_validation->run() == FALSE)
     {   
         
@@ -375,7 +416,11 @@ $array = array(
 echo json_encode($data);
 }
 }
-
+function delete($id){
+$this->_delete($id);
+$this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">User deleted successfully!</div>');
+redirect('list_users_view');
+}
 function get_where($id){
     $this->load->model('mdl_users');
     $query = $this->mdl_users->get_where($id);

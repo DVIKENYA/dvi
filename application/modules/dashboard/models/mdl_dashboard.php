@@ -221,7 +221,7 @@ function get_county_coverage($id){
         
     }
 
-function get_national_coverage($id){
+function get_national_coverage(){
 
         $this->db->distinct();
         $this->db->select('`periodname` AS Months, BCG,DPT2,DPT3,MEASLES,OPV,OPV1,OPV2,OPV3,PCV1,PCV2,PCV3,ROTA1,ROTA2');

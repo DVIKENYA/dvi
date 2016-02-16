@@ -156,15 +156,6 @@ $.getJSON( "<?php echo base_url();?>dashboard/get_chart", function(ty) {
         val = value;
     });
 
-  $.getJSON("<?php echo base_url();?>dashboard/minmax_stock", function(sm) {
-    console.log(sm);
-   
-
-        $.each(sm, function(key, value) {
-            min =   value.min_stock;
-            max =   value.max_stock;
-
-        });
 
 
   $('#morris-bar-chart').highcharts({
@@ -182,14 +173,11 @@ $.getJSON( "<?php echo base_url();?>dashboard/get_chart", function(ty) {
     title: {
       text: "Stock balance of various vaccines"
     },
-    
-    series : [{data : ty, name: "stock level"}],
-
-    xAxis: {
-            categories : nam
-    }
+      xAxis: {
+          categories: nam
+      },
+    series : [{data : ty, name: "stock level"}]
 });
-      });
    
 });
 
@@ -199,7 +187,7 @@ $.getJSON( "<?php echo base_url();?>dashboard/get_chart", function(ty) {
 <script type="text/javascript">
 $.getJSON( "<?php echo base_url();?>dashboard/get_mofstock", function(mts) {
  $.each(mts, function(name, value) {
-        nam =  name;
+        n =  name;
         val = value;
     });
 //console.log(ty);
@@ -215,10 +203,10 @@ $.getJSON( "<?php echo base_url();?>dashboard/get_mofstock", function(mts) {
     title: {
       text: "Months of Stock"
     },
-    series : [{data : mts, name: "months of stock"}],
     xAxis: {
-            categories : nam
-    }
+          categories: n
+      },
+    series : [{data : mts, name: "months of stock"}]
   });
 });
 
