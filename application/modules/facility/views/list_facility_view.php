@@ -51,6 +51,17 @@
             "url": "<?php echo site_url('facility/action_list')?>",
             "type": "POST"
         },
+        "dom": 'Bfrtip',
+        "buttons": [
+          'excelHtml5',
+          'csvHtml5',
+          'pdfHtml5',
+        ],
+        "responsive": {
+          "details": {
+            "type": 'column'
+          }
+        },
 
         //Set column definition initialisation properties.
         "columnDefs": [
@@ -104,5 +115,3 @@ window.setTimeout(function() {
 
 </script>
 
-  </body>
-</html>

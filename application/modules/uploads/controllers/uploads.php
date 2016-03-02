@@ -39,8 +39,8 @@
                 //$this->upload->initialize($config);
                     if ( ! $this->upload->do_upload()) {
                       
-                        $this->session->set_flashdata('msg', $this->upload->display_errors());
-                        redirect('uploads/index', 'refresh');
+                        $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-danger text-center">'.$this->upload->display_errors().'</div>');
+                        redirect('uploads/index');
                     }
                     else
                     {
@@ -68,7 +68,7 @@
                             $this->mdl_uploads->add_uploads($mydata);
                             $data = array('upload_data' => $this->upload->data());
                             $this->session->set_flashdata('msg','<div id="alert-message" class="alert alert-success text-center">File uploaded successfully!</div> ');
-                            redirect('uploads/list_files', 'refresh');
+                            redirect('uploads/list_files');
                 }
         }
 
@@ -129,6 +129,8 @@
         function delete($id){
            $this->load->model('mdl_uploads');
            $this->mdl_uploads->_delete($id);
+           $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-succes text-center">File deleted successfully</div>');
+                        
            redirect('uploads/list_files', 'refresh');
         }
 

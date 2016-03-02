@@ -3,7 +3,7 @@
 
     <div class="col-lg-12 col-sm-12">
 
-      <a href="<?php echo site_url('order/create_order');?>" class="btn btn-primary state_change" id="create_order" value="Create Order">Request Stocks</a>
+      <a href="<?php echo site_url('order/create_order');?>" class="btn btn-primary state_change" id="create_order" value="Create Order">Create Request</a>
     </div>
   </div>
   </br>
@@ -49,10 +49,10 @@
               <td><a href="<?php  echo $ledger_url ?>" class="btn btn-danger btn-xs">View <i class="fa fa-eye"></i></a></td>
           <?php }?>
               </tr>
-
+              <?php echo $this->pagination->create_links(); ?>
         </tbody>
         </table>
-
+         
     </form>
   </div>
 
@@ -82,7 +82,7 @@
 
         </tbody>
         </table>
-
+         <?php echo $this->pagination->create_links(); ?>
     </form>
   </div>
 

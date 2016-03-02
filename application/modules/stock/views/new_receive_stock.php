@@ -30,7 +30,7 @@
   <input type="hidden" name ="transaction_type" class="transaction_type" value="1">
   <?php echo form_hidden('issue_id',$receipts[0]['issue_id']);
         echo form_hidden('order_id',$receipts[0]['order_id']);
-        echo form_hidden('date_recorded',date('Y-m-d',strtotime(date('Y-m-d'))));?>
+        echo form_hidden('date_recorded',date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s'))));?>
 </div>
 
 <br/>

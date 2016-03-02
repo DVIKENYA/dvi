@@ -1,6 +1,4 @@
 <?php echo $this->session->flashdata('msg');  ?>
-<div class="well well-sm"><b>Requests</b></div>
-  </br>
 <div class="row">
   
 
@@ -41,7 +39,7 @@
 
         </tbody>
         </table>
-
+         <?php echo $this->pagination->create_links(); ?>
         </form>
         </div>
                   

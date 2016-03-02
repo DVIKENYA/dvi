@@ -97,14 +97,14 @@ jQuery(window).load(function() {
 	//***********************************End Add Effect*****************************
 	
 	//***********************************Theme Change*********************************//
-	$('.btn-lg').click(function(){
-		var style=($(this).parent().children('h4').eq(1).text()).split(':'),
-		code=style[1].split(";"),
-		bodyclass=$('body').attr('class').split(" "),
-		themeclass=bodyclass[bodyclass.length-1];
-		applyTheme(themeclass,code[0]);
+	// $('.btn-lg').click(function(){
+	// 	var style=($(this).parent().children('h4').eq(1).text()).split(':'),
+	// 	code=style[1].split(";"),
+	// 	bodyclass=$('body').attr('class').split(" "),
+	// 	themeclass=bodyclass[bodyclass.length-1];
+	// 	applyTheme(themeclass,code[0]);
 		
-	});
+	// });
 	//***********************************end Theme Change*********************************//
 	
 	//***********************************Smooth Sliding menu *****************************

@@ -76,7 +76,7 @@ echo form_open('stock/new_save_issued_stock',$form_attributes);?>
 						</select>
 				    </td>
 					<td><?php $data=array('name' => 'expiry_date[]','id'=> 'expiry_date'.$vaccine['vaccine_id'],'class'=>'form-control expiry_date','readonly'=>'','value'=>''); echo form_input($data);?></td>
-					<td><?php $data=array('name' => 'amt_ordered[]','id'=> 'amt_ordered'.$vaccine['vaccine_id'],'class'=>'form-control amt_ordered','value'=>$vaccine['qty_order_doses']); echo form_input($data);?></td>
+					<td><?php $data=array('name' => 'amt_ordered[]','id'=> 'amt_ordered'.$vaccine['vaccine_id'],'class'=>'form-control amt_ordered','value'=>$vaccine['qty_order_doses'],'readonly'=>''); echo form_input($data);?></td>
 					<td><?php $data=array('name' => 'available_quantity[]','id'=> 'available_quantity'.$vaccine['vaccine_id'],'class'=>'form-control available_quantity','value'=>'','readonly'=>''); echo form_input($data);?></td>
 					<td><?php $data=array('name' => 'amt_issued[]','id'=> 'amt_issued'.$vaccine['vaccine_id'],'class'=>'form-control amt_issued','type' =>'number',' min' => '0','value'=>$vaccine['qty_order_doses']); echo form_input($data);?></td>
 					<td><?php $data=array('name' => 'vvm_status[]','id'=> 'vvm_status'.$vaccine['vaccine_id'],'class'=>'form-control  vvm_s','value'=>''); echo form_input($data);?></td>
@@ -94,7 +94,7 @@ echo form_open('stock/new_save_issued_stock',$form_attributes);?>
 <button type="submit" name="stock_issue_fm" id="stock_issue_fm" class="btn btn-sm btn-danger">Submit</button>
 
 <?php
-        echo form_hidden('date_recorded',date('Y-m-d',strtotime(date('Y-m-d'))));
+        echo form_hidden('date_recorded',date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s'))));
 		echo form_close();?>
 	
 

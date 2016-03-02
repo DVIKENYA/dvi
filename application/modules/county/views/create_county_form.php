@@ -4,17 +4,9 @@
      <?php //echo validation_errors('<div class="alert alert-danger alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><b>',' </b></div>');
 
       $array = array();
-      $x=0;
       foreach($maregion as $row ){
-          //$new_arr[$v[0]] = end($v); 
-          //$array[] = end($row->county_name);
-      //    $array = [
-      //    $row-> => $row->county_name
-      //];
          $array[$row->id] = $row->region_name;
-        // $array[$row->region_id] = $row->id;
-
-}
+       }
  
     ?>
       <h1>Edit County Details</h1>

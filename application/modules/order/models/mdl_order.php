@@ -9,11 +9,18 @@ parent::__construct();
 
     // Get a list of orders placed to your station
 
-    function get_placed_orders($station,$station_id){
-        $call_procedure="CALL get_placed_orders($station,'$station_id')";
+    function get_placed_orders($station,$station_id,$limit, $offset = 0){
+        $call_procedure="CALL get_placed_orders($station,'$station_id',$limit, $offset)";
         $query=$this->db->query($call_procedure);
         $query->next_result();
         return $query->result_array();
+    }
+
+    function count_placed_orders($station,$station_id){
+        $call_procedure="CALL count_placed_orders($station,'$station_id')";
+        $query=$this->db->query($call_procedure);
+        $query->next_result();
+        return $query->num_rows();
     }
 
     function get_last_order_details($station_id){
@@ -32,8 +39,8 @@ parent::__construct();
     }
 
         // Get list of all placed orders
-    function get_all_placed_orders($station,$station_id){
-        $call_procedure="CALL get_all_placed_orders($station,'$station_id')";
+    function get_all_placed_orders($station,$station_id,$limit, $offset = 0){
+        $call_procedure="CALL get_all_placed_orders($station,'$station_id',$limit, $offset)";
         $query=$this->db->query($call_procedure);
         $query->next_result();
         return $query->result_array();

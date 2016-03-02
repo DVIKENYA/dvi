@@ -51,17 +51,21 @@
 
                   <a href="<?php  echo $forward_url ?>" class="btn btn-danger btn-xs">Forward Request <i class="fa fa-exchange"></i></a>
               </td>
-          <?php } else  {?>
+          <?php }elseif($user_object['user_level']=='1'){?>
               <td>
+                  <a href="<?php  echo $ledger_url ?>" class="btn btn-danger btn-xs">Issue <i class="fa fa-share"></i></a>
+              </td>
+         <?php  } else{?>
+             <td>
                   <a href="<?php  echo $ledger_url ?>" class="btn btn-danger btn-xs">Issue <i class="fa fa-share"></i></a>
                   <a href="<?php  echo $forward_url ?>" class="btn btn-danger btn-xs">Forward Request <i class="fa fa-exchange"></i></a>
               </td>
-         <?php }}?>
+          <?php }}?>
               </tr>
 
         </tbody>
         </table>
-
+         <?php echo $this->pagination->create_links(); ?>
     </form>
 
   </div>
@@ -92,7 +96,7 @@
 
                 </tbody>
             </table>
-
+          <?php echo $this->pagination->create_links(); ?>
         </form>
     </div>
 
