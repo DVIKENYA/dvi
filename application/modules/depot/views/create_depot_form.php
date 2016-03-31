@@ -23,7 +23,7 @@ foreach ($locations as $row) {
         
         <div class="form-group">
             <?php
-            echo form_label('Store Office', 'officer');
+            echo form_label('Store Officer', 'officer');
             echo form_error('officer');
             echo form_input(['name' => 'officer', 'id' => 'officer', 'pattern' => '[a-zA-Z\s]+', 'value' => $officer, 'class' => 'form-control', 'placeholder' => 'Full Name']);
             ?>

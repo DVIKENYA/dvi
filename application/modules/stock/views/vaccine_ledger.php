@@ -4,12 +4,8 @@
             <div class="information green_info">
                 <div class="information_inner">
                     <div class="info green_symbols"><i class="fa fa-cubes icon"></i></div>
-                    <span>Stock Balance </span>
-                    <h1 class="bolded"><?php if (empty($bal)) {
-                            echo 0;
-                        } else {
-                            echo($bal[0]['stock_balance']);
-                        } ?></h1>
+                    <span><?php echo ($vaccine[0]["Vaccine_name"]);?> Stock Balance </span>
+                    <h1 class="bolded" id="bal"></h1>
 
                 </div>
             </div>
@@ -62,6 +58,8 @@
                                                     <th>Amount <br>Received</th>
                                                     <th>Batch <br>Number</th>
                                                     <th>Expiry <br>Date</th>
+                                                    <th>Action</th>
+                                                   
 
                                                 </tr>
 
@@ -76,6 +74,7 @@
                                                     <th>Amount <br>Received</th>
                                                     <th>Batch <br>Number</th>
                                                     <th>Expiry <br>Date</th>
+                                                    <th>Action</th>
                                                 </tr>
                                                 </tfoot>
                                             </table>
@@ -201,19 +200,15 @@
                 </div>
             </div>
         </div>
-        <script type="text/javascript">
-
-
-        </script>
     </div>
 
-
-    <div class="row"></div>
     <br/>
-    <div id="container" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
+<!--    <div id="container" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>-->
 
 
     <script type="text/javascript">
+
+        var table1;
 
         $(document).ready(function () {
 
@@ -283,7 +278,55 @@
                 table1.columns(0).search(obj).draw();
             });
 
+
+
+
+
         });
+        function remove_duplicate(id) {
+            var url;
+            url = "<?php echo site_url('stock/remove_duplicate')?>"  + '/'+ id;
+            if (confirm('Are you sure, remove this data?')) {
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    dataType: "JSON",
+                    success: function (data) {
+                        console.log(data);
+                        reload_table();
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+
+                    }
+                });
+            }
+        }
+
+        function reload_table() {
+            table1.ajax.reload(null, false); //reload datatable ajax
+
+        }
+
+        function auto_load(){
+            url = "<?php echo site_url('stock/get_stock_balance'). "/" . $id?>";
+            $.ajax({
+              url: url,
+              cache: false,
+              success: function(data){
+                 $("#bal").html(data);
+              } 
+            });
+          }
+
+        $(document).ready(function(){
+
+            auto_load(); //Call auto_load() function when DOM is Ready
+
+          });
+
+          //Refresh auto_load() function after 10000 milliseconds
+          setInterval(auto_load,50000);
+
 
         $(document).ready(function () {
 

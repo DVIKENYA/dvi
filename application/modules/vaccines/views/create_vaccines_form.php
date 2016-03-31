@@ -24,7 +24,7 @@
         <?php
         echo form_label('Vaccine Name / Diluents','Vaccine_name');
         echo form_error('Vaccine_name');
-        echo form_input(['name' => 'Vaccine_name', 'id' => 'vaccines', 'pattern'=>'[a-zA-Z\s]+','value' => $Vaccine_name ,'class' => 'form-control', 'placeholder' => 'Enter vaccine name']);
+        echo form_input(['name' => 'Vaccine_name', 'id' => 'vaccines', 'value' => $Vaccine_name ,'class' => 'form-control', 'placeholder' => 'Enter vaccine name']);
         ?>
       </div>
      <div class="form-group">

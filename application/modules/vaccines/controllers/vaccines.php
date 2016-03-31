@@ -130,7 +130,7 @@ class Vaccines extends MY_Controller
     {
 
         $this->load->library('form_validation');
-        $this->form_validation->set_rules('Vaccine_name', 'Vaccine Name', 'required|alpha_numeric|xss_clean');
+        $this->form_validation->set_rules('Vaccine_name', 'Vaccine Name', 'required|alpha_dash|xss_clean');
         $this->form_validation->set_rules('Doses_required', 'Doses Required', 'required|integer|xss_clean');
         $this->form_validation->set_rules('Wastage_factor', 'Wastage Factor', 'required|decimal|xss_clean');
         $this->form_validation->set_rules('Vaccine_formulation', 'Vaccine Formulation', 'required||xss_clean');

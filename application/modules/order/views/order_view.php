@@ -75,7 +75,7 @@
     <input type="button" value="Continue" class="btn btn-sm btn-danger"
            onclick="window.location.href='<?php echo base_url() . 'stock/receive_stocks' . '/' . $order_id ?>'"/>
 <?php } else if ($option == 2 && $status_name == "pending" && $level != 3) { ?>
-    <input type="button" value="Issue Order" class="btn btn-sm btn-danger"
+    <input type="button" value="Continue" class="btn btn-sm btn-danger"
            onclick="window.location.href='<?php echo base_url() . 'stock/issue_stocks' . '/' . $order_id ?>'"/>
 <?php } else { ?>
     <!--   <input type="button" value="Receive Order" class="btn btn-sm btn-danger" disabled="" hidden/>-->

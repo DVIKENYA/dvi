@@ -121,7 +121,11 @@ $regional ="";
                         <button class="btn btn-danger pull-right" name="submit" type="submit">Submit</button>
                         <span class="clearfix"></span>
                     </div>
-                    <?php echo form_close(); ?>
+                    <?php
+                    if (isset($update_id)){
+                        echo form_hidden('update_id', $update_id);
+                    }
+                    echo form_close(); ?>
 
                 </div><!--/porlets-content-->
             </div><!--/block-web-->

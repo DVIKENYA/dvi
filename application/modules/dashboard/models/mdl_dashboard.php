@@ -21,10 +21,11 @@ class Mdl_dashboard extends CI_Model
 
     function get_stock_balance($station_id)
     {
-        $this->db->select('vaccine_name, stock_balance');
+        $this->db->select('vaccine_name, sum(stock_balance) as stock_balance');
         $this->db->from('vaccine_stockbalance');
         $array = array('station_id' => $station_id);
         $this->db->where($array);
+        $this->db->group_by('vaccine_name,station_id');
         $query = $this->db->get();
         return $query;
     }

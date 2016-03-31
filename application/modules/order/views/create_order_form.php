@@ -154,7 +154,7 @@ echo form_close();
         stock.val("<?php echo $order_v['stock_on_hand']; ?>");
         $("#first_expiry_date_<?php echo $order_v['ID']; ?>").val("<?php echo $order_v['first_expiry_date']; ?>");
         min = $("#min_stock_<?php echo $order_v['ID']; ?>");
-        min.val(Math.ceil("<?php echo $order_v['minstock']; ?>"));
+        min.val(Math.ceil(("<?php echo $order_v['minstock']; ?>")*months*0.25));
         max = $("#max_stock_<?php echo $order_v['ID']; ?>");
         max.val(Math.ceil("<?php echo $order_v['maxstock']; ?>") * months);
         quantity = $("#quantity_dose_<?php echo $order_v['ID']; ?>");

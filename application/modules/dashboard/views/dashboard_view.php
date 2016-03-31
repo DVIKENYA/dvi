@@ -58,13 +58,13 @@
                             <tr>
                                 <?php if ($user_level == '1' || $user_level == '2') { ?>
                                 <th>
-                                    <h5 class="content-header text-info">3 Worst Performing Counties</h5></th>
+                                    <h5 class="content-header text-info">3 Poor Performing Counties</h5></th>
                                 <?php }elseif($user_level == '3') { ?>
                                 <th>
-                                    <h5 class="content-header text-info">3 Worst Performing </br>SubCounties</h5></th>
+                                    <h5 class="content-header text-info">3 Poor Performing </br>SubCounties</h5></th>
                                 <?php }elseif($user_level == '4') { ?>
                                 <th>
-                                    <h5 class="content-header text-info">3 Worst Performing </br>Facilities</h5></th>
+                                    <h5 class="content-header text-info">3 Poor Performing </br>Facilities</h5></th>
                                 <?php } ?>
                                 <th>
                                     <h5 class="content-header text-info">DPT </br>Coverage %</h5></th>

@@ -47,6 +47,7 @@
                     <th>Expiry&nbsp;Date</th>
                     <th>Quantity(doses)</th>
                     <th>VVM Status</th>
+                    <th>Comment</th>
                     <th>Action</th>
                     </thead>
                     <tbody>
@@ -77,20 +78,42 @@
                                 <option value="3">Stage 3</option>
                                 <option value="4">Stage 4</option>
                             </select></td>
-                        <td><a href="#" class="add"><span class="label label-success"><i class="fa  fa-plus-square"></i> <b>ADD</b></span></a><span
-                                class="divider">  </span><a href="#" class="remove"><span class="label label-danger"><i
-                                        class="fa  fa-minus-square"></i> <b>REMOVE</b></span></a></td>
+
+                        <td><?php  $data = array('name'=> 'comment','id'=> 'comment','rows'=> '2','cols'=> '8','class'=> 'form-control comment');
+                            echo form_textarea($data);?></td>
+                        <td class="small">
+                                <a href="#" class="add btn"><span class="label label-success"><i
+                                            class="fa fa-plus-square"></i> <b>ADD</b></span></a><br>
+                                <a href="#" class="remove btn"><span class="label label-danger"><i
+                                            class="fa  fa-minus-square"></i> <b>REMOVE</b></span></a>
+                            </td>
                     </tr>
 
                     </tbody>
                 </table>
 
-                <?php echo form_hidden('date_recorded', date('Y-m-d', strtotime(date('Y-m-d')))); ?>
+                <?php echo form_hidden('date_recorded', date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s'))));  ?>
             </div>
 
-            <button type="submit" name="stock_received" id="stock_received" class="btn btn-sm btn-danger">Receive
-                Stock
-            </button>
+            <input type="button" name="btn" data-toggle="modal" data-target="#confirm-submit" class="btn btn-danger" value="Submit"/>
+
+            <div class="modal fade" id="confirm-submit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            Confirm Submit
+                        </div>
+                        <div class="modal-body">
+                            Are you sure you want to submit the entered details?
+                        <div class="modal-footer">
+                                <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cancel</button>
+                               <button type="submit" name="stock_received" id="stock_received" class="btn btn-sm btn-danger">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>  
+            </div>
+            
 
             <?php
             echo form_close(); ?>
@@ -135,6 +158,10 @@
         var vvm_status = cloned_object.find(".vvm_status");
         vvm_status.attr('id', vvm_status_id);
 
+        var comment_id = "comment" + next_receive_row;
+        var comment = cloned_object.find(".comment");
+        comment.attr('id', comment_id);
+
         cloned_object.insertAfter(thisRow).find('input').val('');
         //cloned_object .insertAfter( thisRow ).find('#expiry_date').datepicker();
     });
@@ -160,6 +187,7 @@
         var expiry_date = retrieveFormValues_Array('expiry_date');
         var amount_received = retrieveFormValues_Array('amount_received');
         var vvm_status = retrieveFormValues_Array('vvm_status');
+        var comment = retrieveCommentValues_Array('comment');
         var date_received = retrieveFormValues('date_received');
         var date_recorded = retrieveFormValues('date_recorded');
         var received_from = retrieveFormValues('received_from');
@@ -179,6 +207,7 @@
             var get_expiry = expiry_date[i];
             var get_amount_received = amount_received[i];
             var get_vvm_status = vvm_status[i];
+            var get_comment = comment[i];
 
 
             data = {
@@ -186,7 +215,8 @@
                 "batch_no": get_batch,
                 "expiry_date": get_expiry,
                 "amount_received": get_amount_received,
-                "vvm_status": get_vvm_status
+                "vvm_status": get_vvm_status,
+                "comment": get_comment
             };
             dat.push(data);
         }
@@ -245,6 +275,21 @@
         return dump;
     }
 
+    
+    function retrieveCommentValues_Array(name) {
+        var dump = new Array();
+        var counter = 0;
+         $.each($("textarea[name=" + name + "]"), function (i, v) {
+            var theTag = v.tagName;
+            var theElement = $(v);
+            var theValue = theElement.val();
+            /*dump[counter] = theElement.attr("value");*/
+            dump[counter] = theValue;
+
+            counter++;
+        });
+        return dump;
+    }
 
     window.onbeforeunload = function () {
 

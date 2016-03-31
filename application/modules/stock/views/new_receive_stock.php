@@ -52,6 +52,7 @@
       <th style="width:9%;" class="small">Comment</th>
    </thead>
    <tbody>
+
 <?php foreach ($receipts as $vaccine) { ?>
      <tr align="center" receive_row="<?php echo $vaccine['ID'] ?>"> 
      <td><?php echo $vaccine['Vaccine_name']?></td>
@@ -68,7 +69,8 @@
         <option value="3">Stage 3</option>
         <option value="3">Stage 4</option>
       </select></td>
-     <td><textarea name="comment[]" id="comment"></textarea></td>      
+     <td><?php  $data = array('name'=> 'comment','id'=> 'comment','rows'=> '2','cols'=> '9','class'=> 'form-control comment'); echo form_textarea($data);?></td>
+<!--     <td><textarea name="comment[]" id="comment" disabled>--><?php //echo ($vaccine['comment']); ?><!--</textarea></td>-->
     </tr>
 <?php }?>
   </tbody>
@@ -77,7 +79,26 @@
 
 </div>
 
-<button type="submit" name="stock_received" id="stock_received" class="btn btn-sm btn-danger">Receive Stock</button>
+<input type="button" name="btn" data-toggle="modal" data-target="#confirm-submit" class="btn btn-danger" value="Submit"/>
+
+            <div class="modal fade" id="confirm-submit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            Confirm Submit
+                        </div>
+                        <div class="modal-body">
+                            Are you sure you want to submit the entered details?
+                        <div class="modal-footer">
+                                <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cancel</button>
+                              <button type="submit" name="stock_received" id="stock_received" class="btn btn-sm btn-danger">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>  
+            </div>
+
+
 
 <?php
 

@@ -21,7 +21,7 @@ class Stock extends MY_Controller
         $data['vvm_status'] = $this->mdl_vvmstatus->get_vvm();
         $this->load->model('stock/mdl_stock');
         $info['user_object'] = $this->get_user_object();
-$user_level = $info['user_object']['user_level'];
+        $user_level = $info['user_object']['user_level'];
         $user_id = $this->session->userdata['logged_in']['user_id'];
         $info['user_object'] = $this->get_user_object();
         $station_id = $info['user_object']['statiton_above'];
@@ -97,7 +97,7 @@ $user_level = $info['user_object']['user_level'];
         $data['page_title'] = "Issue Stocks";
         $data['module'] = "stock";
         $info['user_object'] = $this->get_user_object();
-$user_level = $info['user_object']['user_level'];
+        $user_level = $info['user_object']['user_level'];
         $user_id = $this->session->userdata['logged_in']['user_id'];
         if ($user_level == 1) {
             /*
@@ -151,9 +151,8 @@ $user_level = $info['user_object']['user_level'];
         $this->load->library('pagination');
         $this->load->library('table');
         $info['user_object'] = $this->get_user_object();
-        $info['user_object'] = $this->get_user_object();
-$user_level = $info['user_object']['user_level'];
-        $info['user_object'] = $this->get_user_object();
+        $user_level = $info['user_object']['user_level'];
+        
         $station_id = $info['user_object']['statiton_above'];
         if ($user_level == 1) {
             /*
@@ -235,7 +234,7 @@ $user_level = $info['user_object']['user_level'];
             'source' => $this->input->post('received_from'),
             'vaccine_id' => $this->input->post('vaccine'),
             's11' => $this->input->post('s11'),
-            'batch_number' => $this->input->post('batch_no'),
+            'batch_number' => strtoupper($this->input->post('batch_no')),
             'expiry_date' => $this->input->post('expiry_date'),
             'quantity_in' => $this->input->post('quantity_received'),
             'VVM_status' => $this->input->post('vvm_status'),
@@ -248,36 +247,38 @@ $user_level = $info['user_object']['user_level'];
         $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">Stock successfully received from <strong>' . $data['source'] . '</strong>!</div>');
     }
 
-    function test(){
-        Modules::run('secure_tings/is_logged_in');
+    // function test(){
+    //     Modules::run('secure_tings/is_logged_in');
 
-        $data['module'] = "stock";
-        $data['view_file'] = "test";
-        $data['section'] = "manage stock";
-        $data['subtitle'] = "Stocks Legder";
-        $data['page_title'] = "Stocks Legder";
-        $data['user_object'] = $this->get_user_object();
-        $data['main_title'] = $this->get_title();
-        //
-        //breadcrumbs
-        $this->load->library('make_bread');
-        $this->make_bread->add('Manage Stock', '', 0);
-        $this->make_bread->add('Issue Stocks', 'stock/list_issue_stock', 0);
-        $this->make_bread->add('Issue Stocks Directly', '', 0);
-        $data['breadcrumb'] = $this->make_bread->output();
-        //
-        echo Modules::run('template/' . $this->redirect($this->session->userdata['logged_in']['user_group']), $data);
+    //     $data['module'] = "stock";
+    //     $data['view_file'] = "test";
+    //     $data['section'] = "manage stock";
+    //     $data['subtitle'] = "Stocks Legder";
+    //     $data['page_title'] = "Stocks Legder";
+    //     $data['user_object'] = $this->get_user_object();
+    //     $data['main_title'] = $this->get_title();
+    //     //
+    //     //breadcrumbs
+    //     $this->load->library('make_bread');
+    //     $this->make_bread->add('Manage Stock', '', 0);
+    //     $this->make_bread->add('Issue Stocks', 'stock/list_issue_stock', 0);
+    //     $this->make_bread->add('Issue Stocks Directly', '', 0);
+    //     $data['breadcrumb'] = $this->make_bread->output();
+    //     //
+    //     echo Modules::run('template/' . $this->redirect($this->session->userdata['logged_in']['user_group']), $data);
 
-    }
+    // }
 
     function issue_stock()
     {
         Modules::run('secure_tings/is_logged_in');
         $this->load->model('vaccines/mdl_vaccines');
         $this->load->model('stock/mdl_stock');
+        $this->load->model('stock/mdl_vvmstatus');
+        // $data['vvm'] = $this->mdl_vvmstatus->get_vvm();
         $data['vaccines'] = $this->mdl_vaccines->getVaccine();
         $info['user_object'] = $this->get_user_object();
-$user_level = $info['user_object']['user_level'];
+        $user_level = $info['user_object']['user_level'];
         $user_id = $this->session->userdata['logged_in']['user_id'];
         if ($user_level == 1) {
             /* 
@@ -290,7 +291,7 @@ $user_level = $info['user_object']['user_level'];
             user_level = regional
             retrieve all counties 
             */
-            $data['locations'] = $this->mdl_stock->get_county_base($user_id);
+            $data['locations'] = $this->mdl_stock->get_subcounty($user_id);
         } elseif ($user_level == 3) {
             /* 
             user_level = county
@@ -318,6 +319,7 @@ $user_level = $info['user_object']['user_level'];
         $this->make_bread->add('Issue Stocks', 'stock/list_issue_stock', 0);
         $this->make_bread->add('Issue Stocks Directly', '', 0);
         $data['breadcrumb'] = $this->make_bread->output();
+//        $this->output->enable_profiler(TRUE);
         //
         echo Modules::run('template/' . $this->redirect($this->session->userdata['logged_in']['user_group']), $data);
 
@@ -340,8 +342,7 @@ $user_level = $info['user_object']['user_level'];
         $this->make_bread->add('Manage Stock', '', 0);
         $this->make_bread->add('Stocks Ledger', '', 0);
         $data['breadcrumb'] = $this->make_bread->output();
-        //
-
+        //$this->output->enable_profiler(TRUE);
         echo Modules::run('template/' . $this->redirect($this->session->userdata['logged_in']['user_group']), $data);
 
     }
@@ -353,17 +354,13 @@ $user_level = $info['user_object']['user_level'];
         Modules::run('secure_tings/is_logged_in');
         $id = $this->uri->segment(3);
         $data['id'] = $id;
-        $this->load->model('stock/mdl_stock');
         $this->load->model('vaccines/mdl_vaccines');
-        $data['vaccines'] = $this->mdl_vaccines->get_vaccine_details();
-        $data['user_object'] = $this->get_user_object();
-        $station_id = $data['user_object']['user_statiton'];
-        $data['bal'] = $this->mdl_stock->get_stock_balance($selected_vaccine, $station_id);
+        $data['vaccine'] = $this->mdl_vaccines->get_where($selected_vaccine)->result_array();
         $data['module'] = "stock";
         $data['view_file'] = "vaccine_ledger";
         $data['section'] = "manage stock";
-        $data['subtitle'] = "Stocks Ledger";
-        $data['page_title'] = "Stocks Ledger";
+        $data['subtitle'] = $this->vaccine_name($selected_vaccine)." Stocks Ledger";
+        // $data['page_title'] = "Stocks Ledger";
         $data['user_object'] = $this->get_user_object();
         $data['main_title'] = $this->get_title();
         //breadcrumbs
@@ -373,6 +370,7 @@ $user_level = $info['user_object']['user_level'];
 
         $data['breadcrumb'] = $this->make_bread->output();
         //
+         // $this->output->enable_profiler(TRUE);
 
         echo Modules::run('template/' . $this->redirect($this->session->userdata['logged_in']['user_group']), $data);
         //echo Modules::run('template/admin', $data);
@@ -438,8 +436,9 @@ $user_level = $info['user_object']['user_level'];
             "data" => $data,
         );
 
+        
         echo json_encode($output);
-
+        // $this->output->enable_profiler(TRUE);
     }
 
     function ledger_in()
@@ -472,6 +471,8 @@ $user_level = $info['user_object']['user_level'];
             $row[] = $bal->amount_received;
             $row[] = $bal->batch_no;
             $row[] = $bal->expiry_date;
+            $row[] =  '<a class="btn btn-sm btn-primary" onclick="remove_duplicate('.$bal->id.')" title="Remove"> Remove</a>';
+    
             $data[] = $row;
 
         }
@@ -517,6 +518,8 @@ $user_level = $info['user_object']['user_level'];
             $row[] = $bal->batch_no;
             $row[] = $bal->expiry_date;
             $data[] = $row;
+
+
         }
         $output = array(
             "draw" => $_POST['draw'],
@@ -526,17 +529,27 @@ $user_level = $info['user_object']['user_level'];
         );
 
         echo json_encode($output);
+        // $this->output->enable_profiler(TRUE);
 
     }
 
 
-    function store_balance($selected_vaccine)
+    function get_stock_balance($selected_vaccine)
     {
         $data['user_object'] = $this->get_user_object();
         $station_id = $data['user_object']['user_statiton'];
         $this->load->model('stock/mdl_stock');
-        $query = $this->mdl_stock->get_store_balance($selected_vaccine, $station_id);
-        echo json_encode($query);
+        $query = $this->mdl_stock->get_stock_balance($selected_vaccine, $station_id);
+        if(empty($query)){
+
+            echo (0);
+        }else {
+            foreach ($query as $val) {
+                echo $val->stock_balance;
+            }
+             
+        }
+        
 
     }
 
@@ -563,6 +576,7 @@ $user_level = $info['user_object']['user_level'];
         $data = $this->mdl_stock->get_batches($selected_vaccine, $station_id);
         /* echo json_encode($selected_vaccine);*/
         echo json_encode($data);
+
     }
 
     function get_batch_details()
@@ -587,21 +601,25 @@ $user_level = $info['user_object']['user_level'];
         $selected_batch = $this->input->post('selected_batch');
 
         $data_array = array();
-        foreach ($selected_batch as $item) {
-            $query = $this->mdl_stock->get_order_batch($order_id, $item['selected_batch'], $station_id);
+        if (!empty($selected_batch)){
+            foreach ($selected_batch as $item) {
+                $query = $this->mdl_stock->get_order_batch($order_id, $item['selected_batch'], $station_id);
 
-            foreach ($query as $row) {
-                //var_dump($query);
-                $data['vaccine_id'] = $row->vaccine_id;
-                $data['batch_no'] = $row->batch_number;
-                // $data['expiry_date'] = $row->expiry_date;
-                // $data['vvm_status'] = $row->name;
-                $data_array['issue_row' . $row->vaccine_id][] = $data;
+                foreach ($query as $row) {
+                    //var_dump($query);
+                    $data['vaccine_id'] = $row->vaccine_id;
+                    $data['batch_no'] = $row->batch_number;
+                    // $data['expiry_date'] = $row->expiry_date;
+                    // $data['vvm_status'] = $row->name;
+                    $data_array['issue_row' . $row->vaccine_id][] = $data;
+
+                }
 
             }
-
+            echo json_encode($data_array);
+        } else{
+            echo json_encode($data_array);
         }
-        echo json_encode($data_array);
         // $this->output->enable_profiler(TRUE);
     }
 
@@ -665,6 +683,54 @@ $user_level = $info['user_object']['user_level'];
         echo Modules::run('template/' . $this->redirect($this->session->userdata['logged_in']['user_group']), $data);
     }
 
+    function adjust_stock()
+    {
+        Modules::run('secure_tings/is_logged_in');
+        $this->load->model('vaccines/mdl_vaccines');
+        $data['vaccines'] = $this->mdl_vaccines->getVaccine();
+        $data['module'] = "stock";
+        $data['view_file'] = "adjust_stock";
+        $data['section'] = "manage stock";
+        $data['subtitle'] = "Stock Adjustment";
+        $data['page_title'] = "Stock Adjustment";
+        $data['user_object'] = $this->get_user_object();
+        $data['main_title'] = $this->get_title();
+
+        //breadcrumbs
+        $this->load->library('make_bread');
+        $this->make_bread->add('Manage Stock', '', 0);
+        $this->make_bread->add('Stock Adjustment', '', 0);
+        $data['breadcrumb'] = $this->make_bread->output();
+        //
+        echo Modules::run('template/' . $this->redirect($this->session->userdata['logged_in']['user_group']), $data);
+    }
+
+    function save_adjust_stock()
+    {
+        Modules::run('secure_tings/is_logged_in');
+        $data['user_object'] = $this->get_user_object();
+        $station_name = $data['user_object']['user_statiton'];
+        $user_id = $data['user_object']['user_id'];
+        $user_level = $data['user_object']['user_level'];
+        $save_data = array(
+            'vaccine_id' => $this->input->post('vaccine'),
+            'batch_number' => strtoupper($this->input->post('batch_no')),
+            'date_of_count' => date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s'))),
+            'quantity' => $this->input->post('quantity'),
+            'reason' => $this->input->post('reason'),
+            'adjustment' => $this->input->post('adjustment'),
+            'station_id' => $station_name,
+            'user_id' => $user_id,
+            'station_level' => $user_level,
+
+        );
+        $this->load->model('stock/mdl_stock');
+        echo json_encode($save_data);
+        //$this->mdl_stock->save_physical_count($save_data);
+        //$this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">Stock physical count updated successfully!</div>');
+
+    }
+
     function save_physical_count()
     {
         Modules::run('secure_tings/is_logged_in');
@@ -674,15 +740,17 @@ $user_level = $info['user_object']['user_level'];
         $user_level = $data['user_object']['user_level'];
         $save_data = array(
             'vaccine_id' => $this->input->post('vaccine'),
-            'batch_number' => $this->input->post('batch_no'),
+            'batch_number' => strtoupper($this->input->post('batch_no')),
             'expiry_date' => $this->input->post('expiry_date'),
             'available_quantity' => $this->input->post('available_quantity'),
-            'date_of_count' => date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s'))),
+            'date_of_count' => $this->input->post('date_of_count'),
+            'date_recorded' => date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s'))),
             'physical_count' => $this->input->post('physical_count'),
+            'discrepancy' => $this->input->post('available_quantity')-$this->input->post('physical_count'),
             'station_id' => $station_name,
             'user_id' => $user_id,
             'station_level' => $user_level,
-            'order_id' => $this->input->post('id')
+            'receive_id' => $this->input->post('id')
 
         );
         $this->load->model('stock/mdl_stock');
@@ -855,7 +923,7 @@ $user_level = $info['user_object']['user_level'];
             foreach ($value as $keyvac => $valuevac) {
                 foreach ($valuevac as $keys => $values) {
                     if ($keys == "issue_id") {
-                        $temp[$keyvac]['issue_id'] = $issue_id;
+                       $temp[$keyvac]['issue_id'] = $issue_id;
                     } else {
                         $temp[$keyvac][$keys] = $values;
                     }
@@ -864,7 +932,7 @@ $user_level = $info['user_object']['user_level'];
                 }
 
             }
-            echo json_encode($temp);
+            // echo json_encode($temp);
 
             $this->db->insert_batch('m_issue_stock_item', $temp);
 
@@ -872,7 +940,7 @@ $user_level = $info['user_object']['user_level'];
 
 
         $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">Stocks have been issued successfully</div>');
-        redirect('order/list_orders');
+        redirect('stock/list_issue_stock' , 'refresh');
 
     }
 
@@ -881,8 +949,6 @@ $user_level = $info['user_object']['user_level'];
         Modules::run('secure_tings/is_logged_in');
         $this->load->model('vaccines/mdl_vaccines');
         $data['vaccines'] = $this->mdl_vaccines->getVaccine();
-        $this->load->model('stock/mdl_vvmstatus');
-        $data['vvm_status'] = $this->mdl_vvmstatus->get_vvm();
         $this->load->model('mdl_stock');
         $data['receipts'] = $this->mdl_stock->get_order_to_receive($order_id);
         $data['module'] = "stock";
@@ -976,7 +1042,7 @@ $user_level = $info['user_object']['user_level'];
         $this->db->insert_batch('m_receive_stock_item', $temp);
 
         $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">Received stocks have been saved successfully</div>');
-        redirect('order/list_orders');
+        redirect('order/list_orders', 'refresh');
     }
 
     function save_received_stocks()
@@ -1016,6 +1082,7 @@ $user_level = $info['user_object']['user_level'];
             $receive_array[$receive_counter]['batch_no'] = $item['batch_no'];
             $receive_array[$receive_counter]['expiry_date'] = $item['expiry_date'];
             $receive_array[$receive_counter]['vvm_status'] = $item['vvm_status'];
+            $receive_array[$receive_counter]['comment'] = $item['comment'];
             $receive_array[$receive_counter]['amount_received'] = $item['amount_received'];
             $receive_array[$receive_counter]['receive_id'] = $receive_id[$receive_counter];
 
@@ -1040,7 +1107,21 @@ $user_level = $info['user_object']['user_level'];
         }
 
         $this->session->set_flashdata('msg', '<div id="alert-message" class="alert alert-success text-center">Received stocks have been saved successfully</div>');
-        redirect('order/list_orders');
+        redirect('order/list_orders' , 'refresh');
+    }
+
+    function remove_duplicate($id){
+        $this->load->model('mdl_stock');
+        $data = array("hidden"=>"1");
+        $query = $this->mdl_stock->_remove_duplicate($id, $data);
+        echo json_encode($query);
+    }
+
+
+    function vaccine_name($id){
+        $this->load->model('vaccines/mdl_vaccines');
+        $query= $this->mdl_vaccines->get_where($id)->result();
+        return ($query[0]->Vaccine_name);
     }
 
 }

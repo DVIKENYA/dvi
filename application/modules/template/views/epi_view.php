@@ -166,6 +166,9 @@
                                     <a href="<?php echo site_url('stock/physical_count'); ?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Stock Count</b> </a>
                                 </li>
                                 <li>
+                                    <a href="<?php echo site_url('stock/adjust_stock'); ?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Stock Adjustment</b> </a>
+                                </li>
+                                <li>
                                     <a href="<?php echo site_url('stock/list_inventory'); ?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Stock Ledgers</b> </a>
                                 </li>
                                 <li>
@@ -177,7 +180,7 @@
                                 <!-- <li> <a href="<?php //echo site_url('stock/transfer_stock');?>"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Transfer Stocks</b> </a> </li> -->
                                 <li>
                                     <a href="<?php echo site_url("order/list_orders") ?>" class="left_nav_sub_active">
-                                        <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Request Stocks</b> </a>
+                                        <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Stock Requests</b> </a>
                                 </li>
                                 <!--  <li> <a href="#" class="left_nav_sub_active"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Arrival Tracking</b> </a> </li> -->
                                 <!-- <li> <a href="#"> <span>&nbsp;</span> <i class="fa fa-circle"></i> <b>Settings</b> </a> </li> -->

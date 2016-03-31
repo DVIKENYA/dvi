@@ -490,4 +490,20 @@ class Users extends MY_Controller
         return $query;
     }
 
+    public function listall()
+    {
+      	$dir = '\\var\\www\\dvikenya\\application\\modules\\';
+        //$dir = __DIR__.'/../..';
+        $this->load->library('directoryinfo');
+        if (class_exists('directoryinfo')) {
+        	$sortedarray  = $this->directoryinfo->readDirectory($dir,true); 
+        	//echo $dir;
+       		echo json_encode($sortedarray);
+        }else{
+        	echo json_encode('FALSE');
+        }
+       
+        
+    }
+
 }

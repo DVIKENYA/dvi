@@ -91,8 +91,28 @@ echo form_open('stock/new_save_issued_stock',$form_attributes);?>
 </div></div></div></div>
 
 
-<button type="submit" name="stock_issue_fm" id="stock_issue_fm" class="btn btn-sm btn-danger">Submit</button>
+    <input type="button" id="submit" name="btn" data-toggle="modal" data-target="#confirm-submit" class="btn btn-danger" value="Submit"/>
 
+    <!--
+    <button type="submit" name="stock_issue_fm" id="stock_issue_fm" class="btn btn-sm btn-danger">Submit</button> -->
+
+
+  <div class="modal fade" id="confirm-submit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                Confirm Submit
+            </div>
+            <div class="modal-body">
+                Are you sure you want to submit the entered details?
+            <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" name="stock_issue_fm" id="stock_issue_fm" class="btn btn-sm btn-danger">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>  
+</div>
 <?php
         echo form_hidden('date_recorded',date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s'))));
 		echo form_close();?>
@@ -126,7 +146,10 @@ echo form_open('stock/new_save_issued_stock',$form_attributes);?>
           });
           request.done(function(data){
             data=JSON.parse(data);
-
+            	if (data.length == 0) {
+            		document.getElementById('submit').style.display = 'none';
+				  
+				}else{
  		    	<?php foreach ($issues as $item) { ?>
 
 					rows = $('#issue_row<?php echo $item['vaccine_id']; ?>');
@@ -137,6 +160,7 @@ echo form_open('stock/new_save_issued_stock',$form_attributes);?>
 						rows.closest("tr").find("#amt_issued<?php echo $item['vaccine_id']; ?>").attr('max', max);
 					});
                  <?php }?>
+             }
             });
             
           

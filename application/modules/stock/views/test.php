@@ -1,207 +1,161 @@
-   <h4>Filter By:</h4>
-   <input name="reportrange" id="reportrange" />
+<form action="#" method="post" id="sign-up_area">
+    <div id="entry1" class="clonedInput">
+        <h2 id="reference" name="reference" class="heading-reference">Entry #1</h2>
+        <fieldset>
+            <label class="label_ttl" for="title">Title:</label>
+            <select class="select_ttl" name="title" id="title">
+                <option value="" selected="selected" disabled="disabled">
+                    Select your title
+                </option>
 
-    <div class="table-responsive">
-        <table id="rewards-datatable" class="table table-striped table-bordered table-condensed" cellspacing="0" width=" 100%">
-        <thead>
-        <tr>
-            <th>DATE</th>
-            <th>DESCRIPTION</th>
-            <th>LOAN ACCOUNT</th>
-            <th>LEVEL</th>
-            <th>AMOUNT</th>
-            <th>TOTAL</th>
-        </tr>
-        </thead>
+                <option value="Dr.">
+                    Dr.
+                </option>
 
-        <tbody>
-        <tr>
-            <td>31/01/2014</td>
-            <td>PAYMENT RECEIVED</td>
-            <td>2220005001</td>
-            <td>1</td>
-            <td>150.00</td>
-            <td>150.00</td>
-        </tr>
-        <tr>
-            <td>28/02/2014</td>
-            <td>PAYMENT RECEIVED</td>
-            <td>22200059999</td>
-            <td>1</td>
-            <td>150.00</td>
-            <td>150.00</td>
-        </tr>
-        <tr>
-            <td>15/03/2014</td>
-            <td>PAYMENT RECEIVED</td>
-            <td>2220005077</td>
-            <td>1</td>
-            <td>150.00</td>
-            <td>340.00</td>
-        </tr>
-        <tr>
-            <td>30/04/2014</td>
-            <td>PAYMENT RECEIVED</td>
-            <td>2220005004</td>
-            <td>2</td>
-            <td>10.00</td>
-            <td>150.00</td>
-        </tr>
-        <tr>
-            <td>31/01/2014</td>
-            <td>PAYMENT RECEIVED</td>
-            <td>2220005001</td>
-            <td>1</td>
-            <td>150.00</td>
-            <td>150.00</td>
-        </tr>
-        <tr>
-            <td>28/02/2014</td>
-            <td>PAYMENT RECEIVED</td>
-            <td>22200059999</td>
-            <td>1</td>
-            <td>150.00</td>
-            <td>150.00</td>
-        </tr>
-        <tr>
-            <td>15/03/2014</td>
-            <td>PAYMENT RECEIVED</td>
-            <td>2220005077</td>
-            <td>1</td>
-            <td>150.00</td>
-            <td>340.00</td>
-        </tr>
-        <tr>
-            <td>30/04/2014</td>
-            <td>PAYMENT RECEIVED</td>
-            <td>2220005004</td>
-            <td>2</td>
-            <td>10.00</td>
-            <td>150.00</td>
-        </tr>
-        <tr>
-            <td>31/01/2014</td>
-            <td>PAYMENT RECEIVED</td>
-            <td>2220005001</td>
-            <td>1</td>
-            <td>150.00</td>
-            <td>150.00</td>
-        </tr>
-        <tr>
-            <td>28/02/2014</td>
-            <td>PAYMENT RECEIVED</td>
-            <td>22200059999</td>
-            <td>1</td>
-            <td>150.00</td>
-            <td>150.00</td>
-        </tr>
-        <tr>
-            <td>15/03/2014</td>
-            <td>PAYMENT RECEIVED</td>
-            <td>2220005077</td>
-            <td>1</td>
-            <td>150.00</td>
-            <td>340.00</td>
-        </tr>
-        <tr>
-            <td>30/04/2014</td>
-            <td>PAYMENT RECEIVED</td>
-            <td>2220005004</td>
-            <td>2</td>
-            <td>10.00</td>
-            <td>150.00</td>
-        </tr>
+                <option value="Mr.">
+                    Mr.
+                </option>
 
-        </tbody>
-        </table>
+                <option value="Mrs.">
+                    Mrs.
+                </option>
 
+                <option value="Ms.">
+                    Ms.
+                </option>
+            </select><!-- end .select_ttl -->
+        </fieldset>
+
+        <fieldset>
+            <label class="label_fn" for="first_name">First name:</label>
+
+            <input class="input_fn" type="text" name="first_name" id="first_name" value="">
+
+            <p class="form-help">This is help text under the form field.</p><!-- this is optional -->
+        </fieldset>
+
+        <fieldset>
+            <label class="label_ln" for="last_name">Last name:</label>
+            <input class="input_ln" type="text" name="last_name" id="last_name" value="">
+        </fieldset>
+
+        <fieldset class="checkbox entrylist">
+            <label class="label_checkboxitem" for="checkboxitemitem">What color?</label>
+            <ul>
+                <li><label><input type="checkbox" id="colorBlue" value="colorBlue" name="checkboxitem"
+                                  class="input_checkboxitem"> Blue</label></li>
+                <li><label><input type="checkbox" id="colorRed" value="colorRed" name="checkboxitem"
+                                  class="input_checkboxitem"> Red</label></li>
+                <li><label><input type="checkbox" id="colorWhite" value="colorWhite" name="checkboxitem"
+                                  class="input_checkboxitem"> White</label></li>
+            </ul><!-- end .input_radio -->
+        </fieldset>
+
+        <fieldset class="radio entrylist">
+            <label class="label_radio" for="radioitem">Do you skate?</label>
+            <ul>
+                <li><label><input type="radio" id="skateyes" value="skateyes" name="radioitem" class="input_radio"> Yes</label>
+                </li>
+                <li><label><input type="radio" id="skateno" value="skateno" name="radioitem" class="input_radio">
+                        No</label></li>
+                <li><label><input type="radio" id="skatewish" value="skatewish" name="radioitem" class="input_radio"> I
+                        wish</label></li>
+            </ul><!-- end .input_radio -->
+        </fieldset>
+
+        <fieldset>
+            <label class="label_email" for="email_address">Email:</label>
+            <input class="input_email" type="text" name="email_address" id="email_address" value=""
+                   placeholder="like this: billybob@example.com">
+        </fieldset>
+    </div><!-- end #entry1 -->
+
+    <div id="addDelButtons">
+        <input type="button" id="btnAdd" value="add section"> <input type="button" id="btnDel"
+                                                                     value="remove section above">
     </div>
 
+    <fieldset>
+        <label for="notes">Notes</label>
+        <textarea id="notes"></textarea>
+    </fieldset>
+
+    <fieldset class="check">
+        <label><input type="checkbox"> I accept the terms of service.</label>
+    </fieldset>
+
+    <fieldset class="form-actions">
+        <input type="submit" value="Submit">
+    </fieldset>
+</form>
+
 <script>
-    $(document).ready(function () {
-//DATATABLE
-//To display datatable without search and page length select, and to still have pagination work, instantiate like so
-        var oTable = $('#rewards-datatable').dataTable({
-            "sDom": "tp",
-            "pageLength": 10,
-            "pagination": true
+    $(function () {
+        $('#btnAdd').click(function () {
+            var num = $('.clonedInput').length, // how many "duplicatable" input fields we currently have
+                newNum = new Number(num + 1),      // the numeric ID of the new input field being added
+                newElem = $('#entry' + num).clone().attr('id', 'entry' + newNum).fadeIn('slow'); // create the new element via clone(), and manipulate it's ID using newNum value
+            // manipulate the name/id values of the input inside the new element
+            // H2 - section
+            newElem.find('.heading-reference').attr('id', 'ID' + newNum + '_reference').attr('name', 'ID' + newNum + '_reference').html('Entry #' + newNum);
+
+            // Title - select
+            newElem.find('.label_ttl').attr('for', 'ID' + newNum + '_title');
+            newElem.find('.select_ttl').attr('id', 'ID' + newNum + '_title').attr('name', 'ID' + newNum + '_title').val('');
+
+            // First name - text
+            newElem.find('.label_fn').attr('for', 'ID' + newNum + '_first_name');
+            newElem.find('.input_fn').attr('id', 'ID' + newNum + '_first_name').attr('name', 'ID' + newNum + '_first_name').val('');
+
+            // Last name - text
+            newElem.find('.label_ln').attr('for', 'ID' + newNum + '_last_name');
+            newElem.find('.input_ln').attr('id', 'ID' + newNum + '_last_name').attr('name', 'ID' + newNum + '_last_name').val('');
+
+            // Color - checkbox
+            newElem.find('.label_checkboxitem').attr('for', 'ID' + newNum + '_checkboxitem');
+            newElem.find('.input_checkboxitem').attr('id', 'ID' + newNum + '_checkboxitem').attr('name', 'ID' + newNum + '_checkboxitem').val([]);
+
+            // Skate - radio
+            newElem.find('.label_radio').attr('for', 'ID' + newNum + '_radioitem');
+            newElem.find('.input_radio').attr('id', 'ID' + newNum + '_radioitem').attr('name', 'ID' + newNum + '_radioitem').val([]);
+
+            // Email - text
+            newElem.find('.label_email').attr('for', 'ID' + newNum + '_email_address');
+            newElem.find('.input_email').attr('id', 'ID' + newNum + '_email_address').attr('name', 'ID' + newNum + '_email_address').val('');
+
+            // insert the new element after the last "duplicatable" input field
+            $('#entry' + num).after(newElem);
+            $('#ID' + newNum + '_title').focus();
+
+            // enable the "remove" button
+            $('#btnDel').attr('disabled', false);
+
+            // right now you can only add 5 sections. change '5' below to the max number of times the form can be duplicated
+            if (newNum == 5)
+                $('#btnAdd').attr('disabled', true).prop('value', "You've reached the limit");
         });
-//DATE RANGE
-//set global vars that are set by daterange picker, to be used by datatable
-        var startdate;
-        var enddate;
-//instantiate datepicker and choose your format of the dates
-        $('#reportrange').daterangepicker({
-            initialText : 'Select period...',
-            presetRanges: [{
-                text: 'Today',
-                dateStart: function() { return moment() },
-                dateEnd: function() { return moment() }
-            }, {
-                text: 'Tomorrow',
-                dateStart: function() { return moment().add('days', 1) },
-                dateEnd: function() { return moment().add('days', 1) }
-            }, {
-                text: 'Next 7 Days',
-                dateStart: function() { return moment() },
-                dateEnd: function() { return moment().add('days', 6) }
-            }, {
-                text: 'Next Week',
-                dateStart: function() { return moment().add('weeks', 1).startOf('week') },
-                dateEnd: function() { return moment().add('weeks', 1).endOf('week') }
-            }],
-            applyOnMenuSelect: false,
-            datepickerOptions: {
-                minDate: 0,
-                maxDate: null
+
+        $('#btnDel').click(function () {
+            // confirmation
+            if (confirm("Are you sure you wish to remove this section? This cannot be undone.")) {
+                var num = $('.clonedInput').length;
+                // how many "duplicatable" input fields we currently have
+                $('#entry' + num).slideUp('slow', function () {
+                    $(this).remove();
+                    // if only one element remains, disable the "remove" button
+                    if (num - 1 === 1)
+                        $('#btnDel').attr('disabled', true);
+                    // enable the "add" button
+                    $('#btnAdd').attr('disabled', false).prop('value', "add section");
+                });
             }
+            return false;
+            // remove the last element
+
+            // enable the "add" button
+            $('#btnAdd').attr('disabled', false);
         });
-////Filter the datatable on the datepicker apply event
-//        $('#reportrange').on('apply.daterangepicker', function (ev, picker) {
-//                startdate = picker.startDate.format('YYYY-MM-DD');
-//                enddate = picker.endDate.format('YYYY-MM-DD');
-//                oTable.fnDraw();
-//            }
-//        );
-//
-//        $.fn.dataTableExt.afnFiltering.push(
-//            function (oSettings, aData, iDataIndex) {
-//                if (startdate != undefined) {
-//// 0 here is the column where my dates are.
-////Convert to YYYY-MM-DD format from DD/MM/YYYY
-//                    var coldate = aData[0].split("/");
-//                    var d = new Date(coldate[2], coldate[1] - 1, coldate[0]);
-//                    var date = moment(d.toISOString());
-//                    date = date.format("YYYY-MM-DD");
-//
-////Remove hyphens from dates
-//                    dateMin = startdate.replace(/-/g, "");
-//                    dateMax = enddate.replace(/-/g, "");
-//                    date = date.replace(/-/g, "");
-//
-////console.log(dateMin, dateMax, date);
-//
-//// run through cases to filter results
-//                    if (dateMin == "" && date <= dateMax) {
-//                        return true;
-//                    }
-//                    else if (dateMin == "" && date <= dateMax) {
-//                        return true;
-//                    }
-//                    else if (dateMin <= date && "" == dateMax) {
-//                        return true;
-//                    }
-//                    else if (dateMin <= date && date <= dateMax) {
-//                        return true;
-//                    }
-//
-//// all failed
-//                    return false;
-//                }
-//            }
-//        );
-    });
+
+        $('#btnDel').attr('disabled', true);
+    }
 </script>
-
- 
-

@@ -2,6 +2,10 @@
 <div class="row">
     <div class="col-lg-12">
         <?php
+        $vvm = array(
+            '1'  => 'Stage 1',
+            '2'  => 'Stage 2',
+            );
         $form_attributes = array('id' => 'issuestock_fm', 'method' => 'post', 'class' => '', 'role' => 'form');
         echo form_open('', $form_attributes); ?>
 
@@ -82,15 +86,21 @@
                                 echo form_input($data); ?></td>
                             <td><?php $data = array('name' => 'amt_issued', 'id' => 'amt_issued', 'class' => 'form-control amt_issued', 'type' => 'number', ' min' => '0', 'required' => 'true');
                                 echo form_input($data); ?></td>
-                            <td><?php $data = array('name' => 'vvm_status', 'id' => 'vvm_status', 'class' => 'form-control vvm_status');
-                                echo form_input($data); ?></td>
+                            <td>
+                                <select name="vvm_status" class="form-control vvm_status" id="vvm_status" required="true">
+                                    <option value="">Select Status</option>
+                                    <?php foreach ($vvm as $key=>$value) {
+                                        echo "<option value='" . $key . "'>" . $value . "</option>";
+                                    } ?>
+                                </select>
+                            </td>
                             <td class="small">
                                 <a href="#" class="add btn"><span class="label label-success"><i
                                             class="fa fa-plus-square"></i> <b>ADD</b></span></a><br>
                                 <a href="#" class="remove btn"><span class="label label-danger"><i
                                             class="fa  fa-minus-square"></i> <b>REMOVE</b></span></a>
                             </td>
-                            <?php echo form_hidden('date_recorded', date('Y-m-d', strtotime(date('Y-m-d')))); ?>
+                            <?php echo form_hidden('date_recorded', date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s')))); ?>
                         </tr>
 
                         </tbody>
@@ -101,9 +111,28 @@
         </div>
     </div>
 
+    <input type="button" name="btn" data-toggle="modal" data-target="#confirm-submit" class="btn btn-danger" value="Submit"/>
 
-    <button type="submit" name="stock_issue_fm" id="stock_issue_fm" class="btn btn-sm btn-danger">Submit</button>
+    <!--
+    <button type="submit" name="stock_issue_fm" id="stock_issue_fm" class="btn btn-sm btn-danger">Submit</button> -->
 
+
+  <div class="modal fade" id="confirm-submit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                Confirm Submit
+            </div>
+            <div class="modal-body">
+                Are you sure you want to submit the entered details?
+            <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" name="stock_issue_fm" id="stock_issue_fm" class="btn btn-sm btn-danger">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>  
+</div>
 
     <?php
 
@@ -224,7 +253,7 @@
                     /* dataType : json,*/
                     success: function (data, textStatus, jqXHR) {
                         //console.log(data);
-                        window.location.replace('<?php echo base_url() . 'stock/list_issue_stock'?>');
+                         window.location.replace('<?php echo base_url() . 'stock/list_issue_stock'?>');
                         //data: return data from server
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
@@ -299,7 +328,7 @@
                 $.each(data, function (key, value) {
                     stock_row.closest("tr").find(".expiry_date").val(value.expiry_date);
                     stock_row.closest("tr").find(".available_quantity").val(value.stock_balance);
-                    stock_row.closest("tr").find(".vvm_status").val(value.status);
+                    // stock_row.closest("tr").find(".vvm_status").val(value.status);
                     stock_row.closest("tr").find(".amt_issued").attr('max', value.stock_balance);
 
                 });
