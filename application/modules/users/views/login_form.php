@@ -8,7 +8,7 @@
               <?php
               echo form_label('Enter User Name','username');
               echo form_error('username');
-              echo form_input(['name' => 'username', 'id' => 'username', 'class' => 'form-control', 'placeholder' => 'Enter Username Name']);
+              echo form_input(['name' => 'username', 'id' => 'username', 'class' => 'form-control', 'placeholder' => 'Enter Username Name', 'AutoComplete'=>'Off']);
               ?>
           </div>
     <div class="form-group">
@@ -21,3 +21,11 @@
       
       <button class="btn btn-lg btn-danger btn-block" name="submit" type="submit">LOGIN</button>
     <?php echo form_close();?>
+<script type="text/javascript">
+window.setTimeout(function() {
+    $("#alert-message").fadeTo(500, 0).slideUp(500, function(){
+        $(this).remove(); 
+    });
+}, 5000);
+
+</script>

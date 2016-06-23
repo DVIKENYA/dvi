@@ -2,6 +2,7 @@
     <div class="col-lg-12">
 <div class="table-responsive">
  <?php echo $this->session->flashdata('msg');  ?>
+    
 <table class="table table table-bordered table-hover table-striped" id="inventory">
         <thead>
                 
@@ -20,7 +21,7 @@
                     <td><?php echo $vaccine['Vaccine_name']?></td>
                     <td><?php echo $vaccine['Vaccine_formulation']?></td>
                     <td><?php echo $vaccine['Mode_administration']?></td>  
-                    <td align="center"><a href="<?php echo $ledger_url ?>"> <span class="label label-success">view vaccine ledger</span> <i class="fa  fa-book semiround"></i> </a></td>
+                    <td align="center"><a href="<?php echo $ledger_url ?>" class="btn btn-success btn-xs"> view vaccine ledger <i class="fa  fa-book"></i> </a></td>
 
               </tr>
                <?php }?>
@@ -35,5 +36,5 @@
                   $("#alert-message").fadeTo(500, 0).slideUp(500, function(){
                       $(this).remove(); 
                   });
-              }, 5000);
+              }, 2000);
         </script> 

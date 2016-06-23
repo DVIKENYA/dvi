@@ -9,7 +9,7 @@ parent::__construct();
 
 public function index()
 	{
-            Modules::run('secure_tings/is_logged_in');
+            Modules::run('secure_tings/ni_admin');
             $this->load->model('mdl_county');
             $this->load->library('pagination');
             $this->load->library('table');
@@ -43,11 +43,15 @@ public function index()
             $data['view_file']="list_county_view";
            $data['user_object'] = $this->get_user_object();
            $data['main_title'] = $this->get_title();
+        $this->load->library('make_bread');
+        $this->make_bread->add('Configurations', '', 0);
+        $this->make_bread->add('List Counties', '', 0);
+        $data['breadcrumb'] = $this->make_bread->output();
            echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);	
          }
    
 function create(){
-	Modules::run('secure_tings/is_logged_in');
+	Modules::run('secure_tings/ni_admin');
             $update_id= $this->uri->segment(3);
             $data = array();
             $this->load->model('mdl_county');
@@ -74,6 +78,11 @@ function create(){
 	$data['view_file'] = "create_county_form";
 	$data['user_object'] = $this->get_user_object();
            $data['main_title'] = $this->get_title();
+    $this->load->library('make_bread');
+    $this->make_bread->add('Configurations', '', 0);
+    $this->make_bread->add('List Counties', 'county/', 1);
+    $this->make_bread->add('Edit County', '', 0);
+    $data['breadcrumb'] = $this->make_bread->output();
            echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);  
 }
 
@@ -135,7 +144,7 @@ function get_data_from_post(){
         $this->form_validation->set_rules('county_name', 'County Name', 'required|xss_clean');
         $this->form_validation->set_rules('county_headquarter', 'County Headquarter', 'required|xss_clean');
         $this->form_validation->set_rules('region_id', 'Region', 'required|xss_clean');
-        
+        $this->form_validation->set_error_delimiters('<p class="red_text semi-bold">'.'*', '</p>');
                 
         $update_id = $this->input->post('update_id', TRUE);
         if ($this->form_validation->run() == FALSE)

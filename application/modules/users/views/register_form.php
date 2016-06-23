@@ -2,7 +2,7 @@
    <div class="row">
        <div class="col-lg-4 col-lg-offset-4">
       <?php echo $this->session->flashdata('msg');  ?>
-      <?php echo validation_errors('<div class="alert alert-danger alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><b>',' </b></div>');?>
+      <?php //echo validation_errors('<div class="alert alert-danger alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><b>',' </b></div>');?>
  <?php echo form_open('users/register');?>
    
 <?php  
@@ -40,7 +40,7 @@ $group = array();
         <?php
         echo form_label('Enter Phone Number','phone');
         echo form_error('phone');
-        echo form_input(['name' => 'phone', 'id' => 'phone',  'value' => $phone ,'class' => 'form-control', 'placeholder' => 'Enter Phone Number']);
+        echo form_input(['name' => 'phone', 'id' => 'phone', 'pattern'=>"[07]{2}[0-9]{8}" , 'value' => $phone ,'class' => 'form-control', 'placeholder' => 'Enter Phone Number']);
         ?>
       </div>
        <div class="form-group">
@@ -82,4 +82,10 @@ $group = array();
       
       <button class="btn btn-lg btn-danger btn-block" name="submit" type="submit">REGISTER</button>
     <?php echo form_close();?>
-</div></div>
+</div>
+<?php 
+      if (isset($update_id)){
+          echo form_hidden('update_id', $update_id);
+      }
+      echo form_close();?>
+</div>

@@ -21,6 +21,7 @@ function getVaccine(){
     }
     function get_vaccine_details(){
     	$this->db->select('ID,Vaccine_name, Vaccine_formulation,Mode_administration');
+        $this->db->order_by('Vaccine_name','asc');
         $query = $this->db->get('m_vaccines');
         return $query->result_array();
     }
@@ -43,7 +44,8 @@ return $query;
 
 function get_where($id){
 $table = $this->get_table();
-$this->db->where('id', $id);
+$this->db->select('Vaccine_name');
+$this->db->where('ID', $id);
 $query=$this->db->get($table);
 return $query;
 }

@@ -1,190 +1,176 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 
-class Mdl_dashboard extends CI_Model {
-var $order = array('id' => 'desc');
-var $column = array('Months', 'Above2yrs', 'Above1yr');
-
-
-function __construct() {
-parent::__construct();
-}
-
-function get_table() {
-    $table = "children_immunized";
-    return $table;
-}
-
-private function _get_datatables_query(){
-$this->db->from($this->get_table());
-$this->search_order();
-}
-
-function getDataTable(){
-$this->_get_datatables_query();
-if($_POST['length'] != -1)
-$this->db->limit($_POST['length'], $_POST['start']);
-$query = $this->db->get();
-return $query->result();
-}
-
-function search_order()
-{   
-$i = 0;
-
-foreach ($this->column as $item) 
+class Mdl_dashboard extends CI_Model
 {
-    if($_POST['search']['value'])
-        ($i===0) ? $this->db->like($item, $_POST['search']['value']) : $this->db->or_like($item, $_POST['search']['value']);
-    $column[$i] = $item;
-    $i++;
-}
+    var $order = array('id' => 'desc');
+    var $column = array('Months', 'Above2yrs', 'Above1yr');
 
-if(isset($_POST['order']))
-{
-    $this->db->order_by($column[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
-} 
-else if(isset($this->order))
-{
-    $order = $this->order;
-    $this->db->order_by(key($order), $order[key($order)]);
-}
-}
 
-function count_filtered(){
-$this->_get_datatables_query();
-$query = $this->db->get();
-return $query->num_rows();
-}
+    function __construct()
+    {
+        parent::__construct();
+    }
 
-function count_all() {
-$table = $this->get_table();
-$query=$this->db->get($table);
-$num_rows = $query->num_rows();
-return $num_rows;
-}
 
-function getChart($user_id)
-{
-    $this->db->distinct();
-    $this->db->select('Vaccine, SUM(`Stock_Balance`) AS Stock_balance');
-    $this->db->group_by('Vaccine');
-    $this->db->where("user_id", $user_id);
-    $query = $this->db->get('vaccine_stockbalance');
-    return $query;
-
-}
-function getLineChart($vaccine, $user_id)
-{
-
- $this->db->select('`Vaccine` AS Vaccine, `Stock_Balance` AS Stock_balance');
- $v = array('Vaccine' => $vaccine);
- $u = array('user_id' => $user_id);
- $this->db->where($v);
- $this->db->where($u);
- $query = $this->db->get('vaccine_stockbalance');
- return $query->result();
-
-}
-
-function getData()
-{
-$query = $this->db->query("SELECT Months, Above2yrs, Above1yr FROM children_immunized");
-
-return $query->result();
-
-}
-function get_vaccine_details(){
-        $this->db->select('ID,Vaccine_name');
+    function vaccine(){
+        $this->db->select('Vaccine_name');
         $query = $this->db->get('m_vaccines');
+        return $query->result();
+    }
+
+    function get_stock_balance($station_id)
+    {
+        $this->db->select('vaccine_name, sum(stock_balance) as stock_balance');
+        $this->db->from('vaccine_stockbalance');
+        $array = array('station_id' => $station_id);
+        $this->db->where($array);
+        $this->db->group_by('vaccine_name,station_id');
+        $query = $this->db->get();
         return $query;
     }
 
-function getCoverage(){
-    $query = $this->db->query("SELECT `periodname` AS Months, `BCG` , `DPT1` , `PCV1` , `OPV` , `ROTA` ,`Measles` FROM `total_doses_adm`");
-    
-    return $query;
+    function get_stock_balance_where($station_id, $vaccine)
+    {
+        $this->db->select('vaccine_name, stock_balance');
+        $this->db->from('vaccine_stockbalance');
+        $array = array('station_id' => $station_id, 'vaccine_name' => $vaccine);
+        $this->db->where($array);
+        $query = $this->db->get();
+        return $query->result();
     }
 
-function mofstock(){
-    $query = $this->db->query("SELECT sum( bcgdoseadm ) AS totalbcg,sum( opv1dosesadm ) AS totalopv1, sum( pneumococal1adm ) AS totalpneumococal1, sum( rotavirus1dosesadministered ) AS totalrotavirus1
-FROM dhis_usage;");
-    return $query;
-}
-
-function getMonths(){
-$query = $this->db->query("SELECT DISTINCT periodname AS months from dhis_usage");
- return $query;
-
-}
-
-function get($order_by){
-$table = $this->get_table();
-$this->db->order_by($order_by);
-$query=$this->db->get($table);
-return $query;
-}
-
-function get_with_limit($limit, $offset, $order_by) {
-$table = $this->get_table();
-$this->db->limit($limit, $offset);
-$this->db->order_by($order_by);
-$query=$this->db->get($table);
-return $query;
-}
-
-function get_where($id){
-$table = $this->get_table();
-$this->db->where('id', $id);
-$query=$this->db->get($table);
-return $query;
-}
-
-function get_where_custom($col, $value) {
-$table = $this->get_table();
-$this->db->where($col, $value);
-$query=$this->db->get($table);
-return $query;
-}
-
-function _insert($data){
-$table = $this->get_table();
-$this->db->insert($table, $data);
-}
-
-function _update($id, $data){
-$table = $this->get_table();
-$this->db->where('id', $id);
-$this->db->update($table, $data);
-}
-
-function _delete($id){
-$table = $this->get_table();
-$this->db->where('id', $id);
-$this->db->delete($table);
-}
-
-function count_where($column, $value) {
-$table = $this->get_table();
-$this->db->where($column, $value);
-$query=$this->db->get($table);
-$num_rows = $query->num_rows();
-return $num_rows;
-}
+    function get_doses_administered_where($user_level, $station_id, $vaccine)
+    {
+        $this->db->select(''.$vaccine.'');
+        if ($user_level == 1) {
+            $this->db->from('county_doses_administered');
+        } elseif ($user_level == 2) {
+            $this->db->from('county_doses_administered');
+        } elseif($user_level == 3) {
+            $this->db->from('county_doses_administered');
+        } elseif ($user_level == 4) {
+            $this->db->from('subcounty_doses_administered');
+        }elseif ($user_level == 5) {
+            $this->db->from('facility_doses_administered');
+        }
+        $array = array('station_id' => $station_id);
+        $this->db->where($array);
+        $query = $this->db->get();
+        return $query->result();
+    }
 
 
-function get_max() {
-$table = $this->get_table();
-$this->db->select_max('id');
-$query = $this->db->get($table);
-$row=$query->row();
-$id=$row->id;
-return $id;
-}
 
-function _custom_query($mysql_query) {
-$query = $this->db->query($mysql_query);
-return $query;
-}
+
+
+
+    function get_subcounty_coverage($id)
+    {
+
+        $this->db->select('`periodname` AS Months, BCG,DPT2,DPT3,MEASLES,OPV,OPV1,OPV2,OPV3,PCV1,PCV2,PCV3,ROTA1,ROTA2,m_subcounty.id, subcounty_name');
+        $this->db->from('view_subcountycov_calculated');
+        $this->db->join('m_subcounty', 'm_subcounty.id = view_subcountycov_calculated.subcounty_id');
+        $this->db->where('subcounty_name', $id);
+        $this->db->group_by('periodname');
+        $query = $this->db->get();
+
+        return $query;
+    }
+
+    function get_county_coverage($id)
+    {
+
+        $this->db->select('`periodname` AS Months, BCG,DPT2,DPT3,MEASLES,OPV,OPV1,OPV2,OPV3,PCV1,PCV2,PCV3,ROTA1,ROTA2, m_county.id, county_name');
+        $this->db->from('view_countycov_calculated');
+        $this->db->join('m_county', 'm_county.id = view_countycov_calculated.county_id');
+        $this->db->where('county_name', $id);
+        $query = $this->db->get();
+
+        return $query;
+
+    }
+
+    function get_national_coverage()
+    {
+
+        $this->db->distinct();
+        $this->db->select('`periodname` AS Months, BCG,DPT2,DPT3,MEASLES,OPV,OPV1,OPV2,OPV3,PCV1,PCV2,PCV3,ROTA1,ROTA2');
+        $this->db->from('view_subcountycov_calculated');
+        $query = $this->db->get();
+
+        return $query;
+
+    }
+
+    function best_county_dpt3($station_id)
+    {
+        $this->db->select('county_name,totaldpt3');
+        $this->db->where('region_name', $station_id);
+        $this->db->order_by('totaldpt3', 'desc');
+        $this->db->limit(3);
+        $query = $this->db->get('county_dpt3_cov');
+
+        return $query;
+    }
+
+    function worst_county_dpt3($station_id)
+    {
+        $this->db->select('county_name,totaldpt3');
+        $this->db->where('region_name', $station_id);
+        $this->db->order_by('totaldpt3', 'asc');
+        $this->db->limit(3);
+        $query = $this->db->get('county_dpt3_cov');
+
+        return $query;
+    }
+
+    function best_subcounty_dpt3($station_id)
+    {
+        $this->db->select('subcounty_name,totaldpt3');
+        $this->db->where('county_name', $station_id);
+        $this->db->order_by('totaldpt3', 'desc');
+        $this->db->limit(3);
+        $query = $this->db->get('subcounty_dpt3_cov');
+
+        return $query;
+    }
+
+    function worst_subcounty_dpt3($station_id)
+    {
+        $this->db->select('subcounty_name,totaldpt3');
+        $this->db->where('county_name', $station_id);
+        $this->db->order_by('totaldpt3', 'asc');
+        $this->db->limit(3);
+        $query = $this->db->get('subcounty_dpt3_cov');
+
+        return $query;
+    }
+
+
+    function best_facility_dpt3($station_id)
+    {
+        $this->db->select('facility_name,totaldpt3');
+        $this->db->where('totaldpt3 > 0');
+        $this->db->where('subcounty_name', $station_id);
+        $this->db->order_by('totaldpt3', 'desc');
+        $this->db->limit(3);
+        $query = $this->db->get('facility_dpt3_cov');
+
+        return $query;
+    }
+
+    function worst_facility_dpt3($station_id)
+    {
+        $this->db->select('facility_name,totaldpt3');
+        $this->db->where('totaldpt3 > 0');
+        $this->db->where('subcounty_name', $station_id);
+        $this->db->order_by('totaldpt3', 'asc');
+        $this->db->limit(3);
+        $query = $this->db->get('facility_dpt3_cov');;
+
+        return $query;
+    }
+
 
 }

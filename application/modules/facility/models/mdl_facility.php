@@ -3,7 +3,7 @@
 
 class Mdl_Facility extends CI_Model {
 var $order = array('id' => 'desc');
-var $column = array('id', 'facility_name', 'officer_incharge', 'vaccine_carrier', 'cold_box');
+var $column = array('mf.id', 'mf.facility_name', 'officer_incharge', 'vaccine_carrier', 'cold_box','subcounty_name', 'county_name', 'region_name');
 var $fridge_columns = array('m_facility.facility_name', 'm_facility_fridges.refrigerator_id', 'Model', 'Manufacturer', 'temperature_monitor_no', 'main_power_source');
 var $facility_fridges = array('m_facility_fridges.refrigerator_id',  'm_fridges.Model', 'm_fridges.Manufacturer', 'temperature_monitor_no', 'main_power_source','refrigerator_age');
 
@@ -18,18 +18,58 @@ $table = "m_facility";
 return $table;
 }
 
-private function _get_datatables_query(){
+private function _get_datatables_query($station_id){
 
-$this->db->from($this->get_table());
-$this->search_order();
+// $this->db->from($this->get_table());
+$this->search_order($station_id);
 }
+	function search_order($station_id)
+	{
+        if ($station_id!=NULL){
+			$this->db->select($this->column);
+			$this->db->from('m_facility mf');
+			$this->db->join('m_subcounty', 'm_subcounty.id = mf.subcounty_id');
+			$this->db->join('m_county', 'm_county.id = mf.county_id');
+			$this->db->join('m_region', 'm_county.region_id = m_region.id');
+			$this->db->where('county_name',$station_id);
+			$this->db->or_where('subcounty_name',$station_id);
+			$this->db->or_where('region_name',$station_id);
 
-function getFacility(){
-$this->_get_datatables_query();
-if($_POST['length'] != -1)
-$this->db->limit($_POST['length'], $_POST['start']);
-$query = $this->db->get();
-return $query->result();
+		}else{
+			$this->db->select($this->column);
+			$this->db->from('m_facility mf');
+			$this->db->join('m_subcounty', 'm_subcounty.id = mf.subcounty_id');
+			$this->db->join('m_county', 'm_county.id = mf.county_id');
+			$this->db->join('m_region', 'm_county.region_id = m_region.id');
+		}
+		$i = 0;
+
+		foreach ($this->column as $item)
+		{
+			if($_POST['search']['value'])
+				($i===0) ? $this->db->like($item, $_POST['search']['value']) : $this->db->or_like($item, $_POST['search']['value']);
+			$column[$i] = $item;
+			$i++;
+		}
+
+		if(isset($_POST['order']))
+		{
+			$this->db->order_by($column[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
+		}
+		else if(isset($this->order))
+		{
+			$order = $this->order;
+			$this->db->order_by(key($order), $order[key($order)]);
+		}
+	}
+
+    function getFacility($station_id){
+
+        $this->_get_datatables_query($station_id);
+        if($_POST['length'] != -1)
+        $this->db->limit($_POST['length'], $_POST['start']);
+        $query = $this->db->get();
+        return $query->result();
 }
 
 function get_fridges_by_id($id){
@@ -40,8 +80,8 @@ $query = $this->db->get();
 return $query->result();
 }
 
-function count_filtered(){
-$this->_get_datatables_query();
+function count_filtered($station_id){
+$this->_get_datatables_query($station_id);
 $query = $this->db->get();
 return $query->num_rows();
 }
@@ -92,28 +132,6 @@ $query = $this->db->get();
 return $query->result();
 }
 
-function search_order()
-{	
-$i = 0;
-
-foreach ($this->column as $item) 
-{
-	if($_POST['search']['value'])
-		($i===0) ? $this->db->like($item, $_POST['search']['value']) : $this->db->or_like($item, $_POST['search']['value']);
-	$column[$i] = $item;
-	$i++;
-}
-
-if(isset($_POST['order']))
-{
-	$this->db->order_by($column[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
-} 
-else if(isset($this->order))
-{
-	$order = $this->order;
-	$this->db->order_by(key($order), $order[key($order)]);
-}
-}
 
 function count_fridges_filtered($id){
 $this->_get_fridges_query($id);

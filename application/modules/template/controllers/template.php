@@ -3,14 +3,22 @@
 class Template extends MX_Controller {
 
 	 function home($data){
-            $this->load->view('home_view', $data);
+        $this->load->view('home_view', $data);
     }
     function admin($data){
        $this->load->view('admin_view',$data);
     }	
+    function ps($data){
+       // Modules::run('secure_tings/ni_admin');
+        $this->load->view('ps_view',$data);
+    }
     function epi($data){
        // Modules::run('secure_tings/ni_admin');
         $this->load->view('epi_view',$data);
+    }
+     function met($data){
+       // Modules::run('secure_tings/ni_admin');
+        $this->load->view('met_view',$data);
     }
 
     function phn($data){
@@ -31,37 +39,4 @@ class Template extends MX_Controller {
        // Modules::run('secure_tings/ni_admin');
         $this->load->view('moh_view',$data);
     }
-	
-	function getUserRegion(){
-        $this->load->model('users/mdl_users');
-        $user_id = ($this->session->userdata['logged_in']['user_id']);
-        $result=$this->mdl_users->get_userRegion($user_id)->row();
-        $data = $result->region_name;        
-       return $data;      
-    }
-    
-    function getUserCounty(){
-        $this->load->model('users/mdl_users');
-        $user_id = ($this->session->userdata['logged_in']['user_id']);
-        $result=$this->mdl_users->get_userCounty($user_id)->row();
-        $data = $result->county_name;        
-       return $data;      
-    }
-
-    function getUserSubcounty(){
-        $this->load->model('users/mdl_users');
-        $user_id = ($this->session->userdata['logged_in']['user_id']);
-        $result=$this->mdl_users->get_userSubcounty($user_id)->row();
-        $data = $result->subcounty_name;        
-       return $data;      
-    }
-
-    function getUserFacility(){
-        $this->load->model('users/mdl_users');
-        $user_id = ($this->session->userdata['logged_in']['user_id']);
-        $result=$this->mdl_users->get_userFacility($user_id)->row();
-        $data = $result->facility_name;        
-       return $data;      
-    }
 }
-

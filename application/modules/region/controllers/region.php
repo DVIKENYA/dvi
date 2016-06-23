@@ -42,6 +42,10 @@ public function index()
             $data['page_title'] = "Regions";
            $data['user_object'] = $this->get_user_object();
            $data['main_title'] = $this->get_title();
+        $this->load->library('make_bread');
+        $this->make_bread->add('Configurations', '', 0);
+        $this->make_bread->add('List Regions', '', 0);
+        $data['breadcrumb'] = $this->make_bread->output();
            echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);	
          }
    
@@ -72,6 +76,11 @@ function create(){
   $data['page_title'] = "Regions";
 	$data['user_object'] = $this->get_user_object();
            $data['main_title'] = $this->get_title();
+    $this->load->library('make_bread');
+    $this->make_bread->add('Configurations', '', 0);
+    $this->make_bread->add('List Regions', 'region/', 1);
+    $this->make_bread->add('Edit Region', '', 0);
+    $data['breadcrumb'] = $this->make_bread->output();
            echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);  
 }
 
@@ -104,10 +113,10 @@ function get_data_from_post(){
         $this->load->library('form_validation');
         $this->form_validation->set_rules('region_name', 'region Name', 'required|xss_clean');
         $this->form_validation->set_rules('region_headquarter', 'region Headquarter', 'required|xss_clean');
-		$this->form_validation->set_rules('region_manager', 'region manager', 'required|xss_clean');
-		$this->form_validation->set_rules('region_manager_phone', '', 'required|xss_clean');
-		$this->form_validation->set_rules('region_manager_email', '', 'required|xss_clean');
-		                
+    		$this->form_validation->set_rules('region_manager', 'region manager', 'required|xss_clean');
+    		$this->form_validation->set_rules('region_manager_phone', '', 'required|xss_clean');
+    		$this->form_validation->set_rules('region_manager_email', '', 'required|xss_clean');
+    		$this->form_validation->set_error_delimiters('<p class="red_text semi-bold">'.'*', '</p>');             
         $update_id = $this->input->post('update_id', TRUE);
         if ($this->form_validation->run() == FALSE)
         {   

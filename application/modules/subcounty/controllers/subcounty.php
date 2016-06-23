@@ -41,6 +41,10 @@ public function index()
             $data['view_file']="list_subcounty_view";
             $data['user_object'] = $this->get_user_object();
             $data['main_title'] = $this->get_title();
+            $this->load->library('make_bread');
+            $this->make_bread->add('Configurations', '', 0);
+            $this->make_bread->add('List Sub-counties', '', 0);
+            $data['breadcrumb'] = $this->make_bread->output();
             echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);  
 	}
    
@@ -70,6 +74,11 @@ function create(){
           	$data['view_file'] = "create_subcounty_form";
           	$data['user_object'] = $this->get_user_object();
             $data['main_title'] = $this->get_title();
+            $this->load->library('make_bread');
+            $this->make_bread->add('Configurations', '', 0);
+            $this->make_bread->add('List Sub-counties', 'subcounty/', 1);
+            $this->make_bread->add('Edit Sub-county', '', 0);
+            $data['breadcrumb'] = $this->make_bread->output();
             echo Modules::run('template/'.$this->redirect($this->session->userdata['logged_in']['user_group']), $data);
 }
 
@@ -105,7 +114,7 @@ function get_data_from_post(){
         $this->form_validation->set_rules('population_one', 'Estimated Population Under One', 'required|xss_clean');
         $this->form_validation->set_rules('population_women', 'Estimated Population of Women', 'required|xss_clean');
         $this->form_validation->set_rules('no_facilities', 'Number of Health Facilities', 'required|xss_clean');
-                
+        $this->form_validation->set_error_delimiters('<p class="red_text semi-bold">'.'*', '</p>');        
         $update_id = $this->input->post('update_id', TRUE);
         if ($this->form_validation->run() == FALSE)
         {   
